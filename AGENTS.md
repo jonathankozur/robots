@@ -50,7 +50,7 @@ Toda tarea debe tener un responsable humano, un sistema y un alcance reservado. 
 
 Los cambios de contratos compartidos requieren análisis de todos sus productores y consumidores, plan de compatibilidad o migración y revisión humana cruzada. Todos los PR requieren aprobación de otro desarrollador; la revisión propia o de otro agente es evidencia adicional.
 
-La integración debe revisar la base actual, no únicamente la base desde la que comenzó la tarea. Seguir [colaboración](docs/workflow/collaboration.md). Las protecciones y verificaciones automáticas se consideran pendientes hasta comprobar su configuración y funcionamiento real.
+La integración debe revisar la base actual, no únicamente la base desde la que comenzó la tarea. Seguir [colaboración](docs/workflow/collaboration.md). Las reglas de protección de `main` están configuradas y su configuración se comprobó en GitHub; sigue pendiente demostrar que bloquean una integración sin revisión. Los checks automáticos y sus controles aún no están configurados: requieren workflows y pruebas del proyecto.
 
 ## Fuente común y recuperación de contexto
 

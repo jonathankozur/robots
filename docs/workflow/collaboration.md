@@ -2,6 +2,12 @@
 
 Las restricciones obligatorias están en [AGENTS.md](../../AGENTS.md). Este documento explica cómo aplicarlas sin depender del proveedor del agente.
 
+## Estado del repositorio
+
+El repositorio [jonathankozur/robots](https://github.com/jonathankozur/robots) es público; `main` es la rama base. La configuración vigente requiere PR, una aprobación, aprobación de una persona distinta de quien hizo el último push, descarta revisiones obsoletas y exige resolver conversaciones. Estas reglas también se aplican a administradores. No permite force push ni borrar `main`; requiere historial lineal. GitHub permite squash y rebase, y borra ramas de trabajo después de integrarlas.
+
+La configuración se verificó por API en el repositorio. Aún no se demostró intentando integrar un PR sin aprobación. No hay workflows ni checks configurados, así que GitHub todavía no puede exigir verificaciones automáticas. Al menos otra persona con permiso de escritura debe incorporarse para poder aprobar los PR de la cuenta propietaria. La invitación y la verificación conductual quedan pendientes.
+
 ## Roles y autoridad
 
 | Rol | Responsabilidad | Autoridad |
@@ -71,7 +77,7 @@ Cuando se cree o conecte el repositorio y se identifiquen colaboradores con perm
 
 Las protecciones están disponibles para repositorios públicos con GitHub Free. La configuración debe demostrarse en el repositorio real, no darse por aplicada por escribir este documento. [Protecciones de ramas](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches).
 
-No existen todavía workflows ni controles ejecutables. Tras elegir tecnología, deberán comprobar al menos dependencias permitidas, validez de contratos, alcance del diff, coherencia de adaptadores y pruebas relevantes. Cualquier revisión de su configuración conserva la aprobación humana; no se elimina un control para hacer pasar el PR que detectó.
+Todavía no existen workflows ni controles ejecutables. Tras elegir tecnología, deberán comprobar al menos dependencias permitidas, validez de contratos, alcance del diff, coherencia de adaptadores y pruebas relevantes. Cualquier revisión de su configuración conserva la aprobación humana; no se elimina un control para hacer pasar el PR que detectó.
 
 ## Descubrimiento y conservación del contexto
 

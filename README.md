@@ -2,7 +2,7 @@
 
 El proyecto está en diseño. El [GDD preliminar](diseno_autobattler_robots.md) conserva su contenido original y distingue conceptos, propuestas y decisiones abiertas.
 
-Esta entrega contiene documentación y skills. Todavía no hay motor, código del juego, bus implementado, pruebas ejecutables ni protecciones de GitHub configuradas.
+Esta entrega contiene documentación y skills. La rama pública `main` requiere PR y revisión; ver la [configuración actual y los pendientes](docs/workflow/collaboration.md#estado-del-repositorio). Todavía no hay motor, código del juego, bus implementado ni pruebas ejecutables. Los checks automáticos de PR quedan pendientes hasta elegir tecnología e implementar workflows.
 
 ## Para empezar
 

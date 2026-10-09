@@ -12,7 +12,7 @@ La autorización humana de implementar el plan «Protocolo de agentes y arquitec
 | Simulación determinista por ticks con fases | Reloj lógico y entrega diferida; presentación desacoplada del ritmo de simulación. |
 | Datos recibidos mediante mensajes | Vistas locales limitadas, actualizadas por contratos explícitos; sin consultas directas a otro sistema. |
 | Persistencia en puntos seguros entre encuentros | Snapshots coherentes y confirmados; no se reanuda una batalla a mitad. |
-| GitHub público | Preparar revisión cruzada y protecciones cuando existan repositorio y colaboradores. |
+| GitHub público | Repositorio público `jonathankozur/robots`, con `main` protegido por PR y una aprobación humana. Ver el estado y los límites en [colaboración](workflow/collaboration.md#estado-del-repositorio). |
 | Plan breve aprobado antes de implementar | Aprobación específica del alcance, sin renovarla para acciones ya autorizadas. |
 | Revisión humana en cada PR | Otro desarrollador aprueba; las revisiones de agentes son complementarias. |
 | Primera entrega: documentación y skills | Sin scripts de control, motor, bus, pruebas de juego ni tareas nuevas. |
@@ -28,7 +28,7 @@ El GDD original permanece en [diseno_autobattler_robots.md](../diseno_autobattle
 | Bus y scheduler v1 | Revisión técnica específica de [mensajería](architecture/messaging-v1.md), contratos y escenarios de aceptación. |
 | Controles ejecutables | Implementación y ejecución demostrada de verificaciones de arquitectura, contratos y determinismo. |
 | Git y repositorio compartido | Repositorio real, rama base, colaboradores identificados y checkouts separados. |
-| Protecciones de GitHub | Configuración comprobada y demostración de que un cambio sin aprobación o verificaciones no se integra. |
+| Checks obligatorios de GitHub | Workflows y verificaciones ejecutables que se puedan exigir a cada PR, más evidencia de su bloqueo ante fallos. |
 | Base de datos | Elección humana y definición de snapshots, almacenamiento, migraciones y operaciones permitidas. |
 | Multiplayer | Autoridad, sincronización, autenticación y protocolo externo. La base solo fija el límite del adaptador. |
 
@@ -42,4 +42,4 @@ Cada decisión posterior debe conservar: identificador, fecha, estado (propuesta
 
 ## Estado de esta instalación
 
-Al comenzar esta entrega, la carpeta contenía únicamente el GDD y no era un repositorio Git. La creación documental es el bootstrap expresamente solicitado. Las reglas de ramas, PR y controles quedan especificadas; su configuración remota no se realizó en esta entrega.
+Al comenzar esta entrega, la carpeta contenía únicamente el GDD y no era un repositorio Git. Se creó `jonathankozur/robots` como repositorio público, se subió la documentación inicial a `main` y se configuraron protecciones de rama. La configuración actual y los controles aún pendientes están detallados en [colaboración](workflow/collaboration.md#estado-del-repositorio).
