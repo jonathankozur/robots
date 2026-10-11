@@ -1,6 +1,6 @@
 # Escenarios de aceptación del protocolo v1
 
-Estos son casos especificados para revisión y futura automatización. No son pruebas ejecutables ni resultados aprobados de un runtime. El entorno y la configuración técnica deben concretarse según [habilitación](../decisions.md).
+Los escenarios generales de agentes, colaboración, persistencia e integración siguen pendientes de ejecución. BUS-001 convierte los escenarios del núcleo en pruebas ejecutables con fixtures; la evidencia se distingue abajo de la aceptación pendiente del gameplay. Ver [habilitación](../decisions.md).
 
 ## Documentación y descubrimiento
 
@@ -28,7 +28,7 @@ Estos son casos especificados para revisión y futura automatización. No son pr
 
 Estos ejercicios deben realizarse sin cambios remotos o de producción, utilizando encargos y artefactos de evaluación autorizados. La entrega inicial no lanza agentes de otros proveedores ni afirma haber ejecutado estas pruebas.
 
-## Bus y scheduler: pruebas futuras
+## Bus y scheduler: escenarios y evidencia
 
 | Caso | Estímulo | Resultado esperado |
 | --- | --- | --- |
@@ -51,7 +51,45 @@ Estos ejercicios deben realizarse sin cambios remotos o de producción, utilizan
 | Cierre y nueva sesión | Cerrar con entregas pendientes, recibir un resultado tardío y abrir otra sesión. | Se registran descartes de cierre; el resultado tardío no reactiva sistemas ni llega a la nueva sesión. |
 | Cadena causal | Ejecutar movimiento, observación, intención e impacto de referencia. | La traza permite identificar productor, consumo, tick/fase y causas de cada resultado. |
 
-## Determinismo: pruebas futuras
+## Evidencia ejecutada de BUS-001
+
+11 de octubre de 2026: npm test aprobó **59 pruebas**; npm run typecheck aprobó comprobación sin emisión. Entorno: Node.js 24.14.0, TypeScript 5.9.3. No se ejecutó ningún build. Ver [entrega y TDD](bus-scheduler-implementation.md).
+
+| Criterios de revisión 0.2 | Evidencia ejecutable |
+| --- | --- |
+| 1–4: catálogo, responsables, fan-out, datos e identidad | tests/core/admission.test.ts, scheduling.test.ts, edge-cases.test.ts e integration.test.ts. |
+| 5–7: fases, orden, congelado y publicación diferida | scheduling.test.ts recorre las 49 combinaciones de fases; lifecycle.test.ts prueba reentrada. |
+| 8: corte externo y diferencia con publicación interna en input | lifecycle.test.ts e integration.test.ts. |
+| 9: vista inicial/obsoleta con política explícita | integration.test.ts, fixture local inicializada por mensajes; no valida aún las vistas de combate. |
+| 10: rechazo normal, excepción y async | lifecycle.test.ts, evento PruebaRechazo con reason tipado; sesión activa frente a fallo inmediato. |
+| 11–14: capacidad, secuencia, sesiones y cierre | scheduling.test.ts, edge-cases.test.ts, lifecycle.test.ts y replay.test.ts. |
+| 15–16: traza igual, grupos de ticks visuales y replay | replay.test.ts compara datos/resultados y JSON completo, rechaza manifiesto distinto e identifica truncamiento. |
+| 17: tick parcial sin exportación ni consumo posterior | replay.test.ts publica una salida y luego falla: no hay consumo posterior ni tick completo/exportación. No existe checkpoint de juego en el núcleo. |
+| 18: dependencias y administración | architecture.test.ts inspecciona AST del núcleo, prueba detección con ejemplos prohibidos y verifica el puerto congelado de send/emit. |
+
+integration.test.ts comprueba además 100 ticks con capacidad exacta, 200 entregas consumidas y diagnóstico acotado. edge-cases.test.ts verifica un payload en el límite de profundidad dentro de esquema, mensaje y traza.
+
+Los fixtures de prueba son los únicos productores/consumidores actuales. Al entregar BUS-001 no se había validado navegador/Electron; BUS-002 añade la evidencia web siguiente. No hay contratos de gameplay que migrar. Las protecciones remotas y checks de GitHub no se consideran comprobados por ejecutar estas pruebas locales.
+
+## Evidencia ejecutada de BUS-002
+
+11 de octubre de 2026: npm test aprobó **72 pruebas, 0 fallidas, 0 omitidas**; npm run typecheck aprobó tsc --noEmit. Se observaron RED iniciales en las ocho pruebas nuevas del cursor/journal y las reglas de escenario antes de su implementación. No se ejecutó ningún build.
+
+| Criterio | Evidencia y resultado |
+| --- | --- |
+| Pausa real y cursor único | tests/core/debug-stepping.test.ts: paso/fase/tick conservan la traza completa; las entregas congeladas siguen ocupando capacidad; reentrada detiene la sesión. |
+| Corte durante pausa y tick parcial | La entrada tardía espera al siguiente tick; exportar un tick parcial se rechaza sin invalidar la sesión sana; cerrar descarta sin confirmar. |
+| Debug independiente | Journal inmutable y secuencial conserva mensajes más allá de la capacidad de traza; activar debug no cambia traza ni manifiesto de replay. |
+| Presets y reglas | tests/harness/scenarios.test.ts ejecuta los 44 presets con su resultado o fallo esperado, valida acciones/propietarios y compara replay desde estados nuevos. |
+| Archivo y reintento | tests/harness/log-server.test.ts escribe JSONL físico, comprueba secuencia, reintento sin duplicados y rechazo de gaps/identidades desconocidas. |
+| Navegador real | Chrome 153: control parcial, pausa automática, entrada manual tardía, replay idéntico, segunda sesión aislada y cierre parcial. |
+| Configuración y evidencia | Chrome: formularios de sistemas/contratos/rutas/reglas/entradas, JSON validado, localStorage, importación/exportación, filtros e historial; configuración bloqueada durante actividad. |
+| Fallos observables | Chrome: QUEUE_CAPACITY y escritura HTTP 503 inducida, pendientes conservados y reintento exitoso; los errores de consola de la respuesta 503 son evidencia deliberada. |
+| Visual y archivo físico | Vistas de escritorio 1600 px y móvil 390 px inspeccionadas. Archivo de replay verificado: 70 líneas JSONL, seis publicaciones, manifiesto inicial y secuencia continua. |
+
+Scripts/capturas locales en output/playwright/ y logs en debug-logs/, ignorados por Git. La [ficha BUS-002](debug-harness-plan.md) registra alcance y límites. Estos resultados verifican fixtures de infraestructura, no combate, Electron, rendimiento de producción ni determinismo entre plataformas.
+
+## Determinismo: escenarios completos pendientes
 
 - Repetir configuración inicial, versión/runtime soportados, semilla, catálogo, orden de sistemas y entradas admitidas: misma traza lógica y estado final.
 - Ejecutar esos mismos ticks con ritmos visuales diferentes, pausas y aceleración: no cambia la simulación.
