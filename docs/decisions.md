@@ -1,6 +1,6 @@
 # Decisiones y habilitación
 
-Revisión documental: **1.0.0**. Fecha: **9 de octubre de 2026**.
+Revisión documental: **1.3.0**. Actualización: **11 de octubre de 2026**. Conserva la base documental del 9 de octubre.
 
 ## Base aprobada
 
@@ -12,9 +12,9 @@ La autorización humana de implementar el plan «Protocolo de agentes y arquitec
 | Simulación determinista por ticks con fases | Reloj lógico y entrega diferida; presentación desacoplada del ritmo de simulación. |
 | Datos recibidos mediante mensajes | Vistas locales limitadas, actualizadas por contratos explícitos; sin consultas directas a otro sistema. |
 | Persistencia en puntos seguros entre encuentros | Snapshots coherentes y confirmados; no se reanuda una batalla a mitad. |
-| GitHub público | Preparar revisión cruzada y protecciones cuando existan repositorio y colaboradores. |
+| GitHub público | Repositorio público `jonathankozur/robots`, con `main` protegido por PR, conversaciones resueltas e historial lineal; no exige aprobación de otro desarrollador. Ver [colaboración](workflow/collaboration.md#estado-del-repositorio). |
 | Plan breve aprobado antes de implementar | Aprobación específica del alcance, sin renovarla para acciones ya autorizadas. |
-| Revisión humana en cada PR | Otro desarrollador aprueba; las revisiones de agentes son complementarias. |
+| Revisión de integración | El responsable humano decide; el autor puede fusionar su PR tras revisión técnica y autorización explícita. |
 | Primera entrega: documentación y skills | Sin scripts de control, motor, bus, pruebas de juego ni tareas nuevas. |
 
 El GDD original permanece en [diseno_autobattler_robots.md](../diseno_autobattler_robots.md). Sus propuestas de cantidades, IA, componentes y progresión conservan sus estados originales.
@@ -23,12 +23,12 @@ El GDD original permanece en [diseno_autobattler_robots.md](../diseno_autobattle
 
 | Requisito | Evidencia necesaria para habilitarlo |
 | --- | --- |
-| Motor y lenguaje | Decisión humana documentada con consecuencias sobre aislamiento, pruebas e integración. |
+| Integración de presentación y escritorio | Tecnología aprobada en TEC-001; Vite verifica el arnés local en BUS-002. Three.js, presentación del juego y Electron siguen pendientes. |
 | Aritmética, precisión, frecuencia de ticks y algoritmo aleatorio | Especificación aprobada del entorno determinista soportado y de sus pruebas. |
-| Bus y scheduler v1 | Revisión técnica específica de [mensajería](architecture/messaging-v1.md), contratos y escenarios de aceptación. |
-| Controles ejecutables | Implementación y ejecución demostrada de verificaciones de arquitectura, contratos y determinismo. |
+| Integración del bus y scheduler v1 | Implementado y probado en BUS-001/BUS-002; revisión cruzada humana e integración pendientes. |
+| Controles ejecutables de gameplay | Controles locales del núcleo implementados; ampliar a productores/consumidores reales cuando existan. |
 | Git y repositorio compartido | Repositorio real, rama base, colaboradores identificados y checkouts separados. |
-| Protecciones de GitHub | Configuración comprobada y demostración de que un cambio sin aprobación o verificaciones no se integra. |
+| Checks obligatorios de GitHub | Workflows y verificaciones ejecutables que se puedan exigir a cada PR, más evidencia de su bloqueo ante fallos. |
 | Base de datos | Elección humana y definición de snapshots, almacenamiento, migraciones y operaciones permitidas. |
 | Multiplayer | Autoridad, sincronización, autenticación y protocolo externo. La base solo fija el límite del adaptador. |
 
@@ -40,6 +40,52 @@ La prohibición de builds permanece vigente. Si el motor exige compilar para una
 
 Cada decisión posterior debe conservar: identificador, fecha, estado (propuesta/aprobada/sustituida), aprobación humana, contexto, alternativas y consecuencias, sistemas y contratos afectados, y referencia a la decisión que sustituye si corresponde. Una propuesta o un recuerdo del agente no es una aprobación.
 
+### COL-001 — Flujo liviano para PR y merge
+
+Fecha: 11 de octubre de 2026. Estado: **aprobada e implementada por solicitud explícita del usuario**. Sustituye las reglas de aprobación externa del registro inicial y las instrucciones anteriores de PR.
+
+- Un issue de GitHub no es requisito para abrir PR; enlazar issue, tarjeta de Trello o plan es opcional.
+- `main` sigue requiriendo PR. El autor puede fusionar su propio PR cuando el responsable humano lo autorice expresamente, después de una revisión técnica del diff. No se exige un segundo desarrollador aprobador.
+- La revisión informa base, cambios, conflictos, opciones, riesgos y recomendación. El responsable humano elige soluciones que cambien comportamiento o determinen qué trabajo conservar. El agente aplica esa elección y vuelve a verificar; no decide por el usuario.
+- Se mantienen conversaciones resueltas, historial lineal, bloqueo de force-push y protección contra borrado. Los checks se ejecutan si el repositorio los configura; actualmente no hay checks requeridos.
+- La protección de GitHub se actualizó en esta intervención: `required_approving_review_count=0`, `require_last_push_approval=false`. Las aprobaciones obsoletas siguen descartándose cuando corresponda; revisión de propietario de código sigue desactivada.
+
+Motivo: mantener trazabilidad y revisión por PR sin hacer depender un equipo pequeño de una ficha adicional o de la disponibilidad de un segundo aprobador. No se elimina la autorización humana para cambios remotos ni la decisión humana sobre conflictos.
+
+### TEC-001 — Tecnología base y representación
+
+Fecha: 11 de octubre de 2026. Estado: **aprobada para BUS-001**, incluida la elección tecnológica presentada antes de la autorización «ok, autorizado». Responsable humano: usuario solicitante. Reemplaza el pendiente de motor/lenguaje para esta infraestructura.
+
+- Lenguaje: TypeScript estricto y módulos ES, con sintaxis borrable para las pruebas nativas de Node.
+- Simulación: núcleo propio por ticks, independiente de bibliotecas gráficas y del reloj real.
+- Presentación prevista: Three.js para modelos 3D; Vite para web; Electron para empaquetado de escritorio posterior. Ninguna integración está implementada en BUS-001. Publicar en Steam requiere un encargo posterior.
+- Evaluación: Node.js 24, ejecutado en 24.14.0; TypeScript 5.9.3 fijado en el lockfile. El juego web ejecutará JavaScript en el navegador.
+- Datos: copia profunda de valores JSON y congelación recursiva, con límites de bytes y profundidad. IDs: enteros positivos seguros por sesión. Orden externo: ingreso serializado, ordinal asignado a la admisión.
+
+Alternativas consideradas: un motor completo aporta editor, herramientas y exportación integrada, con mayor dependencia del motor; el núcleo propio permite controlar las fronteras, a cambio de implementar ensamblado y herramientas. Referencias compartidas o solo readonly serían más económicas, pero no garantizan inmutabilidad en ejecución. Se elige copia/congelación; el costo de asignaciones se medirá antes de introducir pools.
+
+Consecuencias: los sistemas consumen contratos de datos y puertos mínimos; render, red y almacenamiento requieren adaptadores. Node es el entorno verificado ahora. No se afirma determinismo entre navegador y escritorio antes de probarlos.
+
+### BUS-001 — Habilitar y entregar el núcleo de mensajería
+
+Fecha: 11 de octubre de 2026. Estado: **desarrollo autorizado; entregado para revisión humana**. El usuario aprobó el plan basado en la [tarjeta de revisión 0.2](https://trello.com/c/oWqxinQ9), con pruebas Node y tsc --noEmit. La aprobación habilitó este núcleo y sus fixtures; en ese momento no habilitó combate ni acciones de integración.
+
+Alcance y evidencia están en la [ficha de entrega](workflow/bus-scheduler-implementation.md). La [API](architecture/core-api-v1.md) concreta la sintaxis y presupuestos de evaluación manteniendo las fases y reglas de mensajería v1. No hay productores o consumidores de gameplay que migrar. La extracción event-bus conserva su API y archivos originales en el checkout inicial, y no es una dependencia del núcleo.
+
+### BUS-002 — Pausa real, journal debug y laboratorio manual
+
+Fecha: 11 de octubre de 2026. Estado: **desarrollo autorizado; entregado para revisión humana**. Responsable humano: usuario solicitante. Aprobación explícita: «sí voy a necesitar pausa real… implementa la mejora del bus y scheduler… modo debug… archivo log… luego implementa los 10 puntos del arnés». Amplía BUS-001; en ese momento no autorizó integración, PR, push ni merge. La autorización posterior y el flujo aplicable se registran en COL-001.
+
+Se elige un cursor único de ejecución: step ejecuta una unidad completa, stepPhase termina una fase y advanceTick termina el tick actual. Pausar conserva bandeja congelada, cursor y estado propio. El controlador deja de avanzar; no existe reloj autónomo en el núcleo. Suspender instrucciones dentro de callbacks exigiría transformar cada sistema y su contrato de ejecución; no se adopta esa alternativa.
+
+Se elige un journal debug opcional independiente de la traza acotada. El núcleo produce datos inmutables; un adaptador local fuera de la simulación escribe JSONL secuencial. Frente a descarga únicamente en navegador, esta opción deja un archivo físico y admite reintentos, a cambio de requerir servidor local y conservar datos pendientes en memoria. El modo debug no modifica el resultado ni la traza lógica. Cerrar el navegador no garantiza persistir registros pendientes.
+
+El laboratorio configura escenarios con datos y reglas de estado propio, sin código importado. Incluye controles parciales, entradas manuales/programadas, fases/colas/causas, fallos controlados, replay, sesiones independientes y evidencia exportable. Los casos de infracción usan fixtures explícitos; no son permisos nuevos de los sistemas.
+
+Contratos afectados: API Session, inspección, marcadores de fase, journal y maxTicks del manifiesto. Productores/consumidores actuales: fixtures y arnés; sin gameplay que migrar. Grabaciones de manifiesto anterior se rechazan explícitamente. Las fases y el orden de entregas siguen vigentes.
+
+Evidencia, alcance y límites: [entrega BUS-002](workflow/debug-harness-plan.md), [guía manual](../tests/browser/README.md) y [API](architecture/core-api-v1.md). Node y Chrome fueron verificados; no se extrapola a Electron ni a determinismo entre plataformas. La integración se tramita por PR contra la base actual según COL-001.
+
 ## Estado de esta instalación
 
-Al comenzar esta entrega, la carpeta contenía únicamente el GDD y no era un repositorio Git. La creación documental es el bootstrap expresamente solicitado. Las reglas de ramas, PR y controles quedan especificadas; su configuración remota no se realizó en esta entrega.
+Al comenzar esta entrega, la carpeta contenía únicamente el GDD y no era un repositorio Git. Se creó `jonathankozur/robots` como repositorio público, se subió la documentación inicial a `main` y se configuraron protecciones de rama. La configuración actual y los controles aún pendientes están detallados en [colaboración](workflow/collaboration.md#estado-del-repositorio).

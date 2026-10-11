@@ -1,6 +1,6 @@
 # Bus y scheduler v1
 
-Revisión documental: **1.0.0**. Especificación técnica propuesta a partir de las decisiones aprobadas; requiere revisión específica y pruebas antes de habilitar gameplay. Las reglas comunes están en [AGENTS.md](../../AGENTS.md).
+Revisión documental: **1.2.0**. BUS-001 autoriza el núcleo; BUS-002 autoriza control de ejecución y debug con archivo en el arnés. Implementación con fixtures verificada en Node y Chrome; la integración se rige por COL-001 en [decisiones](../decisions.md), y el gameplay sigue pendiente. Las reglas comunes están en [AGENTS.md](../../AGENTS.md). Ver [decisiones](../decisions.md), [API ejecutable](core-api-v1.md) y [evidencia](../workflow/debug-harness-plan.md).
 
 ## Responsabilidades e interfaz conceptual
 
@@ -71,6 +71,14 @@ Las entradas externas se admiten únicamente al comienzo de `input`, antes de co
 
 La primera implementación de simulación será secuencial. El trabajo paralelo de desarrolladores no autoriza paralelizar handlers o loops. Incorporar concurrencia real requiere otra decisión y pruebas de determinismo.
 
+### Control de ejecución aprobado en BUS-002
+
+El controlador puede avanzar por operación, fase o tick. Una operación abre la fase (incluyendo corte externo y congelado), consume una entrega completa, ejecuta un loop completo o cierra la fase. La pausa conserva cursor, bandeja congelada y presupuesto; no reordena trabajo ni interrumpe instrucciones dentro de callbacks. Terminar el tick desde cualquier pausa utiliza exactamente el mismo orden y traza que una ejecución completa. El ingreso externo durante una pausa después del corte espera al siguiente tick.
+
+Una sesión pausada sigue activa, con rutas y catálogo fijos. No se exporta un replay de un tick parcial. El controlador puede cerrar fuera de callbacks y abortar el parcial con registro de descartes, sin confirmarlo. Los sistemas mantienen exclusivamente sus puertos de send/emit: no reciben capacidades de avance, inspección ni cierre.
+
+El modo debug conserva un journal secuencial de manifiesto y traza completa, incluso al truncarse el diagnóstico acotado. Un adaptador ajeno al núcleo lo drena entre operaciones y escribe a archivo. Un error de archivo se informa como fallo del diagnóstico externo y detiene la ejecución automática del arnés; no cambia las reglas ni resultados de simulación. Ver los límites de memoria, confirmación y reproducción en la API.
+
 ### Ejemplo completo: la fase anterior importa
 
 | Momento | Acción |
@@ -108,4 +116,4 @@ El presupuesto de colas es un parámetro positivo de la configuración aprobada;
 
 Una acción imposible según las reglas del juego es un rechazo de negocio con motivo tipado y correlación, no una excepción del bus. Una sesión fallida no declara válidos resultados de un tick parcialmente ejecutado ni genera un checkpoint a partir de ese estado. La recuperación usa el último checkpoint confirmado; no se promete rollback del tick fallido.
 
-Las pruebas que harán verificable esta especificación están descritas en [aceptación](../workflow/acceptance.md). Su implementación sigue pendiente.
+Las pruebas están descritas en [aceptación](../workflow/acceptance.md), con correspondencia a los archivos ejecutables del núcleo. La implementación aplica copia/congelación profunda, orden lexicográfico estable de IDs, capacidades explícitas, causalidad por referencias admitidas y replay de entradas. Los contratos y pruebas de gameplay siguen pendientes.

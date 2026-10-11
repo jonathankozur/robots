@@ -1,10 +1,10 @@
 ---
 name: robots-review-integration
-description: Revisar la integración de un cambio de Robots antes de la revisión humana. Usar para examinar diff, base actual, contratos, migración, pruebas y protecciones, sin sustituir la aprobación de otra persona.
+description: Revisar una integración de Robots frente a la base actual, detectar conflictos y recomendar soluciones para que el responsable humano decida y autorice el merge.
 license: Apache-2.0
 metadata:
   author: gentleman-programming
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
 # Entrada de Claude

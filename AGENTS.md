@@ -1,6 +1,6 @@
 # Protocolo común de Robots
 
-Revisión: **1.0.0**. Estas reglas se aplican a cualquier agente y a cualquier proveedor. Las skills contienen procedimientos; este archivo contiene las restricciones que siempre deben cumplirse.
+Revisión: **1.1.0**. Estas reglas se aplican a cualquier agente y a cualquier proveedor. Las skills contienen procedimientos; este archivo contiene las restricciones que siempre deben cumplirse.
 
 ## Estado del proyecto
 
@@ -23,7 +23,7 @@ No implementar sistemas del juego hasta cumplir la habilitación descrita en ese
 - Al formular una pregunta que requiere respuesta, detener el trabajo y esperar. No asumir aprobación por silencio.
 - No sobrescribir cambios de otra persona ni resolver un conflicto eligiendo unilateralmente qué trabajo conservar.
 - No incluir modificaciones mecánicas globales ni correcciones ajenas al encargo.
-- No efectuar merges, publicaciones, invitaciones, comunicaciones a otras personas ni cambios de configuración remota por iniciativa propia. Requieren autorización explícita para esa acción; toda integración necesita además revisión humana de otra persona.
+- No efectuar merges, publicaciones, invitaciones, comunicaciones a otras personas ni cambios de configuración remota por iniciativa propia. Requieren autorización explícita para esa acción. Si el responsable humano solicita revisar e integrar un PR, el mismo desarrollador puede hacerlo tras examinar el diff y comunicar hallazgos; no se exige una segunda aprobación.
 
 ## Arquitectura obligatoria
 
@@ -48,9 +48,9 @@ No implementar sistemas del juego hasta cumplir la habilitación descrita en ese
 
 Toda tarea debe tener un responsable humano, un sistema y un alcance reservado. Ramas y checkouts separados no sustituyen esa coordinación. No iniciar dos implementaciones con archivos editables superpuestos sin un nuevo plan aprobado.
 
-Los cambios de contratos compartidos requieren análisis de todos sus productores y consumidores, plan de compatibilidad o migración y revisión humana cruzada. Todos los PR requieren aprobación de otro desarrollador; la revisión propia o de otro agente es evidencia adicional.
+Los cambios de contratos compartidos requieren análisis de todos sus productores y consumidores, plan de compatibilidad o migración y una revisión técnica documentada. El responsable humano decide entre las soluciones con impacto funcional. Todos los PR requieren revisar el diff, pero no aprobación de otro desarrollador: quien los abrió puede integrarlos cuando el responsable humano lo autorice y no queden decisiones pendientes.
 
-La integración debe revisar la base actual, no únicamente la base desde la que comenzó la tarea. Seguir [colaboración](docs/workflow/collaboration.md). Las protecciones y verificaciones automáticas se consideran pendientes hasta comprobar su configuración y funcionamiento real.
+La integración debe revisar la base actual, no únicamente la base desde la que comenzó la tarea. Seguir [colaboración](docs/workflow/collaboration.md). `main` exige PR y conversaciones resueltas, conserva historial lineal y bloquea force-push y borrado; no exige aprobación de otra persona. La protección se comprobó en GitHub el 11 de octubre de 2026. Los checks automáticos aún no están configurados.
 
 ## Fuente común y recuperación de contexto
 
