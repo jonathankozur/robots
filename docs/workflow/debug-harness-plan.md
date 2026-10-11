@@ -2,7 +2,7 @@
 
 Estado: **implementado y entregado para revisión humana**. Desarrollo autorizado por el usuario el 11 de octubre de 2026: «sí voy a necesitar pausa real… implementa la mejora del bus y scheduler… modo debug… archivo log… luego implementa los 10 puntos del arnés».
 
-Responsable humano: usuario solicitante. Checkout reservado: codex/bus-scheduler-v1, base beeeb7f7c610df546d03888e45a1dacba2266417, conservando BUS-001 pendiente de revisión humana. Alcance: src/core, tests/core, tests/browser, tests/harness, scripts, configuración npm/TypeScript y documentación relacionada. Sin sistemas de gameplay ni cambios remotos.
+Responsable humano: usuario solicitante. Checkout reservado: codex/bus-scheduler-v1, base beeeb7f7c610df546d03888e45a1dacba2266417; BUS-001 seguía pendiente de revisión al preparar esta ficha. Alcance: src/core, tests/core, tests/browser, tests/harness, scripts, configuración npm/TypeScript y documentación relacionada. Sin sistemas de gameplay ni cambios remotos.
 
 ## Diseño aprobado por el alcance solicitado
 
@@ -17,7 +17,7 @@ Responsable humano: usuario solicitante. Checkout reservado: codex/bus-scheduler
 
 Los únicos consumidores actuales son fixtures y el arnés. advanceTick termina el tick actual si se llama desde una pausa parcial. Se añaden registros phase_started/phase_finished y maxTicks al manifiesto: grabaciones anteriores con manifiesto antiguo son rechazadas explícitamente, no migradas silenciosamente. Los métodos nuevos están en el controlador Session, nunca en Publisher.
 
-Aplicar TDD a cursor, invariantes, inspección, journal, reglas declarativas y escritura de logs. Ejecutar node --test, tsc --noEmit y prueba real de navegador con pasos parciales, pausa, entradas tardías, replay, edición y archivo físico. No ejecutar builds. Revisar la base actual y obtener revisión humana antes de integrar.
+Aplicar TDD a cursor, invariantes, inspección, journal, reglas declarativas y escritura de logs. Ejecutar node --test, tsc --noEmit y prueba real de navegador con pasos parciales, pausa, entradas tardías, replay, edición y archivo físico. No ejecutar builds. Antes de integrar, revisar la base vigente según COL-001 y contar con autorización humana explícita.
 
 Engram no está disponible en esta sesión. Las decisiones y evidencia se conservarán aquí y en contratos compartidos.
 
@@ -44,6 +44,6 @@ Arnés: tests/browser/lab.ts y lab.css, escenarios declarativos en scenarios.ts,
 
 La pausa ocurre entre operaciones síncronas completas. El historial inspecciona evidencia y no revierte estado. La comparación completa exige traza íntegra; el journal se drena por separado. El núcleo y el adaptador conservan datos de debug en memoria hasta procesarlos: no hay garantía de persistencia de pendientes al cerrar el navegador ni benchmark para sesiones grandes. El fallo de log pausa el controlador; no cambia el estado lógico de la simulación.
 
-Mantener los productores de juego fuera del arnés y reemplazar fixtures con sistemas reales solo mediante encargos aprobados. Pendientes: revisión humana cruzada, comprobar la base actual al integrar, entorno de combate/aritmética/RNG y validación de Electron/plataformas adicionales. Ninguna prueba local acredita protección de GitHub ni publicación en Steam.
+Mantener los productores de juego fuera del arnés y reemplazar fixtures con sistemas reales solo mediante encargos aprobados. La integración sigue COL-001; permanecen pendientes el entorno de combate/aritmética/RNG y la validación de Electron/plataformas adicionales. Ninguna prueba local acredita protección de GitHub ni publicación en Steam.
 
-La autorización, decisiones, descubrimientos y evidencia se conservan en estos archivos compartidos ante la indisponibilidad de Engram. Reversión: retirar únicamente la ampliación BUS-002 tras revisión; conservar BUS-001 y el trabajo anterior, sin tocar main ni event-bus del checkout original.
+La autorización, decisiones, descubrimientos y evidencia se conservan en estos archivos compartidos ante la indisponibilidad de Engram. Reversión: antes de integrar, retirar únicamente BUS-002; después, revertir mediante PR. Conservar BUS-001 y el trabajo anterior, sin tocar event-bus del checkout original.

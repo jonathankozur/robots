@@ -1,6 +1,6 @@
 # Encargo BUS-001: bus y scheduler v1
 
-Fecha: 11 de octubre de 2026. Estado: **entregado para revisión humana**, alcance reservado a Codex en este checkout hasta coordinar la revisión.
+Fecha: 11 de octubre de 2026. Estado: **implementación entregada**. La revisión y la integración se tramitan por PR según COL-001.
 
 - Responsable humano: usuario solicitante de la conversación vinculada a la [tarjeta de diseño](https://trello.com/c/oWqxinQ9).
 - Aprobación: «ok, autorizado», después del plan de revisión 0.2 con TDD, pruebas Node.js y comprobación de tipos sin emisión. No autoriza PR, push ni merge.
@@ -49,9 +49,9 @@ Documentación: decisiones TEC-001/BUS-001, mensajería v1, API del núcleo, ace
 
 Riesgos/límites: copia/congelación sin benchmarks de producción; controles estáticos de arquitectura sin sandbox; callbacks mantienen responsabilidad sobre estado propio y efectos externos. El núcleo no revierte efectos iniciados por un callback asíncrono y no restaura sistemas desde checkpoints.
 
-Pendientes: otro desarrollador debe revisar la implementación, sus contratos y la base actual antes de integrar. Gameplay requiere frecuencia, aritmética/RNG, fichas de mensajes y planes propios. Browser/Electron, CI obligatorio, rendimiento real y adaptadores externos necesitan verificaciones posteriores.
+Integración: revisar implementación, contratos y base actual según COL-001; el mismo autor puede fusionar con autorización humana explícita, sin segundo aprobador. Gameplay requiere frecuencia, aritmética/RNG, fichas de mensajes y planes propios. Browser/Electron, CI obligatorio, rendimiento real y adaptadores externos necesitan verificaciones posteriores.
 
-Reversión: descartar los cambios locales de esta rama/checkout si la revisión los rechaza; no hay cambios integrados en main ni modificaciones a la extracción original.
+Reversión: si se rechaza antes de integrar, retirar los cambios de esta rama; si se requiere revertir después, hacerlo mediante un PR. Conservar BUS-001 y la extracción original.
 
 ### Ampliación autorizada: arnés web aislado
 
@@ -65,4 +65,4 @@ El usuario autorizó explícitamente pausa real, mejora de bus/scheduler, log de
 
 La evidencia histórica anterior corresponde a BUS-001: el estado actual incluye Vite como herramienta de desarrollo, servidor local de JSONL y verificación de Chrome. El núcleo conserva ausencia de I/O/reloj/render y puertos mínimos. No se incorporaron Three.js, Electron ni gameplay.
 
-Verificación actual: **72 pruebas aprobadas**, tsc --noEmit aprobado y flujos reales de navegador para pausa, replay, configuración, aislamiento y fallo/reintento de archivo. Se corrigió un defecto del editor encontrado en navegador: deshabilitar controles antes de capturar FormData omitía sus valores; ahora se captura el formulario antes de bloquearlo. Sin builds, PR, push, merge ni actualización remota en BUS-002. La revisión humana cruzada y la base actual deben comprobarse antes de integrar.
+Verificación actual: **72 pruebas aprobadas**, tsc --noEmit aprobado y flujos reales de navegador para pausa, replay, configuración, aislamiento y fallo/reintento de archivo. Se corrigió un defecto del editor encontrado en navegador: deshabilitar controles antes de capturar FormData omitía sus valores; ahora se captura el formulario antes de bloquearlo. En BUS-002 no se hicieron builds, PR, push, merge ni actualización remota. La integración posterior debe seguir COL-001 y revisar la base vigente.

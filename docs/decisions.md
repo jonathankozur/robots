@@ -1,6 +1,6 @@
 # Decisiones y habilitación
 
-Revisión documental: **1.2.0**. Actualización: **11 de octubre de 2026**. Conserva la base documental del 9 de octubre.
+Revisión documental: **1.3.0**. Actualización: **11 de octubre de 2026**. Conserva la base documental del 9 de octubre.
 
 ## Base aprobada
 
@@ -12,9 +12,9 @@ La autorización humana de implementar el plan «Protocolo de agentes y arquitec
 | Simulación determinista por ticks con fases | Reloj lógico y entrega diferida; presentación desacoplada del ritmo de simulación. |
 | Datos recibidos mediante mensajes | Vistas locales limitadas, actualizadas por contratos explícitos; sin consultas directas a otro sistema. |
 | Persistencia en puntos seguros entre encuentros | Snapshots coherentes y confirmados; no se reanuda una batalla a mitad. |
-| GitHub público | Repositorio público `jonathankozur/robots`, con `main` protegido por PR y una aprobación humana. Ver el estado y los límites en [colaboración](workflow/collaboration.md#estado-del-repositorio). |
+| GitHub público | Repositorio público `jonathankozur/robots`, con `main` protegido por PR, conversaciones resueltas e historial lineal; no exige aprobación de otro desarrollador. Ver [colaboración](workflow/collaboration.md#estado-del-repositorio). |
 | Plan breve aprobado antes de implementar | Aprobación específica del alcance, sin renovarla para acciones ya autorizadas. |
-| Revisión humana en cada PR | Otro desarrollador aprueba; las revisiones de agentes son complementarias. |
+| Revisión de integración | El responsable humano decide; el autor puede fusionar su PR tras revisión técnica y autorización explícita. |
 | Primera entrega: documentación y skills | Sin scripts de control, motor, bus, pruebas de juego ni tareas nuevas. |
 
 El GDD original permanece en [diseno_autobattler_robots.md](../diseno_autobattler_robots.md). Sus propuestas de cantidades, IA, componentes y progresión conservan sus estados originales.
@@ -40,6 +40,18 @@ La prohibición de builds permanece vigente. Si el motor exige compilar para una
 
 Cada decisión posterior debe conservar: identificador, fecha, estado (propuesta/aprobada/sustituida), aprobación humana, contexto, alternativas y consecuencias, sistemas y contratos afectados, y referencia a la decisión que sustituye si corresponde. Una propuesta o un recuerdo del agente no es una aprobación.
 
+### COL-001 — Flujo liviano para PR y merge
+
+Fecha: 11 de octubre de 2026. Estado: **aprobada e implementada por solicitud explícita del usuario**. Sustituye las reglas de aprobación externa del registro inicial y las instrucciones anteriores de PR.
+
+- Un issue de GitHub no es requisito para abrir PR; enlazar issue, tarjeta de Trello o plan es opcional.
+- `main` sigue requiriendo PR. El autor puede fusionar su propio PR cuando el responsable humano lo autorice expresamente, después de una revisión técnica del diff. No se exige un segundo desarrollador aprobador.
+- La revisión informa base, cambios, conflictos, opciones, riesgos y recomendación. El responsable humano elige soluciones que cambien comportamiento o determinen qué trabajo conservar. El agente aplica esa elección y vuelve a verificar; no decide por el usuario.
+- Se mantienen conversaciones resueltas, historial lineal, bloqueo de force-push y protección contra borrado. Los checks se ejecutan si el repositorio los configura; actualmente no hay checks requeridos.
+- La protección de GitHub se actualizó en esta intervención: `required_approving_review_count=0`, `require_last_push_approval=false`. Las aprobaciones obsoletas siguen descartándose cuando corresponda; revisión de propietario de código sigue desactivada.
+
+Motivo: mantener trazabilidad y revisión por PR sin hacer depender un equipo pequeño de una ficha adicional o de la disponibilidad de un segundo aprobador. No se elimina la autorización humana para cambios remotos ni la decisión humana sobre conflictos.
+
 ### TEC-001 — Tecnología base y representación
 
 Fecha: 11 de octubre de 2026. Estado: **aprobada para BUS-001**, incluida la elección tecnológica presentada antes de la autorización «ok, autorizado». Responsable humano: usuario solicitante. Reemplaza el pendiente de motor/lenguaje para esta infraestructura.
@@ -56,13 +68,13 @@ Consecuencias: los sistemas consumen contratos de datos y puertos mínimos; rend
 
 ### BUS-001 — Habilitar y entregar el núcleo de mensajería
 
-Fecha: 11 de octubre de 2026. Estado: **desarrollo autorizado; entregado para revisión humana**. El usuario aprobó el plan basado en la [tarjeta de revisión 0.2](https://trello.com/c/oWqxinQ9), con pruebas Node y tsc --noEmit. La aprobación habilita este núcleo y sus fixtures; no habilita combate, PR, push ni merge.
+Fecha: 11 de octubre de 2026. Estado: **desarrollo autorizado; entregado para revisión humana**. El usuario aprobó el plan basado en la [tarjeta de revisión 0.2](https://trello.com/c/oWqxinQ9), con pruebas Node y tsc --noEmit. La aprobación habilitó este núcleo y sus fixtures; en ese momento no habilitó combate ni acciones de integración.
 
 Alcance y evidencia están en la [ficha de entrega](workflow/bus-scheduler-implementation.md). La [API](architecture/core-api-v1.md) concreta la sintaxis y presupuestos de evaluación manteniendo las fases y reglas de mensajería v1. No hay productores o consumidores de gameplay que migrar. La extracción event-bus conserva su API y archivos originales en el checkout inicial, y no es una dependencia del núcleo.
 
 ### BUS-002 — Pausa real, journal debug y laboratorio manual
 
-Fecha: 11 de octubre de 2026. Estado: **desarrollo autorizado; entregado para revisión humana**. Responsable humano: usuario solicitante. Aprobación explícita: «sí voy a necesitar pausa real… implementa la mejora del bus y scheduler… modo debug… archivo log… luego implementa los 10 puntos del arnés». Amplía BUS-001; no autoriza integración, PR, push ni merge.
+Fecha: 11 de octubre de 2026. Estado: **desarrollo autorizado; entregado para revisión humana**. Responsable humano: usuario solicitante. Aprobación explícita: «sí voy a necesitar pausa real… implementa la mejora del bus y scheduler… modo debug… archivo log… luego implementa los 10 puntos del arnés». Amplía BUS-001; en ese momento no autorizó integración, PR, push ni merge. La autorización posterior y el flujo aplicable se registran en COL-001.
 
 Se elige un cursor único de ejecución: step ejecuta una unidad completa, stepPhase termina una fase y advanceTick termina el tick actual. Pausar conserva bandeja congelada, cursor y estado propio. El controlador deja de avanzar; no existe reloj autónomo en el núcleo. Suspender instrucciones dentro de callbacks exigiría transformar cada sistema y su contrato de ejecución; no se adopta esa alternativa.
 
@@ -72,7 +84,7 @@ El laboratorio configura escenarios con datos y reglas de estado propio, sin có
 
 Contratos afectados: API Session, inspección, marcadores de fase, journal y maxTicks del manifiesto. Productores/consumidores actuales: fixtures y arnés; sin gameplay que migrar. Grabaciones de manifiesto anterior se rechazan explícitamente. Las fases y el orden de entregas siguen vigentes.
 
-Evidencia, alcance y límites: [entrega BUS-002](workflow/debug-harness-plan.md), [guía manual](../tests/browser/README.md) y [API](architecture/core-api-v1.md). Node y Chrome fueron verificados; no se extrapola a Electron ni a determinismo entre plataformas. La revisión humana y la comparación con la base actual siguen pendientes antes de integrar.
+Evidencia, alcance y límites: [entrega BUS-002](workflow/debug-harness-plan.md), [guía manual](../tests/browser/README.md) y [API](architecture/core-api-v1.md). Node y Chrome fueron verificados; no se extrapola a Electron ni a determinismo entre plataformas. La integración se tramita por PR contra la base actual según COL-001.
 
 ## Estado de esta instalación
 

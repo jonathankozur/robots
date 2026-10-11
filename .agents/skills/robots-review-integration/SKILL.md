@@ -1,13 +1,13 @@
 ---
 name: robots-review-integration
-description: Revisar la integración de un cambio de Robots antes de la revisión humana. Usar para examinar diff, base actual, contratos, migración, pruebas y protecciones, sin sustituir la aprobación de otra persona.
+description: Revisar una integración de Robots frente a la base actual, detectar conflictos y recomendar soluciones para que el responsable humano decida y autorice el merge.
 license: Apache-2.0
 metadata:
   author: gentleman-programming
-  version: "1.0.0"
+  version: "1.1.0"
 ---
 
-# Revisar integración
+# Revisar e integrar un cambio
 
 ## Referencias
 
@@ -15,12 +15,15 @@ Leer [AGENTS.md](../../../AGENTS.md), [colaboración](../../../docs/workflow/col
 
 ## Procedimiento
 
-1. Identificar rama, checkout, referencia inicial y referencia actual del destino. Revisar el diff completo del cambio frente a esa base. Si no existe Git, declarar esa limitación; no simular una revisión de integración con un inventario de archivos.
-2. Confirmar alcance, responsable humano, aprobación del plan y reserva de archivos. Detectar cambios ajenos, conflictos y modificaciones de reglas, contratos o configuración sin autorización.
-3. Examinar compatibilidad con otros cambios ya integrados y consumidores afectados. Para una ruptura, exigir migración aprobada y evidencia de que el conjunto se integra coherentemente; no aprobar piezas que dejen inválida la base.
-4. Comprobar evidencias y criterios mediante `robots-verify-change`. Identificar validaciones pendientes, fallas y riesgos concretos. No ejecutar builds ni presentar verificaciones no ejecutadas como exitosas.
-5. Si hay repositorio remoto, comprobar las protecciones y verificaciones reales aplicables. Su mención en documentación no demuestra que estén activas. No inventar colaboradores ni configurar recursos remotos sin autorización.
-6. Entregar hallazgos con archivo, evidencia, impacto y corrección sugerida. Indicar si el cambio está preparado para revisión humana o tiene impedimentos. Solo crear un PR si esa acción fue autorizada; su integración requiere revisión de otra persona y autorización correspondiente.
+1. Identificar rama, checkout, referencia inicial y destino vigente. Obtener la referencia actual del remoto y revisar el diff completo contra ella. Si no existe Git, declarar esa limitación.
+2. Confirmar alcance y autorización. Examinar commits, archivos y cambios heredados de la base; separar el trabajo relacionado del ajeno y reportar ambos.
+3. Revisar compatibilidad con contratos, productores, consumidores y cambios ya integrados. Comprobar el plan de migración cuando una ruptura lo requiera; no integrar piezas que dejen inválida la base.
+4. Revisar conflictos de merge y el estado del PR. Por cada conflicto, indicar archivos y semántica afectada, alternativas viables, costes y recomendación. No escoger qué trabajo de una persona descartar.
+5. Contrastar evidencias mediante `robots-verify-change`. Indicar pruebas y checks configurados que sí se ejecutaron, pendientes, fallos y riesgos. No ejecutar builds prohibidos ni presentar verificaciones inexistentes como exitosas.
+6. Consultar la protección real del destino. Un PR puede enlazar issue, tarjeta o plan como contexto, pero ninguno es requisito universal para crearlo. Un segundo aprobador tampoco es requisito de este flujo; no modificar protecciones remotas sin autorización explícita.
+7. Informar la revisión antes de integrar y recomendar una solución. Si el conflicto o riesgo exige elegir un comportamiento o conservar uno entre cambios incompatibles, formular la pregunta concreta y detenerse hasta que el responsable humano elija. Aplicar esa decisión, revalidar y actualizar el PR.
+8. Crear o actualizar el PR solo si el usuario lo pidió. Integrar solo tras autorización explícita del responsable humano, cuando el PR sea integrable, los checks requeridos por el repositorio pasen y no queden decisiones/conversaciones pendientes. El autor puede fusionar su propio PR; no esperar una aprobación separada de otro desarrollador.
+9. Confirmar que el remoto reporta el PR integrado y que el commit resultante está en la rama destino. Informar la estrategia de merge y cualquier limitación.
 
 ## Comandos de consulta
 
@@ -36,4 +39,4 @@ Seleccionar después la comparación completa contra la referencia de destino ve
 
 ## Resultado y detención
 
-Reportar base revisada, contratos, evidencias, hallazgos y pendientes. Cambiar de rol o realizar una segunda revisión automática no aporta una aprobación humana. Si cambia el diff tras la revisión, reevaluar los puntos afectados y renovar la revisión humana cuando corresponda. Al solicitar una resolución humana, detenerse y esperar.
+Reportar base, commits, archivos, contratos, evidencias, conflictos, alternativas y recomendación. Si cambia el diff tras la revisión, reevaluar los puntos afectados. Una elección humana pendiente requiere detener solo la parte que depende de ella; continuar el trabajo independiente. No inferir autorización de merge si el usuario no la expresó.

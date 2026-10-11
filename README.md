@@ -53,4 +53,4 @@ El comando inicia Vite en desarrollo para servir y transformar módulos TypeScri
 
 Las entradas de Claude son archivos normales, sin enlaces simbólicos ni copias del procedimiento. Las rutas de las skills se resuelven respecto del archivo que contiene el enlace. Antes de usar una herramienta, comprobar qué instrucciones y skills cargó.
 
-Mensajería v1 mantiene sus fases y reglas de entrega. BUS-001 y BUS-002 tienen autorización específica y evidencia con sistemas ficticios en Node y Chrome. La revisión humana de integración y el entorno determinista de combate siguen pendientes; estas pruebas no habilitan por sí solas gameplay.
+Mensajería v1 mantiene sus fases y reglas de entrega. BUS-001 y BUS-002 tienen autorización específica y evidencia con sistemas ficticios en Node y Chrome. La integración por PR sigue el flujo liviano documentado en [decisiones](docs/decisions.md); las pruebas con fixtures no habilitan por sí solas gameplay ni el entorno determinista de combate.

@@ -1,6 +1,6 @@
 # Bus y scheduler v1
 
-Revisión documental: **1.2.0**. BUS-001 autoriza el núcleo; BUS-002 autoriza control de ejecución y debug con archivo en el arnés. Implementación con fixtures verificada en Node y Chrome; revisión humana de integración y habilitación del gameplay pendientes. Las reglas comunes están en [AGENTS.md](../../AGENTS.md). Ver [decisiones](../decisions.md), [API ejecutable](core-api-v1.md) y [evidencia](../workflow/debug-harness-plan.md).
+Revisión documental: **1.2.0**. BUS-001 autoriza el núcleo; BUS-002 autoriza control de ejecución y debug con archivo en el arnés. Implementación con fixtures verificada en Node y Chrome; la integración se rige por COL-001 en [decisiones](../decisions.md), y el gameplay sigue pendiente. Las reglas comunes están en [AGENTS.md](../../AGENTS.md). Ver [decisiones](../decisions.md), [API ejecutable](core-api-v1.md) y [evidencia](../workflow/debug-harness-plan.md).
 
 ## Responsabilidades e interfaz conceptual
 

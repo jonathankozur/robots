@@ -4,9 +4,9 @@ Las restricciones obligatorias están en [AGENTS.md](../../AGENTS.md). Este docu
 
 ## Estado del repositorio
 
-El repositorio [jonathankozur/robots](https://github.com/jonathankozur/robots) es público; `main` es la rama base. La configuración vigente requiere PR, una aprobación, aprobación de una persona distinta de quien hizo el último push, descarta revisiones obsoletas y exige resolver conversaciones. Estas reglas también se aplican a administradores. No permite force push ni borrar `main`; requiere historial lineal. GitHub permite squash y rebase, y borra ramas de trabajo después de integrarlas.
+El repositorio [jonathankozur/robots](https://github.com/jonathankozur/robots) es público; `main` es la rama base. La configuración vigente requiere PR, conversaciones resueltas e historial lineal. No exige aprobación de otra persona ni del último push. No permite force-push ni borrar `main`. GitHub permite squash y rebase, y borra ramas de trabajo después de integrarlas.
 
-La configuración se verificó por API en el repositorio. Aún no se demostró intentando integrar un PR sin aprobación. No hay workflows ni checks configurados, así que GitHub todavía no puede exigir verificaciones automáticas. Al menos otra persona con permiso de escritura debe incorporarse para poder aprobar los PR de la cuenta propietaria. La invitación y la verificación conductual quedan pendientes.
+La configuración se verificó por API el 11 de octubre de 2026: `required_approving_review_count=0` y `require_last_push_approval=false`; conversaciones e historial lineal siguen protegidos. No se ha demostrado mediante un intento de merge. No hay workflows ni checks requeridos configurados. El autor puede fusionar su PR después de revisión técnica y autorización explícita del responsable humano.
 
 ## Roles y autoridad
 
@@ -17,8 +17,8 @@ La configuración se verificó por API en el repositorio. Aún no se demostró i
 | Especialista de contratos | Analiza bus, scheduler, productores y consumidores | Propone compatibilidad o migración; no la aprueba por sí mismo. |
 | Implementador de sistema | Ejecuta el plan aprobado en su alcance | Modifica los archivos autorizados y reporta evidencias. |
 | Verificador | Contrasta especificación, aislamiento y resultados | Informa aprobado/fallido/no verificado, con evidencia. |
-| Revisor de integración | Revisa diff, dependencias y base actual | Recomienda; no sustituye revisión humana. |
-| Otro desarrollador humano | Revisa el PR y sus cambios relevantes posteriores | Aprueba o solicita cambios antes de integrar. |
+| Revisor de integración | Codex o el desarrollador que prepara el PR; examina diff, dependencias, base y conflictos | Expone hallazgos, alternativas y recomendación; no decide por el responsable humano. |
+| Responsable humano | Decide entre alternativas con impacto y autoriza el merge | Puede pedir al autor del PR que lo integre después de la revisión técnica; no necesita una segunda aprobación. |
 
 Un agente puede ejercer varios roles en momentos distintos. Cambiar de rol no amplía sus permisos. No crear un agente o skill duplicados por proveedor o por cada sistema: el encargo aporta el sistema concreto y los roles usan las mismas reglas compartidas.
 
@@ -31,8 +31,9 @@ Un agente puede ejercer varios roles en momentos distintos. Cambiar de rol no am
 5. Ejecutar en una rama y checkout separados. No crear tareas, PR o comunicaciones remotas salvo autorización explícita de esas acciones.
 6. Aplicar TDD a la lógica nueva y realizar las verificaciones pertinentes que no incumplan la prohibición de builds. Registrar cualquier comprobación impedida.
 7. Entregar el diff y [reporte](templates.md#reporte-de-entrega). Para preparar integración, revisar la referencia base actual y las modificaciones compartidas recientes.
-8. Si está autorizada la apertura de PR, otro desarrollador humano revisa. La aprobación debe corresponder al diff actual; un cambio relevante posterior requiere revisión renovada.
-9. La integración requiere evidencia de verificaciones exigibles, revisión humana y autorización de la acción de merge. El agente no se integra su propio trabajo por iniciativa propia.
+8. Si el usuario autoriza un PR, abrirlo con resumen, evidencia y límites. Enlazar un issue, tarjeta o plan es opcional; no crear un issue solo para habilitar el PR.
+9. Revisar el diff contra la base actual. Informar conflictos, efectos y alternativas con una recomendación. Si la elección afecta comportamiento o determina qué trabajo conservar, esperar la decisión humana antes de editar.
+10. Tras la decisión y autorización humana explícita de integración, el propio autor puede fusionar el PR. No hace falta esperar una aprobación de otro desarrollador; sí resolver conversaciones y pasar los checks que el repositorio tenga configurados.
 
 Durante esta entrega inicial no existe repositorio Git ni asignación remota. Las fichas son formatos reutilizables; no son tareas creadas ni un registro ficticio de responsables.
 
@@ -54,7 +55,7 @@ Todo cambio compartido necesita una propuesta que identifique:
 - Diferencias observables entre contrato actual y propuesto.
 - Compatibilidad y riesgos de orden, determinismo, estado y guardados.
 - Estrategia de integración y retirada del contrato anterior, si corresponde.
-- Aprobación del plan y posterior revisión humana cruzada del diff.
+- Aprobación del plan y revisión técnica del diff; el responsable humano resuelve alternativas funcionales.
 
 Un cambio compatible puede integrarse primero si mantiene válidos los consumidores actuales. No agregar campos obligatorios ni modificar significado o fase bajo el supuesto de que es solo una ampliación de datos.
 
@@ -64,20 +65,20 @@ Una migración autoriza al integrador a reunir los cambios indicados, no al impl
 
 ## Política de GitHub público
 
-Cuando se cree o conecte el repositorio y se identifiquen colaboradores con permisos adecuados, configurar y comprobar:
+Para este y otros repositorios, adaptar una protección sencilla al tamaño y riesgo del equipo:
 
-- Rama base protegida: PR obligatorio, al menos una aprobación humana de otra persona y aprobación del último cambio revisable por alguien distinto de quien lo publicó.
-- Invalidación de aprobaciones obsoletas, conversaciones resueltas y verificaciones obligatorias con nombres inequívocos.
+- Rama base protegida: PR obligatorio, conversaciones resueltas e historial lineal. No se requiere aprobación externa para que el autor fusione un PR autorizado.
+- No exigir un issue ni una aprobación externa por defecto. El responsable humano puede pedir revisión técnica a Codex o a otro desarrollador y autorizar al mismo autor a fusionar.
+- Configurar checks obligatorios únicamente cuando existan workflows fiables; ejecutar los checks requeridos antes de integrar.
 - Rama actualizada respecto de la base antes de integrar para verificar los cambios en su contexto real.
 - Restricciones aplicadas también a administradores y roles con permiso de bypass; sin force push ni eliminación de la rama base.
-- Responsables de revisión para contratos, scheduler, instrucciones, skills, workflows y el propio archivo `CODEOWNERS`. Las identidades se registran al incorporar colaboradores; no escribir usuarios ficticios.
-- Las aprobaciones de agentes no cuentan como la revisión humana exigida. Las credenciales de automatización no reciben una vía de bypass de la política.
+- La revisión técnica puede solicitarse a Codex o al desarrollador; el responsable humano conserva la decisión de integración. No usar bypass para saltar checks configurados o conversaciones pendientes.
 
 `CODEOWNERS` solicita y puede exigir revisión de propietarios cuando se configura la protección correspondiente; no garantiza por sí solo dos aprobaciones ni protege una rama sin esas reglas. [Documentación de propietarios](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners).
 
 Las protecciones están disponibles para repositorios públicos con GitHub Free. La configuración debe demostrarse en el repositorio real, no darse por aplicada por escribir este documento. [Protecciones de ramas](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches).
 
-Todavía no existen workflows ni controles ejecutables. Tras elegir tecnología, deberán comprobar al menos dependencias permitidas, validez de contratos, alcance del diff, coherencia de adaptadores y pruebas relevantes. Cualquier revisión de su configuración conserva la aprobación humana; no se elimina un control para hacer pasar el PR que detectó.
+Todavía no existen workflows ni checks requeridos. Cuando se agreguen, documentar qué verifican y ejecutarlos antes de integrar. Mantener conversaciones resueltas, compatibilidad de contratos y un diff limitado al alcance autorizado.
 
 ## Descubrimiento y conservación del contexto
 
