@@ -97,3 +97,18 @@ La pestaña solo ayuda a probar el catálogo y los dos consumidores ficticios. N
 ## Verificación de las entregas
 
 npm test ejecuta pruebas del núcleo, escenarios y escritura JSONL; npm run typecheck comprueba tipos sin emisión. La entrega BUS-002 incluye comprobación manual automatizada en Chrome de pausa, entradas tardías, replay, aislamiento, formularios, importación, fallo/reintento de logs y vista móvil. Evidencia y límites en docs/workflow/debug-harness-plan.md.
+
+## Ciclo de aplicación (APP-001)
+
+1. Abrir **Ciclo de aplicación** y pulsar **Preparar encuentro**. Ver dos confirmaciones pendientes y estado Inicializando. Primer Tick: se reciben confirmaciones, pero la disponibilidad todavía viaja por el bus. Segundo Tick: Disponible, navegación y combate muestran sus propias vistas.
+2. Pulsar **Enviar operación (+1)** y luego Tick: solo aumenta el contador ficticio de navegación. Esperar sin pulsar controles no produce avance.
+3. Pulsar Paso y luego Preparar encuentro: TICK_IN_PROGRESS rechaza el reemplazo sin terminar la pausa. Completar con Tick y preparar de nuevo: cambia contextId, se cierra el anterior y las instancias nuevas comienzan independientes.
+4. Cambiar Robot a robot.missing o robot.unarmed y preparar: rechazo, manteniendo el encuentro anterior. Volver a robot.scout. Repetir solicitud no duplica una sesión; una petición competidora durante inicialización produce BUSY.
+5. Tras reemplazar, Entrada tardía usa el ID anterior y se rechaza sin alterar la nueva vista.
+6. Marcar Fallar limpieza de recursos y cerrar: Fallido, recursos pendientes, nuevo encuentro bloqueado. Desmarcar y cerrar otra vez: limpieza completa. La limpieza no se reintenta automáticamente.
+7. Cerrar y pulsar Nuevo controlador para cambiar Escenario. Confirmación ausente, con límite de 3 ticks, produce INITIALIZATION_LIMIT al recibir el rechazo en el tick siguiente. Rechazo de propietario produce PARTICIPANT_REJECTED. Contradicción y excepción detienen la sesión; duplicado exacto deja Disponible.
+8. Marcar Usar partes restauradas de prueba y preparar: contador 7 e integridad 70000. Solo son datos ficticios aportados al arranque; no hay guardado ni captura de progreso.
+9. Entre ticks, Reproducir y comparar reconstruye propietarios independientes y verifica traza/vistas exactas. Exportar replay conserva el encuentro, no una expedición completa. La comparación manual del panel se limita a 5000 ticks.
+10. Debug a archivo crea un JSONL por contexto bajo debug-logs/. Se drena fuera de callbacks después de cada operación; un fallo de escritura conserva el lote pendiente. Reintentar log vuelve a escribir idempotentemente. Descargar debug permite revisar los registros locales. Exportar reporte incluye ciclo de vida y diagnóstico, que no deben confundirse con el replay del encuentro.
+
+El editor aplica al próximo encuentro. Para iniciar otro con diferente escenario de fallo, cerrar/limpiar antes de recrear el controlador. El panel usa las APIs públicas de APP-001, no accede a estado privado de participantes.
