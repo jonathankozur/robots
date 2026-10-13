@@ -5,6 +5,7 @@ import type { Lab, Scenario, Rule, Action } from "./scenarios.ts";
 import { DebugFile } from "./debug-client.ts";
 import "./lab.css";
 import { mountEnvironmentPanel } from "./environment-panel.ts";
+import { mountContentPanel } from "./content-panel.ts";
 
 const layout = '<header class="app-header"><div class="brand"><span class="brand-mark">R</span><div><strong>ROBOTS</strong><span>Laboratorio de mensajes</span></div></div><div class="file-actions"><button id="save">Guardar escenario</button><button id="export-scenario">Exportar JSON</button><button id="import">Importar</button><input type="file" id="file" accept=".json,application/json" hidden></div></header>'
   + '<div class="app"><aside class="sidebar"><div class="side-label">ESCENARIOS</div><select id="preset" aria-label="Escenario"></select><p id="preset-description"></p><div id="expected" class="muted"></div><button id="duplicate" class="full">Duplicar y editar</button><hr><label class="debug-toggle"><input id="debug-enabled" type="checkbox" checked> Registrar debug a archivo</label><p class="muted small">Cada mensaje, ruta y consumo se guarda en JSONL.</p><div id="log-status" class="log-status">Archivo pendiente de iniciar sesión.</div><button id="retry-log" hidden>Reintentar escritura</button><button id="download-pending" hidden>Descargar registros pendientes</button><hr><div class="side-label">EVIDENCIA</div><button id="export-replay" class="full">Exportar replay</button><button id="replay" class="full">Reproducir y comparar</button><button id="isolation" class="full">Probar segunda sesión</button><button id="export-report" class="full">Exportar reporte</button><hr><p class="small muted">Sistemas ficticios independientes. Fases fijas; pausas reales entre callbacks síncronos.</p></aside>'
@@ -20,6 +21,9 @@ document.body.innerHTML = layout;
 document.querySelector(".tabs")!.insertAdjacentHTML("beforeend", '<button data-view="environment">Entorno determinista</button>');
 document.querySelector(".workspace")!.insertAdjacentHTML("beforeend", '<section id="environment-view" hidden></section>');
 mountEnvironmentPanel(document.getElementById("environment-view")!);
+document.querySelector(".tabs")!.insertAdjacentHTML("beforeend", '<button data-view="content">Catálogo de contenido</button>');
+document.querySelector(".workspace")!.insertAdjacentHTML("beforeend", '<section id="content-view" hidden></section>');
+mountContentPanel(document.getElementById("content-view")!);
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T { return document.getElementById(id) as T; }
 function escape(value: unknown): string { return String(value).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!); }
@@ -52,11 +56,13 @@ function fillCatalog(): void {
     + '</optgroup><optgroup label="Mis escenarios">' + Object.keys(saved()).map(name => option("saved:" + name, name)).join("") + '</optgroup>';
 }
 function changeView(view: string): void {
-  for (const name of ["simulation", "configuration", "comparison", "environment"]) el(name + "-view").hidden = name !== view;
-  for (const selector of [".workspace > .controls", ".workspace > .status-strip", ".workspace > .title-row"]) (document.querySelector(selector) as HTMLElement).hidden = view === "environment";
+  const standalone = view === "environment" || view === "content";
+  for (const name of ["simulation", "configuration", "comparison", "environment", "content"]) el(name + "-view").hidden = name !== view;
+  for (const selector of [".workspace > .controls", ".workspace > .status-strip", ".workspace > .title-row"]) (document.querySelector(selector) as HTMLElement).hidden = standalone;
   document.querySelector(".app")!.classList.toggle("environment-mode", view === "environment");
-  (document.querySelector(".file-actions") as HTMLElement).hidden = view === "environment";
-  el("notice").hidden = view === "environment" || !el("notice").textContent;
+  document.querySelector(".app")!.classList.toggle("content-mode", view === "content");
+  (document.querySelector(".file-actions") as HTMLElement).hidden = standalone;
+  el("notice").hidden = standalone || !el("notice").textContent;
   document.querySelectorAll<HTMLButtonElement>("[data-view]").forEach(button => { button.classList.toggle("active", button.dataset.view === view); });
 }
 function trace(): readonly TraceEntry[] { return lab?.session.trace().entries ?? []; }
