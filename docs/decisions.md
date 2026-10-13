@@ -1,6 +1,6 @@
 # Decisiones y habilitación
 
-Revisión documental: **1.3.0**. Actualización: **11 de octubre de 2026**. Conserva la base documental del 9 de octubre.
+Revisión documental: **1.4.0**. Actualización: **13 de octubre de 2026**. Conserva la base documental del 9 de octubre.
 
 ## Base aprobada
 
@@ -24,8 +24,8 @@ El GDD original permanece en [diseno_autobattler_robots.md](../diseno_autobattle
 | Requisito | Evidencia necesaria para habilitarlo |
 | --- | --- |
 | Integración de presentación y escritorio | Tecnología aprobada en TEC-001; Vite verifica el arnés local en BUS-002. Three.js, presentación del juego y Electron siguen pendientes. |
-| Aritmética, precisión, frecuencia de ticks y algoritmo aleatorio | Especificación aprobada del entorno determinista soportado y de sus pruebas. |
-| Integración del bus y scheduler v1 | Implementado y probado en BUS-001/BUS-002; revisión cruzada humana e integración pendientes. |
+| Aritmética, precisión, frecuencia de ticks y algoritmo aleatorio | Resuelto para infraestructura por ENV-001; fórmulas/balance de gameplay requieren sus propios contratos. |
+| Integración del bus y scheduler v1 | Integrado en main por PR #1 (050f831); evolución ENV-001 en rama propia, integración pendiente. |
 | Controles ejecutables de gameplay | Controles locales del núcleo implementados; ampliar a productores/consumidores reales cuando existan. |
 | Git y repositorio compartido | Repositorio real, rama base, colaboradores identificados y checkouts separados. |
 | Checks obligatorios de GitHub | Workflows y verificaciones ejecutables que se puedan exigir a cada PR, más evidencia de su bloqueo ante fallos. |
@@ -85,6 +85,18 @@ El laboratorio configura escenarios con datos y reglas de estado propio, sin có
 Contratos afectados: API Session, inspección, marcadores de fase, journal y maxTicks del manifiesto. Productores/consumidores actuales: fixtures y arnés; sin gameplay que migrar. Grabaciones de manifiesto anterior se rechazan explícitamente. Las fases y el orden de entregas siguen vigentes.
 
 Evidencia, alcance y límites: [entrega BUS-002](workflow/debug-harness-plan.md), [guía manual](../tests/browser/README.md) y [API](architecture/core-api-v1.md). Node y Chrome fueron verificados; no se extrapola a Electron ni a determinismo entre plataformas. La integración se tramita por PR contra la base actual según COL-001.
+
+### ENV-001 — Entorno determinista y verificación de fixture
+
+Fecha: 13 de octubre de 2026. Estado: **desarrollo autorizado; entrega local para revisión**. Responsable humano: usuario solicitante. Decisiones y plan: [tarjeta 01](https://trello.com/c/4pYHaLi7), aprobados mediante «me parece bien la recomendacion sobre las decisiones…». Ejecución autorizada mediante «implementalo. Recorda que tenes que crear un nuevo branch antes de tocar codigo».
+
+20 ticks/s (50 ms/tick); duraciones enteras redondeadas hacia arriba; cantidades seguras escaladas a 1000 y probabilidades a 10000; daño no negativo redondeado hacia abajo al finalizar fórmulas futuras. Se rechazan entradas y productos intermedios inseguros. RNG xoshiro128** 1.1 con semilla hexadecimal explícita y streams por sistema/propósito; derivación FNV-1a64 + SplitMix64 v1. Cada propietario conserva snapshots propios, sin RNG global mutable ni dependencia del frame.
+
+Alternativas y consecuencias en la [especificación](architecture/deterministic-environment-v1.md): frecuencia fija cuantiza tiempos; enteros escalados exigen límites; streams independientes requieren más snapshots. La elección no fija fórmulas de daño, IA, visibilidad ni rendimiento del gameplay.
+
+SessionOptions.environment es opcional para conservar sesiones históricas sin inventar configuración. El perfil se valida y conserva en el manifiesto. ReplayRecording sigue en v1 y mantiene comparación estricta, incluido runtime. La evidencia lógica Node/Chrome es un reporte separado; no habilita importación de replay entre runtimes.
+
+Node 24 y Chrome de escritorio son la matriz inicial. Versiones y evidencia reales en la [entrega ENV-001](workflow/deterministic-environment-v1.md). Sin builds, nuevas dependencias, gameplay, persistencia, Electron, PR ni merge en este encargo.
 
 ## Estado de esta instalación
 

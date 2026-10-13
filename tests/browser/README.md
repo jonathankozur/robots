@@ -59,6 +59,31 @@ Un error de escritura detiene la ejecución automática, muestra el motivo y con
 
 Los filtros y el deslizador histórico solo cambian la evidencia visible: no retroceden el estado real de los sistemas. Una traza truncada impide comparación completa; el archivo debug conserva los registros drenados aunque la traza haya llegado a su capacidad. No usar los estados inspeccionados para que un sistema consulte a otro.
 
-## Verificación
+## Entorno determinista (ENV-001)
+
+1. Abrir la pestaña **Entorno determinista**. Es una fixture independiente del editor de escenarios del bus.
+2. Mantener semilla `0123456789abcdef`, sorteos extra de Beta en 0 y pulsar **Crear / reiniciar**. Se congela la configuración hasta cerrar la sesión.
+3. Usar **Paso**, **Fase** y **Tick**. Alpha sortea en decision, manda LabCalculate a Beta en action y Beta publica LabResult a Observador en publication. Expandir registros para ver payload, rutas y causas.
+4. **Ejecutar N ticks** con 6 termina seis ticks desde el cursor actual. **Pausar** conserva el parcial; esperar no cambia estados ni extrae azar. Cambiar el ritmo visual solo cambia cuánto espera el controlador.
+5. Desde una sesión nueva, completar 6 ticks: resultados Alpha 8322, 4625, 6261, 2887, 1851, 6097; total de Beta 40847 unidades. **Repetir y comparar** reconstruye propietarios nuevos con la misma configuración y mezcla paso/fase/tick. Debe indicar **Coinciden** sin avanzar la sesión observada.
+6. Cerrar, configurar 3 sorteos extra de Beta, crear y completar 6 ticks: Alpha conserva sus resultados y estados; Beta cambia consumo y resultados. Cerrar y cambiar la semilla produce otras secuencias.
+7. Debug crea un JSONL propio del entorno, indicado dentro de la pestaña. Reiniciar confirma el cierre anterior antes de cambiar de archivo. Un fallo detiene avance automático y habilita reintento; el núcleo mantiene su cursor. Cerrar navegador no garantiza drenar pendientes.
+8. **Exportar evidencia** solo funciona entre ticks completos de sesión sana. El reporte incluye configuración, traza y estado inmutables, con runtime separado. La pestaña oculta los controles del escenario anterior; al volver a **Simulación**, vuelven sus controles y su sesión independiente.
+
+### Comparar con Node
+
+Desde la raíz de ESTE checkout:
+
+```powershell
+node tests/core/export-environment-reference.ts
+```
+
+Genera `debug-logs/node-environment-reference.json` para la semilla predeterminada y 6 ticks. Para otra semilla: `node tests/core/export-environment-reference.ts 0000000000000000`.
+
+Crear una sesión del panel con esa semilla, 0 sorteos extra y completar exactamente 6 ticks. En **Comparar referencia Node**, cargar ese JSON. Debe mostrar **Node y navegador coinciden**; se comparan los mismos datos lógicos completos y se informa el runtime de referencia. Diferente semilla, horizonte, estado, configuración o traza da una diferencia explícita. No se trata de importar un replay multiplataforma.
+
+Vectores independientes: `python tests/core/reference-vectors.py` regenera el JSON de referencia mediante enteros Python. No es necesario para usar el panel; los tests Node usan los vectores ya conservados. Sin builds ni dependencias nuevas.
+
+## Verificación de las entregas
 
 npm test ejecuta pruebas del núcleo, escenarios y escritura JSONL; npm run typecheck comprueba tipos sin emisión. La entrega BUS-002 incluye comprobación manual automatizada en Chrome de pausa, entradas tardías, replay, aislamiento, formularios, importación, fallo/reintento de logs y vista móvil. Evidencia y límites en docs/workflow/debug-harness-plan.md.

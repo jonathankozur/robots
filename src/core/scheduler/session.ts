@@ -7,6 +7,7 @@ import { TraceLog } from "../messaging/trace.ts";
 import type { DebugRecord, ReplayRecording, TraceSnapshot } from "../messaging/trace.ts";
 import { snapshotData, snapshotPayload } from "../messaging/immutable.ts";
 import type { Payload } from "../messaging/contracts.ts";
+import { validateEnvironment } from "../determinism/environment.ts";
 
 export type SessionState = "preparing" | "active" | "failed" | "closed";
 export interface Failure {
@@ -57,6 +58,7 @@ export class Session {
     this.#environment = snapshotPayload({
       sessionId: options.sessionId, revision: options.revision, runtime: options.runtime, phases: PHASES,
       initialState: snapshotPayload(options.initialState ?? {}, 1_048_576),
+      ...(options.environment === undefined ? {} : { environment: validateEnvironment(options.environment, this.#catalogue.systems) as unknown as Payload }),
       limits: { maxDeliveries: options.maxDeliveries ?? 4096, maxExternalInputs: this.#externalCapacity,
         maxPayloadBytes: options.maxPayloadBytes ?? 65_536, traceCapacity, maxMessageId: options.maxMessageId ?? Number.MAX_SAFE_INTEGER,
         maxTicks: this.#maxTicks },

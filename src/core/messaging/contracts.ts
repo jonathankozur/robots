@@ -50,11 +50,32 @@ export interface SystemDefinition {
   readonly loopPhase?: Phase;
   readonly loop?: (context: LoopContext) => void;
 }
+export interface RngSnapshot {
+  readonly version: 1;
+  readonly algorithm: "xoshiro128**-1.1";
+  readonly words: readonly [number, number, number, number];
+  readonly draws: number;
+}
+export interface StreamDeclaration { readonly systemId: string; readonly purpose: string }
+export interface SimulationEnvironment {
+  readonly version: 1;
+  readonly tickRate: 20;
+  readonly quantityScale: 1000;
+  readonly probabilityScale: 10000;
+  readonly numericProfile: "safe-integer-v1";
+  readonly damageRounding: "floor";
+  readonly durationRounding: "ceil";
+  readonly rngAlgorithm: "xoshiro128**-1.1";
+  readonly seedDerivation: "fnv1a64-splitmix64-v1";
+  readonly masterSeed: string;
+  readonly streams: readonly (StreamDeclaration & { readonly initial: RngSnapshot })[];
+}
 export interface SessionOptions {
   readonly sessionId: string;
   readonly revision: string;
   readonly runtime: string;
   readonly initialState?: Payload;
+  readonly environment?: SimulationEnvironment;
   readonly contracts: readonly Contract[];
   readonly systems: readonly SystemDefinition[];
   readonly maxDeliveries?: number;
