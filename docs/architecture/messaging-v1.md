@@ -97,9 +97,9 @@ Los nombres y cargas de este ejemplo son contratos de referencia, no mecánicas 
 
 ## Determinismo
 
-La unidad de avance es el tick lógico. El entorno soportado debe declarar versión de juego y runtime, configuración de fases/orden/catálogos, frecuencia de ticks, aritmética, algoritmo aleatorio y semilla. Estos aspectos técnicos pendientes se resuelven antes de desarrollar combate.
+La unidad de avance es el tick lógico. El entorno soportado declara versión de juego y runtime, fases/orden/catálogos, frecuencia, aritmética, RNG y semilla. [ENV-001](deterministic-environment-v1.md) resuelve el perfil de infraestructura: 20 ticks/s, enteros escalados y streams RNG por propietario/propósito. Las fórmulas y sistemas de combate requieren contratos posteriores.
 
-Para esa combinación, la misma configuración inicial y secuencia de entradas admitidas deben producir la misma traza lógica y resultado. No se promete aún igualdad entre plataformas diferentes.
+Para esa combinación, la misma configuración inicial y entradas admitidas deben producir la misma traza lógica y resultado. ENV-001 comprueba primitivas y fixture en Node 24.14.0/Chrome 153.0.8010.54; no promete gameplay entre plataformas ni importación de replay entre runtimes. La ausencia de environment conserva las fixtures anteriores sin certificar ese perfil ni inferirlo silenciosamente.
 
 No utilizar delta del frame, hora del sistema, UUID aleatorios, orden no especificado de colecciones ni aleatoriedad global implícita para decidir la simulación. Las decisiones aleatorias usan el mecanismo determinista aprobado, con estado y consumo reproducibles. La presentación interpreta estados y eventos; acelerar, pausar o interpolar imágenes no cambia ticks ya ejecutados.
 

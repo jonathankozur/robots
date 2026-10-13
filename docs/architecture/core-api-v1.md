@@ -1,6 +1,6 @@
 # API del núcleo v1
 
-Revisión: 1.1.0. Encargos autorizados: [BUS-001](../workflow/bus-scheduler-implementation.md) y [BUS-002](../workflow/debug-harness-plan.md). Esta API implementa [mensajería v1](messaging-v1.md) con fixtures; no incorpora reglas del juego.
+Revisión: 1.2.0. Encargos autorizados: [BUS-001](../workflow/bus-scheduler-implementation.md), [BUS-002](../workflow/debug-harness-plan.md) y [ENV-001](../workflow/deterministic-environment-v1.md). Esta API implementa [mensajería v1](messaging-v1.md) con fixtures; no incorpora reglas del juego.
 
 ## Componentes e interfaz
 
@@ -82,10 +82,20 @@ ReplayRecording v1 contiene manifiesto, completedTicks y entradas con source/inp
 
 Una reproducción admite únicamente entradas registradas, impide ingreso vivo y no avanza más allá del horizonte. El controlador compara traza y resultado con el original; cargar el archivo no certifica por sí solo determinismo. Las pruebas reconstruyen los fixtures y comparan ambas trazas completas.
 
+## Entorno opcional ENV-001
+
+`SessionOptions.environment` admite exclusivamente `SimulationEnvironment` v1: 20 ticks/s, escalas 1000/10000, perfil safe-integer-v1 y xoshiro128** 1.1 con derivación fnv1a64-splitmix64-v1. El constructor valida y copia el entorno; el manifiesto lo conserva como environment. El ensamblador declara propietarios/propósitos y entrega sus snapshots iniciales; Session no administra el RNG vivo.
+
+El núcleo exporta helpers puros de tiempo, cálculo seguro, parser decimal, derivación, nextU32/nextInt/chance y creación/validación de entorno. Datos públicos RngSnapshot, StreamDeclaration y SimulationEnvironment permanecen libres de imports. Códigos añadidos: NUMERIC_INVALID, NUMERIC_OVERFLOW, RNG_INVALID, RNG_EXHAUSTED, ENVIRONMENT_INVALID. Semántica y límites completos en [entorno v1](deterministic-environment-v1.md).
+
+Ausencia de environment conserva exactamente el manifiesto anterior. ReplayRecording permanece en v1 y exige manifiesto/runtime idénticos. Presencia frente a ausencia, otra semilla o streams se rechazan; perfiles no soportados fallan al validar configuración. El comparador de evidencia lógica del laboratorio separa runtime únicamente en su reporte y no altera ese loader.
+
+Verificado ENV-001 en Node 24.14.0 y Chrome 153.0.8010.54 con vectores independientes y fixture Alpha/Beta/Observador. No extrapolar a Electron, otros navegadores o combate real.
+
 ## Límites de esta entrega
 
 Verificado en Node.js 24.14.0 con fixtures síncronos. El núcleo no importa APIs Node, DOM, Three.js, Electron, reloj real, aleatoriedad ni I/O; TextEncoder es la API estándar usada para medir UTF-8. El control de arquitectura inspecciona AST y comprueba que el puerto público carece de capacidades de administración. Estos controles son de arquitectura en un mismo proceso, no un sandbox para código hostil.
 
 Los callbacks siguen siendo responsables de escribir solo estado propio y evitar efectos externos. Detectar un Promise no revierte efectos que el callback ya inició; los adaptadores reales y futuros sistemas necesitan revisión y controles de importación propios.
 
-El arnés y las pausas/replay/logs se verificaron también en Chrome 153 mediante Playwright. No se afirma equivalencia entre plataformas a partir de esa prueba. Pendientes: Electron, rendimiento y memoria del juego real, frecuencia/aritmética/RNG de combate, contratos de gameplay, DB/multiplayer, CI obligatorio y revisión cruzada humana. Cambiar estas reglas requiere evolucionar el contrato y aprobar su impacto.
+El arnés y las pausas/replay/logs se verificaron también en Chrome 153 mediante Playwright. ENV-001 verifica equivalencia lógica de primitivas/fixture en Node y Chrome; no acredita un juego completo ni carga multiplataforma de replay. Pendientes: Electron, rendimiento y memoria del juego real, fórmulas/contratos de gameplay, DB/multiplayer, CI obligatorio e integración humana de ENV-001. Cambiar estas reglas requiere evolucionar el contrato y aprobar su impacto.

@@ -1,5 +1,22 @@
 # Escenarios de aceptación del protocolo v1
 
+## ENV-001 — Entorno determinista
+
+Plan y aprobación: [encargo](deterministic-environment-v1.md). Especificación: [entorno v1](../architecture/deterministic-environment-v1.md).
+
+| Criterio | Evidencia |
+| --- | --- |
+| 20 Hz, duración ceil y enteros seguros, incluidos límites | determinism-numeric.test.ts; oráculo BigInt en pruebas |
+| RNG y derivación UTF-8 estables, consumo uniforme | determinism-rng.test.ts; vectores independientes Python conservados |
+| Configuración inmutable, propietarios válidos y estados iniciales derivados | determinism-environment.test.ts |
+| Sesiones legacy sin entorno y replay estricto | determinism-environment.test.ts y replay.test.ts |
+| Aislamiento, mezcla de avances, debug y reproducción con propietarios nuevos | environment-fixture.test.ts |
+| Node/Chrome equivalentes para primitivas y fixture | 5 vectores/48 extracciones y reporte de 6 ticks; versiones y procedimiento en entrega |
+| Panel manual, pausa automática, cierre de logs y fallo/reintento | Prueba real Chrome con Playwright, registrada en entrega |
+| Núcleo puro y puerto sin capacidades nuevas | architecture.test.ts permanece sin modificaciones |
+
+Estas pruebas no acreditan gameplay, checkpoint persistente, Electron ni un importador de replay entre runtimes. No se ejecutan builds.
+
 Los escenarios generales de agentes, colaboración, persistencia e integración siguen pendientes de ejecución. BUS-001 convierte los escenarios del núcleo en pruebas ejecutables con fixtures; la evidencia se distingue abajo de la aceptación pendiente del gameplay. Ver [habilitación](../decisions.md).
 
 ## Documentación y descubrimiento
