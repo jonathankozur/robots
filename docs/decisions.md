@@ -1,6 +1,6 @@
 # Decisiones y habilitación
 
-Revisión documental: **1.5.0**. Actualización: **13 de octubre de 2026**. Conserva la base documental del 9 de octubre.
+Revisión documental: **1.6.0**. Actualización: **13 de octubre de 2026**. Conserva la base documental del 9 de octubre.
 
 ## Base aprobada
 
@@ -117,6 +117,18 @@ Fecha: 13 de octubre de 2026. Estado: **plan y ejecución aprobados; entrega loc
 Primera entrega aprobada: infraestructura del catálogo y colección pequeña para probar navegación y combate básico mediante fixtures. Las familias y parámetros crecen cuando se diseñan sus consumidores. Recetas, botín, efectos y balance completo no se anticipan; no se desarrollan sistemas de gameplay.
 
 Base real: main en `d402c32e160f5176f1a5b4c6ce759b08c054455b`, [PR #2 integrado](https://github.com/jonathankozur/robots/pull/2). Rama creada antes de editar: `codex/content-catalog-v1`, checkout propio. [Plan y entrega CAT-001](workflow/content-catalog-v1.md), [contrato v1](architecture/content-catalog-v1.md): catálogo puro JSON, referencias/compatibilidad/energía, snapshots inmutables, fixtures e integración por mensajes/replay sin cambios al núcleo. Verificado con 129/129 pruebas (38 nuevas), typecheck sin emisión y demostración Node. El usuario autorizó después una pestaña independiente en el laboratorio para editar/importar JSON, validar e inspeccionar la fixture; queda documentada como herramienta de desarrollo. Los detalles y límites figuran en la entrega. El encargo no habilita push/PR/merge.
+
+### APP-001 — Ensamblado y ciclo de aplicación
+
+Fecha: 13 de octubre de 2026. Estado: **ocho decisiones confirmadas; plan/contrato 1.0 y entrega aprobados, integración autorizada**. Responsable humano: usuario solicitante. [Tarjeta 03](https://trello.com/c/5bvkqD4N).
+
+El usuario confirmó: (1) estados explícitos y transiciones permitidas; (3) receta explícita con funciones que crean instancias nuevas; (4) disponibilidad después de confirmaciones; (5) validar/preparar el siguiente contexto antes de cerrar el anterior; (6) distinguir rechazo normal de fallo técnico detenido, diagnóstico conservado y recuperación explícita con instancias nuevas; (7) preparar recorrido de restauración sin almacenamiento ahora; (8) controlador externo de ejecución.
+
+Después de explicar qué contiene una sesión y las alternativas, el usuario respondió «ok» a la propuesta de **una sesión nueva por combate, conservando progreso en sus sistemas responsables entre encuentros**. El contexto de aplicación permanece; cada encuentro crea sistemas/bus/scheduler nuevos. Renovar instancias no borra identidad ni daño persistente: esos datos se transfieren explícitamente cuando existan sus propietarios.
+
+Alternativa de sesión global: menos transferencias, más limpieza y riesgo de mezclar encuentros; sesión por sistema: mayor separación, pero múltiples buses/relojes. La opción por combate prioriza aislamiento, cierre y replay, a cambio de contratos explícitos de entrada y resultados.
+
+Autorización actual: documentación, plan y rama codex/application-lifecycle-v1, checkout propio desde main bf8b89b (PR #3). [Plan 1.0 y entrega](workflow/application-lifecycle-v1.md) y [contrato técnico APP-001](architecture/application-lifecycle-v1.md) aprobados para ejecución; entrega local para revisión. El «ok» confirmó la decisión 2. La autorización posterior «comenza la implementacion. Recorda mover la tarjeta a su posicion correspondiente» habilitó ejecutar el plan/contrato 1.0. Entrega: 151 pruebas aprobadas, typecheck sin emisión y recorridos de navegador documentados. Sin gameplay, persistencia ni cambios al núcleo. El responsable humano autorizó después commit, push, PR y merge mediante «hace commit, push, crea el PR y mergea».
 
 ## Estado de esta instalación
 
