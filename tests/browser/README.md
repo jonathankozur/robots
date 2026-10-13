@@ -84,6 +84,16 @@ Crear una sesión del panel con esa semilla, 0 sorteos extra y completar exactam
 
 Vectores independientes: `python tests/core/reference-vectors.py` regenera el JSON de referencia mediante enteros Python. No es necesario para usar el panel; los tests Node usan los vectores ya conservados. Sin builds ni dependencias nuevas.
 
+## Catálogo de contenido (CAT-001)
+
+1. Abrir la pestaña **Catálogo de contenido**. El editor comienza con `content/fixtures/basic-v1.json`; **Cargar ejemplo** restaura esa versión si la modificaste.
+2. Pegar o editar JSON y pulsar **Validar paquete**, o importar un archivo de hasta 1 MiB. Los rechazos muestran código, ruta y explicación. Un paquete inválido nunca inicia una sesión.
+3. Un paquete puede ser válido aunque no permita ejecutar la fixture. Elige un robot con chasis, locomoción y arma definidos y un terreno existente; los requisitos de la demostración se explican junto a los selectores. Por ejemplo, `robot.unarmed` sigue siendo válido para el catálogo, pero no satisface esta fixture.
+4. Pulsa **Iniciar fixture** y avanza con **Paso**, **Fase** o **Tick**. Observa la traza, el manifiesto con el snapshot de contenido y las vistas separadas que reciben navegación y combate. Los datos aparecen al consumirse sus mensajes; avanzar un solo paso puede no alcanzar aún a ambos receptores.
+5. La sesión fija el paquete elegido y bloquea edición/importación mientras está activa. **Cerrar sesión** conserva la traza y las vistas para inspección; valida otro JSON para preparar una ejecución nueva.
+
+La pestaña solo ayuda a probar el catálogo y los dos consumidores ficticios. No ejecuta movimiento, IA, combate ni contenido como código.
+
 ## Verificación de las entregas
 
 npm test ejecuta pruebas del núcleo, escenarios y escritura JSONL; npm run typecheck comprueba tipos sin emisión. La entrega BUS-002 incluye comprobación manual automatizada en Chrome de pausa, entradas tardías, replay, aislamiento, formularios, importación, fallo/reintento de logs y vista móvil. Evidencia y límites en docs/workflow/debug-harness-plan.md.

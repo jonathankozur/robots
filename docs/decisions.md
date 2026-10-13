@@ -1,6 +1,6 @@
 # Decisiones y habilitación
 
-Revisión documental: **1.4.0**. Actualización: **13 de octubre de 2026**. Conserva la base documental del 9 de octubre.
+Revisión documental: **1.5.0**. Actualización: **13 de octubre de 2026**. Conserva la base documental del 9 de octubre.
 
 ## Base aprobada
 
@@ -25,7 +25,7 @@ El GDD original permanece en [diseno_autobattler_robots.md](../diseno_autobattle
 | --- | --- |
 | Integración de presentación y escritorio | Tecnología aprobada en TEC-001; Vite verifica el arnés local en BUS-002. Three.js, presentación del juego y Electron siguen pendientes. |
 | Aritmética, precisión, frecuencia de ticks y algoritmo aleatorio | Resuelto para infraestructura por ENV-001; fórmulas/balance de gameplay requieren sus propios contratos. |
-| Integración del bus y scheduler v1 | Integrado en main por PR #1 (050f831); evolución ENV-001 en rama propia, integración pendiente. |
+| Integración del bus y scheduler v1 | Integrados en main por PR #1 (050f831); ENV-001 integrado por PR #2 (d402c32), base de CAT-001. |
 | Controles ejecutables de gameplay | Controles locales del núcleo implementados; ampliar a productores/consumidores reales cuando existan. |
 | Git y repositorio compartido | Repositorio real, rama base, colaboradores identificados y checkouts separados. |
 | Checks obligatorios de GitHub | Workflows y verificaciones ejecutables que se puedan exigir a cada PR, más evidencia de su bloqueo ante fallos. |
@@ -97,6 +97,26 @@ Alternativas y consecuencias en la [especificación](architecture/deterministic-
 SessionOptions.environment es opcional para conservar sesiones históricas sin inventar configuración. El perfil se valida y conserva en el manifiesto. ReplayRecording sigue en v1 y mantiene comparación estricta, incluido runtime. La evidencia lógica Node/Chrome es un reporte separado; no habilita importación de replay entre runtimes.
 
 Node 24 y Chrome de escritorio son la matriz inicial. Versiones y evidencia reales en la [entrega ENV-001](workflow/deterministic-environment-v1.md). Sin builds, nuevas dependencias, gameplay, persistencia, Electron, PR ni merge en este encargo.
+
+### CAT-001 — Catálogo de contenido y primera entrega
+
+Fecha: 13 de octubre de 2026. Estado: **plan y ejecución aprobados; entrega local completada para revisión, integración pendiente**. Responsable humano: usuario solicitante. Referencia: [tarjeta 02](https://trello.com/c/XXyzIPpr). Aprobación explícita: seleccionó las nueve alternativas recomendadas y confirmó «Me parece bien tu recomendacion para la primera entrega». Después de documentarlas y presentar el plan 1.0, autorizó su ejecución mediante «aprobado, implementalo».
+
+| Decisión aprobada | Alternativas consideradas y consecuencia |
+| --- | --- |
+| JSON validado | TypeScript ofrece tipado de autoría pero mezcla datos con código; YAML añade formato/parser. JSON conserva datos declarativos y exige validación al cargar. |
+| Estructuras específicas y estrictas por familia | Una ficha universal admite campos ambiguos. Cada familia declara campos, unidades y límites; los campos desconocidos se rechazan. |
+| Identificadores estables | Nombres visibles y posiciones se rompen al renombrar/reordenar. La identidad permanece; versiones de formato y revisión de contenido se distinguen. Cada sesión fija sus datos para reproducción. |
+| Componentes separados | Integrarlos al chasis reduce combinaciones. Chasis, locomoción, núcleo, IA y sensor son necesarios para una configuración preparada; armas, defensa adicional y utilidad son opcionales. Los ejemplos iniciales incluyen configuraciones completas. |
+| Compatibilidad por categoría, tipo de montaje y tamaño | Permitir todo elimina restricciones; enumerar cada pareja crece con el contenido. Slots y componentes declaran compatibilidades estructuradas y puntos de montaje identificables. |
+| Energía y compatibilidad de slots | Peso/carga, consumo energético durante batalla y calor agregan reglas y balance. Se conservan presupuesto de equipamiento y slots; esas ampliaciones quedan fuera de la primera entrega. |
+| Rareza y tecnología separadas | Una escala única confunde especialización y avance. Son dimensiones independientes, sin multiplicador universal de rareza; primeras piezas con valores fijos. Escalas finales, afijos y probabilidades se diseñarán con sus propietarios. |
+| Reglas explícitas en los sistemas | Fórmulas ejecutables en datos exigirían un intérprete. El catálogo aporta parámetros con unidades del perfil ENV-001; cada propietario ejecuta sus reglas. No hay scripts ni evaluación de expresiones en contenido. |
+| Identificadores de recursos y puntos de montaje | Rutas/transformaciones particulares acoplan piezas a archivos concretos. Las fichas relacionan recursos visuales y sockets con slots; presentación comprueba posteriormente recursos reales y encaje visual. |
+
+Primera entrega aprobada: infraestructura del catálogo y colección pequeña para probar navegación y combate básico mediante fixtures. Las familias y parámetros crecen cuando se diseñan sus consumidores. Recetas, botín, efectos y balance completo no se anticipan; no se desarrollan sistemas de gameplay.
+
+Base real: main en `d402c32e160f5176f1a5b4c6ce759b08c054455b`, [PR #2 integrado](https://github.com/jonathankozur/robots/pull/2). Rama creada antes de editar: `codex/content-catalog-v1`, checkout propio. [Plan y entrega CAT-001](workflow/content-catalog-v1.md), [contrato v1](architecture/content-catalog-v1.md): catálogo puro JSON, referencias/compatibilidad/energía, snapshots inmutables, fixtures e integración por mensajes/replay sin cambios al núcleo. Verificado con 129/129 pruebas (38 nuevas), typecheck sin emisión y demostración Node. El usuario autorizó después una pestaña independiente en el laboratorio para editar/importar JSON, validar e inspeccionar la fixture; queda documentada como herramienta de desarrollo. Los detalles y límites figuran en la entrega. El encargo no habilita push/PR/merge.
 
 ## Estado de esta instalación
 
