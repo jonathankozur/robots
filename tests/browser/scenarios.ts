@@ -1,5 +1,5 @@
-import { Session, PHASES, ProtocolError } from "../../src/core/index.ts";
-import type { Contract, JsonValue, Payload, Phase, Publisher, Message, SessionOptions } from "../../src/core/index.ts";
+import { Session, PHASES, ProtocolError } from "@robots/runtime";
+import type { Contract, JsonValue, Payload, Phase, Publisher, Message, SessionOptions } from "@robots/runtime";
 
 export type Fault = "throw" | "async" | "reenter" | "restart" | "close" | "unsubscribe" | "export" | "impersonate"
   | "mutate" | "fabricatedCause" | "duplicateCause" | "foreignCause" | "mixedRoots"

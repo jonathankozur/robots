@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ApplicationController } from '../../src/application/index.ts';
+import { ApplicationController } from '@robots/application-host';
 import { presentationRecipe, presentationRequest } from '../core/presentation-fixture.ts';
-import { VisualMotion } from '../../src/presentation/graphics/motion.ts';
-import type { View } from '../../src/presentation/data/contracts.ts';
+import { VisualMotion } from '@robots/presentation-three/motion';
+import type { View } from '@robots/protocol/presentation/v1';
 test('render 15/30/60 FPS, exact/smooth and mixed stepping leave the logical trace unchanged', () => {
     let baseline: unknown;
     for (const fps of [15, 30, 60])

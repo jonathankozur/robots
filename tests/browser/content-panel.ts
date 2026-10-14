@@ -1,5 +1,5 @@
-import { parseContentJson } from "../../src/content/index.ts";
-import type { ContentBundle } from "../../src/content/index.ts";
+import { parseContentJson } from "@robots/content";
+import type { ContentBundle } from "@robots/content";
 import { createContentFixture } from "../core/content-fixture.ts";
 import type { ContentFixture } from "../core/content-fixture.ts";
 import basicBundle from "../../content/fixtures/basic-v2.json" with { type: "json" };

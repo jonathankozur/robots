@@ -1,4 +1,4 @@
-import test from "node:test";import assert from "node:assert/strict";import {ApplicationController} from "../../src/application/index.ts";import type {Payload} from "../../src/core/index.ts";import {navigationRecipe,request,scenario} from "./navigation-fixture.ts";
+import test from "node:test";import assert from "node:assert/strict";import {ApplicationController} from "@robots/application-host";import type {Payload} from "@robots/runtime";import {navigationRecipe,request,scenario} from "./navigation-fixture.ts";
 const app=(instanceId="nav")=>new ApplicationController({instanceId,runtime:"nav-test",recipe:navigationRecipe()});
 const boot=(a:ApplicationController,data=request())=>{assert.equal(a.request(data).ok,true);a.advance();a.advance();assert.equal(a.snapshot().state,"ready");};
 const observed=(a:ApplicationController)=>a.snapshot().observations["navigation-lab-observer"] as any;

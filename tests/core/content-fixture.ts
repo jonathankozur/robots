@@ -1,8 +1,8 @@
-import { Session, createSimulationEnvironment } from "../../src/core/index.ts";
-import type { Contract, Payload, Message, SystemDefinition } from "../../src/core/index.ts";
-import { protocol } from "../../src/core/messaging/contracts.ts";
-import { snapshotPayload } from "../../src/core/messaging/immutable.ts";
-import { validateContentBundle } from "../../src/content/index.ts";
+import { Session, createSimulationEnvironment } from "@robots/runtime";
+import type { Contract, Payload, Message, SystemDefinition } from "@robots/runtime";
+import { protocol } from "@robots/system-api";
+import { snapshotPayload } from "@robots/values/json";
+import { validateContentBundle } from "@robots/content";
 
 export interface ContentFixtureOptions { readonly runtime?: string; readonly debug?: boolean; readonly robotId?: string; readonly terrainId?: string }
 export interface ContentFixture { readonly session: Session; initialize(): void; snapshot(): { readonly navigation: Payload | null; readonly combat: Payload | null } }

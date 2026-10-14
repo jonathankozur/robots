@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
-import { validateContentBundle, fitsSlot } from "../../src/content/index.ts";
+import { validateContentBundle, fitsSlot } from "@robots/content";
 const fresh = () => JSON.parse(readFileSync(new URL("../../content/fixtures/basic-v2.json", import.meta.url), "utf8"));
 function reject(data: unknown, code: string) {
   const result = validateContentBundle(data); assert.equal(result.ok, false);

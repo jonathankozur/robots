@@ -1,8 +1,9 @@
+import { bindPresentationContracts } from '@robots/application-host/bindings';
 import { navigationRecipe, scenario } from './navigation-fixture.ts';
 import content from '../../content/fixtures/presentation-v2.json' with { type: 'json' };
-import type { Recipe, Request } from '../../src/application/index.ts';
-import type { Payload } from '../../src/core/index.ts';
-import { createPresentationActor, INITIAL_FIELDS, presentationContracts } from '../../src/presentation/index.ts';
+import type { Recipe, Request } from '@robots/application-host';
+import type { Payload } from '@robots/runtime';
+import { createPresentationActor, INITIAL_FIELDS } from '@robots/presentation';
 export function presentationRecipe(): Recipe {
     const base = navigationRecipe();
     return { ...base, id: 'presentation.fixture', revision: 'presentation-fixture-v1',
@@ -24,7 +25,7 @@ export function presentationRecipe(): Recipe {
             });
             return { ...views, presentation: { boardId: views.navigation!.boardId, assemblies: visual } as Payload };
         },
-        contracts: [...base.contracts, ...presentationContracts()],
+        contracts: [...base.contracts, ...bindPresentationContracts('presentation')],
         outputTypes: [...base.outputTypes, 'PresentationViewPublished'],
         participants: [...base.participants, { id: 'presentation', initializationType: 'InitializePresentationView', phase: 'action', fields: INITIAL_FIELDS, create: createPresentationActor }] };
 }

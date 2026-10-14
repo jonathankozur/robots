@@ -1,0 +1,29 @@
+{
+  "name": "@robots/presentation-three",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.12.0 <25"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./renderer": "./src/renderer.ts",
+    "./motion": "./src/motion.ts",
+    "./resources": "./src/resources.ts",
+    "./cadence": "./src/cadence.ts",
+    "./batching": "./src/batching.ts"
+  },
+  "dependencies": {
+    "@robots/protocol": "0.1.0",
+    "three": "0.186.1"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@types/node": "24.10.15",
+    "@types/three": "0.186.0"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  }
+}

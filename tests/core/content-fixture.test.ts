@@ -2,10 +2,10 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
 import { createContentFixture } from "./content-fixture.ts";
-import { Session } from "../../src/core/index.ts";
-import type { Payload } from "../../src/core/index.ts";
+import { Session } from "@robots/runtime";
+import type { Payload } from "@robots/runtime";
 import { options } from "./fixtures.ts";
-import { validateContentBundle } from "../../src/content/index.ts";
+import { validateContentBundle } from "@robots/content";
 const fresh = () => JSON.parse(readFileSync(new URL("../../content/fixtures/basic-v2.json", import.meta.url), "utf8"));
 function recorded() {
   const original = createContentFixture(fresh()); original.session.start(); original.initialize();

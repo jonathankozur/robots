@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { Session } from "../../src/core/scheduler/session.ts";
-import type { Contract, Message, Publisher } from "../../src/core/messaging/contracts.ts";
+import { Session } from "@robots/runtime/session";
+import type { Contract, Message, Publisher } from "@robots/system-api";
 import { COMMAND, EVENT, options } from "./fixtures.ts";
 
 const INPUT: Contract = {

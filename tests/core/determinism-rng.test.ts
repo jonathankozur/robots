@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
-import { rngSnapshot, deriveStream, nextU32, nextInt, chance } from "../../src/core/determinism/rng.ts";
-import type { RngSnapshot } from "../../src/core/messaging/contracts.ts";
+import { rngSnapshot, deriveStream, nextU32, nextInt, chance } from "@robots/values/rng";
+import type { RngSnapshot } from "@robots/system-api";
 const vectors = JSON.parse(readFileSync(new URL("./reference-vectors.json", import.meta.url), "utf8")) as {
   raw: { initial: number[]; values: number[]; final: number[] }[];
   derived: { seed: string; systemId: string; purpose: string; initial: number[]; values: number[]; final: number[] }[];

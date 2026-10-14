@@ -4,13 +4,13 @@ import { readdirSync, readFileSync } from 'node:fs';
 import ts from 'typescript';
 function violations(source: string): string[] {
     const ast = ts.createSourceFile('data.ts', source, ts.ScriptTarget.Latest, true), bad: string[] = [];
-    const allowed = new Set(['../../core/index.ts', '../../application/index.ts', '../../navigation/contracts.ts']);
+    const allowed = new Set(['@robots/system-api', '@robots/values/numeric', '@robots/values/integers', '@robots/protocol/navigation/v1', '@robots/protocol/presentation/v1', '@robots/protocol/presentation/manifest-v1']);
     function visit(n: ts.Node): void {
-        if (ts.isImportDeclaration(n) && ts.isStringLiteral(n.moduleSpecifier)) {
+        if ((ts.isImportDeclaration(n) || ts.isExportDeclaration(n)) && n.moduleSpecifier && ts.isStringLiteral(n.moduleSpecifier)) {
             const p = n.moduleSpecifier.text;
             if (!p.startsWith('./') && !allowed.has(p))
                 bad.push(p);
-            if (p === '../../application/index.ts' && !n.importClause?.isTypeOnly)
+            if (p === '@robots/application-host')
                 bad.push('application implementation');
         }
         if (ts.isIdentifier(n) && ['Date', 'performance', 'fetch', 'window', 'document', 'Session', 'setTimeout', 'requestAnimationFrame', 'crypto', 'process'].includes(n.text))
@@ -25,11 +25,11 @@ function violations(source: string): string[] {
     return bad;
 }
 test('presentation data owner excludes graphics, clocks, I/O and neighboring implementations', () => { for (const example of ["import * as T from 'three';", "import {createNavigationActor} from '../../navigation/index.ts';", 'performance.now();', 'async function handler(){}'])
-    assert.ok(violations(example).length); const root = new URL('../../src/presentation/data/', import.meta.url); for (const f of readdirSync(root).filter(f => f.endsWith('.ts')))
+    assert.ok(violations(example).length); const root = new URL('../../packages/presentation/src/', import.meta.url); for (const f of readdirSync(root).filter(f => f.endsWith('.ts')))
     assert.deepEqual(violations(readFileSync(new URL(f, root), 'utf8')), [], f); });
 test('presentation public schemas are deeply immutable and hidden accessors never execute', async () => {
-    const { INITIAL_FIELDS, presentationContracts } = await import('../../src/presentation/index.ts');
-    const { frozen } = await import('../../src/presentation/data/plain.ts');
+    const { INITIAL_FIELDS, PRESENTATION_MESSAGES } = await import('@robots/protocol/presentation/v1');
+    const { frozen } = await import('@robots/presentation/plain');
     let executed = 0;
     const hostile = Object.defineProperty({}, 'view', { get() { executed++; return {}; }, enumerable: true });
     assert.throws(() => frozen(hostile));
@@ -42,5 +42,5 @@ test('presentation public schemas are deeply immutable and hidden accessors neve
             deep(v);
     } }
     deep(INITIAL_FIELDS);
-    deep(presentationContracts());
+    deep(PRESENTATION_MESSAGES);
 });

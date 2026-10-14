@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
-import { ApplicationController } from "../../src/application/index.ts";
+import { ApplicationController } from "@robots/application-host";
 import { fixtureRecipe, nav, combat } from "./application-fixture.ts";
 const content = () => JSON.parse(readFileSync(new URL("../../content/fixtures/basic-v2.json", import.meta.url), "utf8"));
 export const request = (requestId = "one") => ({ requestId, seed: "0123456789abcdef", content: content(), selection: { robotId: "robot.scout", terrainId: "terrain.floor" } });

@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { VisualMotion, hexPosition } from '../../src/presentation/graphics/motion.ts';
-import type { View } from '../../src/presentation/data/contracts.ts';
+import { VisualMotion, hexPosition } from '@robots/presentation-three/motion';
+import type { View } from '@robots/protocol/presentation/v1';
 const frame = (q = 0, sequence = 1, cd = 20) => ({ contextId: 'c', sequence, world: { robots: [{ robotId: 'a', q, r: 0, moveCooldownTicks: cd }] } } as unknown as View);
 test('confirmed visual moves interpolate and pause freezes the clock exactly', () => {
     const c = new VisualMotion();

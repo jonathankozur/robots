@@ -1,0 +1,104 @@
+{
+  "application": {
+    "trace": "9fde5845055a12336e1aa08f9d62e33af597fcfa74064522b90f7664c41387c8",
+    "observations": "d6babc46f89cfed81754319846ad88e3cf2c68c71ca4f0842ec28f71c7fbac08",
+    "entries": 506,
+    "completedTicks": 26
+  },
+  "navigation-speed": {
+    "trace": "c8edf376bb05c3ae8586ee488a091d666de918e80f7d1a5ef4ca9e995fd5690f",
+    "observations": "6b3564053c84d857b965ff5ea1af1cc8c593932d11a48cd7f2d7d17f0c553308",
+    "entries": 833,
+    "completedTicks": 26
+  },
+  "navigation-collision": {
+    "trace": "8b460efb77f14b97d210287d48cbbf9818f222b2c5c156e66f0ad7e8ce88349c",
+    "observations": "4af5686f5f34d7aef098ace72f5bcbfde1eda36e4e2f6f835e70f743a2f7f978",
+    "entries": 695,
+    "completedTicks": 26
+  },
+  "navigation-reverse": {
+    "trace": "9bb04772b7846cf543194d211ac9ab740e399d539ff0898378d7294fd040adfa",
+    "observations": "a6439e1090417d42bbf6f95c46f1a3aaea91b39100535f470787f49bd3fc4266",
+    "entries": 695,
+    "completedTicks": 26
+  },
+  "navigation-duplicate": {
+    "trace": "82a14977d96b9e898ac5d40d77902b26cfd14ef2b0df1f2f06b9de2d7147e053",
+    "observations": "acc3e1c5df569e52ce24b3576adcfb1a98adcbb32ce31ace441c2de86566fa72",
+    "entries": 699,
+    "completedTicks": 26
+  },
+  "navigation-cooldown": {
+    "trace": "15498e307914aa930b9afef563ed065e649659fa6ea84b647054a982b0631ab2",
+    "observations": "ecb282663a5f9afb4c33b3c37890fcfa5db8bdeb675fd0734b043387451bb4e1",
+    "entries": 726,
+    "completedTicks": 26
+  },
+  "navigation-blocked": {
+    "trace": "08d57ceabb3e6e50ffbaf29dac394ed1b88fdfd1c30fe656e684301bf689bba7",
+    "observations": "9a60e0e3c95397232477ccf8698cae31119d192210baa274b4307f4ed194cfab",
+    "entries": 665,
+    "completedTicks": 26
+  },
+  "navigation-opening": {
+    "trace": "7c4d38aa43ebbde087066d104155cb025dc627db552b015a45e2858dcf66901d",
+    "observations": "5decbaaaf46f210cc8b370a281a5b93aff9d7522c364527c8ec2111a6e6a78b9",
+    "entries": 787,
+    "completedTicks": 26
+  },
+  "navigation-swap": {
+    "trace": "cf93b45fd37e71e9b9ce4d22cc096b16c376fa42be4d198683c054da1a50ffa8",
+    "observations": "4084e8affac2ac0a6a8e8ae595157efbc12ebc4f3590ff0dbb55288e05b8ed5b",
+    "entries": 699,
+    "completedTicks": 26
+  },
+  "presentation-speed": {
+    "trace": "9d20c04e226531e283f4649cf05197826dd5c90a3febc51fb5b8b0840f86a98f",
+    "observations": "e7ed92edd742bce4661017624a991277fc916cc861e1ab993b70435764e0929f",
+    "entries": 954,
+    "completedTicks": 26
+  },
+  "presentation-collision": {
+    "trace": "a723492722e725a020f61499c97d1ee351e42efb325d5629f4df826dc6f0c6df",
+    "observations": "d55fef531abfa2debea8e5c94a63901daaffb9c7d890ba9cde1272e4d45fe8ef",
+    "entries": 774,
+    "completedTicks": 26
+  },
+  "presentation-reverse": {
+    "trace": "560d53ecb6d710bf26ad236ac47bc61b67a39676edf6398906e21d579d3629be",
+    "observations": "1ad7803206e4c6d7b34787dccbfac28501fe1d9889db04300447ab653ceb5dbc",
+    "entries": 774,
+    "completedTicks": 26
+  },
+  "presentation-duplicate": {
+    "trace": "0f7d2f22d2dd2c4b75800fd87a951123ff7d1d40e4e9a5a1d80b704b589b582a",
+    "observations": "2fbe5388b996780a247ac14d37093335fdfba322deb1f70378ae5688951d9cd9",
+    "entries": 782,
+    "completedTicks": 26
+  },
+  "presentation-cooldown": {
+    "trace": "c0e03df3d65b8336583514231d032fd2da162c6d9969ef02ebce51b88d5f1979",
+    "observations": "cad6dee8911493e771be3c686b7f958437ed30f90794da0055888a530afd4f8a",
+    "entries": 816,
+    "completedTicks": 26
+  },
+  "presentation-blocked": {
+    "trace": "9a616358526106c51e31e71d132e8838f4a474fa9303e7ae0a6f652b6d5d8079",
+    "observations": "bbdc1758342599dcf1df66780b00220e0534b1d0d478728beea5516055577df4",
+    "entries": 738,
+    "completedTicks": 26
+  },
+  "presentation-opening": {
+    "trace": "2e54b4331d3d3d1f8a32a7715e670bd748e5f9f4d90b7fd3e06b5bd29d30e7f7",
+    "observations": "d500c4fb496cf7b7faccc662f2c012ba0e513f947075b6fa41adb16686ca6a0e",
+    "entries": 894,
+    "completedTicks": 26
+  },
+  "presentation-swap": {
+    "trace": "3ddb5ac721b9f6de70e64b537486ab0288c8953ce797b90eed4cb19f9c7acc8b",
+    "observations": "72cf4ab176a34e8221541dd69c80b0a23b6f1de4b4cb3f18b919f3f7dcac5369",
+    "entries": 778,
+    "completedTicks": 26
+  }
+}

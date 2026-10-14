@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
-import { parseContentJson, validateContentBundle } from "../../src/content/index.ts";
-import type { ContentBundle } from "../../src/content/index.ts";
+import { parseContentJson, validateContentBundle } from "@robots/content";
+import type { ContentBundle } from "@robots/content";
 const text = readFileSync(new URL("../../content/fixtures/basic-v2.json", import.meta.url), "utf8");
 const fresh = () => JSON.parse(text);
 function content(data: unknown): ContentBundle { const result = validateContentBundle(data); assert.equal(result.ok, true); if (!result.ok) throw new Error(JSON.stringify(result)); return result.content; }

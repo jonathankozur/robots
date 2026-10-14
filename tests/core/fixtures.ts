@@ -1,4 +1,4 @@
-import type { Contract, SessionOptions } from "../../src/core/messaging/contracts.ts";
+import type { Contract, SessionOptions } from "@robots/system-api";
 export const COMMAND: Contract = {
   type: "PruebaComando", version: 1, kind: "command",
   producers: [{ systemId: "producer", phases: ["decision"] }],

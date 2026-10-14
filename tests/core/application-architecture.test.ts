@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFileSync,readdirSync } from "node:fs";
-import { ApplicationController } from "../../src/application/index.ts";
+import { ApplicationController } from "@robots/application-host";
 import { fixtureRecipe } from "./application-fixture.ts";
 import ts from "typescript";
 const request=()=>({requestId:"one",seed:"0123456789abcdef",content:JSON.parse(readFileSync(new URL("../../content/fixtures/basic-v2.json",import.meta.url),"utf8")),selection:{robotId:"robot.scout",terrainId:"terrain.floor"}});
@@ -17,11 +17,12 @@ test("recipe selects actual equipment and rejects unarmed demo without invalidat
 });
 function violations(source:string):string[] {
   const ast=ts.createSourceFile("application.ts",source,ts.ScriptTarget.Latest,true),errors:string[]=[];
+  const allowed=new Set(["@robots/system-api","@robots/runtime","@robots/content","@robots/values/json","@robots/protocol/application/v1","@robots/protocol/content/v2","@robots/protocol/navigation/v1","@robots/protocol/presentation/v1"]);
   const blocked=new Set(["Date","performance","fetch","process","document","window","setTimeout","setInterval","requestAnimationFrame","eval","globalThis","Function"]);
   const visit=(node:ts.Node)=>{
     if(ts.isImportDeclaration(node)||ts.isExportDeclaration(node))if(node.moduleSpecifier&&ts.isStringLiteral(node.moduleSpecifier)){
       const s=node.moduleSpecifier.text;
-      if(!s.startsWith("./")&&s!=="../core/index.ts"&&s!=="../content/index.ts")errors.push(s);
+      if(!s.startsWith("./")&&!allowed.has(s))errors.push(s);
     }
     if(ts.isIdentifier(node)&&blocked.has(node.text))errors.push(node.text);
     if(ts.isPropertyAccessExpression(node)&&node.expression.getText(ast)==="Math"&&node.name.text==="random")errors.push("random");
@@ -31,7 +32,7 @@ function violations(source:string):string[] {
 }
 test("application guard catches clock/I-O, neighboring systems and private core imports",()=>{
   for(const source of ['import x from "../core/scheduler/session.ts";','import x from "../damage/index.ts";','Date.now();','fetch("/");','Math.random();','async function tick() {}'])assert.ok(violations(source).length,source);
-  for(const name of readdirSync(new URL("../../src/application/",import.meta.url)).filter(n=>n.endsWith(".ts")))assert.deepEqual(violations(readFileSync(new URL("../../src/application/"+name,import.meta.url),"utf8")),[],name);
+  for(const name of readdirSync(new URL("../../packages/application-host/src/",import.meta.url)).filter(n=>n.endsWith(".ts")))assert.deepEqual(violations(readFileSync(new URL("../../packages/application-host/src/"+name,import.meta.url),"utf8")),[],name);
 });
 test("invalid budgets, unsafe source data and unknown options never start a context",()=>{
   const a=new ApplicationController({instanceId:"invalid",runtime:"test",recipe:fixtureRecipe()});
@@ -47,5 +48,5 @@ test("the observation bridge cannot expose mutable Map or Set state through its 
     return found;
   }
   assert.deepEqual(mutableCollections("interface Boundary { pending: Set<string> }"),["Set"]);
-  assert.deepEqual(mutableCollections(readFileSync(new URL("../../src/application/assembly.ts",import.meta.url),"utf8")),[]);
+  assert.deepEqual(mutableCollections(readFileSync(new URL(import.meta.resolve("@robots/application-host/assembly")),"utf8")),[]);
 });

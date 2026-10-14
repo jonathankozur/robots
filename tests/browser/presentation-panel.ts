@@ -1,12 +1,12 @@
-import { ApplicationController } from '../../src/application/index.ts';
-import type { ReplayRecording, DebugRecord } from '../../src/core/index.ts';
+import { ApplicationController } from '@robots/application-host';
+import type { ReplayRecording, DebugRecord } from '@robots/runtime';
 import { presentationRecipe, presentationRequest } from '../core/presentation-fixture.ts';
 import { navigationPresets } from '../core/navigation-fixture.ts';
 import type { Scenario, FixtureConfig } from '../core/navigation-fixture.ts';
-import type { View } from '../../src/presentation/data/contracts.ts';
-import { validateManifest } from '../../src/presentation/data/manifest.ts';
+import type { View } from '@robots/protocol/presentation/v1';
+import { validateManifest } from '@robots/protocol/presentation/manifest-v1';
 import manifestData from '../../content/presentation/prototype-v1.json' with { type: 'json' };
-import { PresentationRenderer } from '../../src/presentation/graphics/renderer.ts';
+import { PresentationRenderer } from '@robots/presentation-three/renderer';
 import { runTickBatch } from './navigation-run.ts';
 const escape = (v: unknown) => String(v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 const save = (name: string, data: unknown) => { const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })); const a = document.createElement('a'); a.href = url; a.download = name; a.click(); URL.revokeObjectURL(url); };

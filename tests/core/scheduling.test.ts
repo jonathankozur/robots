@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { Session } from "../../src/core/scheduler/session.ts";
-import { PHASES } from "../../src/core/messaging/contracts.ts";
-import type { Contract, Message, Publisher } from "../../src/core/messaging/contracts.ts";
+import { Session } from "@robots/runtime/session";
+import { PHASES } from "@robots/system-api";
+import type { Contract, Message, Publisher } from "@robots/system-api";
 import { COMMAND, EVENT, options } from "./fixtures.ts";
 
 function exercise(destination: typeof PHASES[number], emission: typeof PHASES[number] = "decision") {

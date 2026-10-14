@@ -1,8 +1,8 @@
-import {ApplicationController} from "../../src/application/index.ts";
-import type {Result as ApplicationResult} from "../../src/application/index.ts";
-import type {DebugRecord,Payload,ReplayRecording} from "../../src/core/index.ts";
-import {parseContentJson} from "../../src/content/index.ts";
-import type {World,Result} from "../../src/navigation/index.ts";
+import {ApplicationController} from "@robots/application-host";
+import type {Result as ApplicationResult} from "@robots/application-host";
+import type {DebugRecord,Payload,ReplayRecording} from "@robots/runtime";
+import {parseContentJson} from "@robots/content";
+import type {World,Result} from "@robots/navigation";
 import {navigationRecipe,navigationPresets,fixtureContent} from "../core/navigation-fixture.ts";
 import type {Scenario,FixtureConfig} from "../core/navigation-fixture.ts";
 import {runTickBatch} from "./navigation-run.ts";

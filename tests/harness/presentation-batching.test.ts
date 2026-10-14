@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import * as THREE from 'three';
-import { batchRigidAsset } from '../../src/presentation/graphics/batching.ts';
+import { batchRigidAsset } from '@robots/presentation-three/batching';
 test('rigid batching reduces repeated same-material meshes while preserving world bounds and sockets', () => {
     const g = new THREE.Group(), material = new THREE.MeshStandardMaterial();
     for (const x of [-1, 1]) {

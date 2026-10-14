@@ -4,8 +4,8 @@ function violations(source:string,shared=false):string[]{
  const blocked=new Set(["Date","performance","fetch","process","document","window","crypto","setTimeout","setInterval","requestAnimationFrame","queueMicrotask","eval","globalThis","Function","Session"]);
  function visit(n:ts.Node):void{
   if(ts.isImportDeclaration(n)||ts.isExportDeclaration(n))if(n.moduleSpecifier&&ts.isStringLiteral(n.moduleSpecifier)){
-   const p=n.moduleSpecifier.text;if(!p.startsWith("./")&&!["../core/index.ts","../application/index.ts","../shared/hex-grid/index.ts","../../core/index.ts"].includes(p))found.push(p);
-   if(shared&&p==="../application/index.ts")found.push("application");
+   const p=n.moduleSpecifier.text;if(!p.startsWith("./")&&!["@robots/system-api","@robots/values/numeric","@robots/values/hex-grid","@robots/values/integers","@robots/protocol/navigation/v1"].includes(p))found.push(p);
+   if(shared&&p==="@robots/protocol/navigation/v1")found.push("application");
   }
   if(ts.isIdentifier(n)&&blocked.has(n.text))found.push(n.text);
   if(ts.isPropertyAccessExpression(n)&&n.expression.getText(ast)==="Math"&&n.name.text==="random")found.push("random");
@@ -16,12 +16,12 @@ function violations(source:string,shared=false):string[]{
 }
 test("navigation and hex utilities retain pure/public boundaries without foreign implementations or clocks",()=>{
  for(const code of ['import x from "../inventory/index.ts";','import {Session} from "../core/index.ts";','Date.now();','Math.random();','fetch("/");','async function loop(){}'])assert.ok(violations(code).length);
- for(const directory of ["../../src/navigation/","../../src/shared/hex-grid/"]){const url=new URL(directory,import.meta.url);for(const name of readdirSync(url).filter(n=>n.endsWith(".ts")))assert.deepEqual(violations(readFileSync(new URL(name,url),"utf8"),directory.includes("shared")),[],name);}
+ for(const directory of ["../../packages/navigation/src/","../../packages/values/src/"]){const url=new URL(directory,import.meta.url);for(const name of readdirSync(url).filter(n=>n.endsWith(".ts")))assert.deepEqual(violations(readFileSync(new URL(name,url),"utf8"),directory.includes("values")),[],name);}
 });
 
 test("public navigation schemas and contract declarations are deeply immutable",async()=>{
- const {BOARD_FIELDS,STEP_FIELDS,navigationContracts}=await import('../../src/navigation/index.ts');
+ const {BOARD_FIELDS,STEP_FIELDS,NAVIGATION_MESSAGES}=await import('@robots/protocol/navigation/v1');
  function frozen(value:unknown):void{if(value!==null&&typeof value==='object'){assert.ok(Object.isFrozen(value));for(const child of Object.values(value))frozen(child);}}
- frozen(BOARD_FIELDS);frozen(STEP_FIELDS);frozen(navigationContracts());
+ frozen(BOARD_FIELDS);frozen(STEP_FIELDS);frozen(NAVIGATION_MESSAGES);
  assert.throws(()=>{(STEP_FIELDS.robotId as any).maxLength=1;},TypeError);
 });

@@ -8,6 +8,10 @@ Un sistema es el único escritor del estado que posee. Otros sistemas conocen he
 
 Un dato recibido conserva origen, revisión o tick según su contrato. La ficha debe indicar qué mensaje inicializa la vista, cómo acepta actualizaciones, cuándo la invalida y qué hace antes de disponer de información válida. No completar información faltante leyendo directamente al productor.
 
+IND-001 concreta esta frontera en [paquetes independientes](system-independence-v1.md). Los sistemas importan puertos neutrales, contratos públicos versionados y utilidades puras; sus dependencias no incluyen implementaciones de otros sistemas ni el runtime. `World` y `Result` pertenecen al protocolo público navigation/v1 en `packages/protocol`, no a la implementación de navegación. Presentación puede recibir datos sintéticos conformes o esperar sin que navegación esté instalada. El host selecciona implementaciones y permisos para cada composición.
+
+Esta independencia conserva el fallo global de sesión ante una violación del protocolo o excepción de un actor. Aislamiento de fallos y procesos separados requieren otro diseño; no fueron autorizados en IND-001.
+
 Los contratos públicos contienen datos, identificadores y semántica. Las utilidades compartidas son puras: entrada explícita, salida explícita, sin reloj, I/O, estado global mutable, instancias de sistemas ni aleatoriedad implícita. La geometría hexagonal puede ser una utilidad pura; el estado de ocupación pertenece a navegación.
 
 El código de ensamblado crea e inyecta bus, scheduler y sistemas. Ningún sistema obtiene el bus mediante un singleton global ni descubre implementaciones vecinas en un contenedor de servicios.

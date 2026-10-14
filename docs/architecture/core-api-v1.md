@@ -1,10 +1,10 @@
 # API del núcleo v1
 
-Revisión: 1.2.0. Encargos autorizados: [BUS-001](../workflow/bus-scheduler-implementation.md), [BUS-002](../workflow/debug-harness-plan.md) y [ENV-001](../workflow/deterministic-environment-v1.md). Esta API implementa [mensajería v1](messaging-v1.md) con fixtures; no incorpora reglas del juego.
+Revisión: 1.3.0. Encargos autorizados: [BUS-001](../workflow/bus-scheduler-implementation.md), [BUS-002](../workflow/debug-harness-plan.md), [ENV-001](../workflow/deterministic-environment-v1.md) e [IND-001](../workflow/system-independence-v1.md). Esta API implementa [mensajería v1](messaging-v1.md); no incorpora reglas del juego.
 
 ## Componentes e interfaz
 
-El punto de entrada del ensamblador es src/core/index.ts. Session mantiene el ciclo de vida y scheduler; Catalogue valida configuración y suscripciones; Bus administra mensajes/rutas; TraceLog conserva evidencia acotada. Cada instancia es propia de una sesión. Los sistemas reciben Publisher; no reciben Session, Bus ni implementaciones vecinas.
+El punto de entrada del ensamblador es `@robots/runtime` (packages/runtime/src/index.ts). `src/core/index.ts` conserva compatibilidad mediante reexports. Session mantiene el ciclo de vida y scheduler; Catalogue valida configuración y suscripciones; Bus administra mensajes/rutas; TraceLog conserva evidencia acotada. Cada instancia es propia de una sesión. Los sistemas reciben Publisher de `@robots/system-api`; no reciben Session, Bus ni implementaciones vecinas. Actor es también un puerto neutral en system-api. Ver [dependencias y montaje](system-independence-v1.md).
 
 | Operación de Session | Uso |
 | --- | --- |
@@ -32,6 +32,10 @@ Unir causas de raíces distintas, repetir una causa o inventar una referencia fa
 ## Catálogo y datos
 
 Cada contrato tiene type, version exacta, kind, producers con fases, fields y, para comandos, responsibleSystemId. Un comando exige una sola inscripción de su responsable. Los eventos admiten cero o varios consumidores. La fase de recepción está en la suscripción y forma parte del manifiesto validado.
+
+`MessageDefinition` describe solamente type, version, kind y fields. El host genera `Contract` mediante `bindMessage` de `@robots/application-host/bindings`, aportando productores/fases y responsable concretos. Las definiciones públicas viven en `@robots/protocol`, separadas de permisos de fixtures y de implementaciones.
+
+IND-001 permite `producers: []` tanto en eventos como en comandos: un consumidor instalado puede esperar sin proveedor. Ningún sistema queda autorizado a publicar ese mensaje. Todo productor declarado debe existir y tener fases válidas; todo comando conserva su único responsable inscrito incluso con cero productores. El catálogo permanece fijo durante la sesión. No se añade registro dinámico ni se permite suplir datos ausentes leyendo a otro sistema.
 
 FieldRule admite string, number, boolean, object y array, además de optional. Las cadenas tienen límites en unidades UTF-16; los números admiten min/max y enteros seguros; los arrays requieren maxLength y regla de items; los objetos exigen campos declarados. Opciones de esquema mal escritas y campos de payload desconocidos se rechazan. Unidades, vigencia y motivos de negocio corresponden a cada ficha de mensaje.
 

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { checkedInteger, checkedAdd, checkedSubtract, checkedMultiply, divideRounded, mulDiv, msToTicks, ticksToMs, parseScaledDecimal } from "../../src/core/determinism/numeric.ts";
+import { checkedInteger, checkedAdd, checkedSubtract, checkedMultiply, divideRounded, mulDiv, msToTicks, ticksToMs, parseScaledDecimal } from "@robots/values/numeric";
 
 test("durations use fixed 50ms ticks, ceil without overflowing an intermediate addition", () => {
   assert.deepEqual([0, 1, 49, 50, 51, 125].map(msToTicks), [0, 1, 1, 1, 2, 3]);

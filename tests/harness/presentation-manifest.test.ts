@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { validateManifest } from '../../src/presentation/data/manifest.ts';
+import { validateManifest } from '@robots/protocol/presentation/manifest-v1';
 const good = () => ({ version: 1, revision: 'v1', assets: [{ resourceId: 'resource.chassis', url: '/assets/presentation/chassis.glb', sha256: 'a'.repeat(64), sockets: ['drive'] }] });
 test('visual manifest rejects foreign URLs, duplicate identifiers/sockets and unknown fields before loading', () => {
     for (const mutation of [(v: any) => v.assets[0].url = 'https://other/a.glb', (v: any) => v.assets.push({ ...v.assets[0] }), (v: any) => v.assets[0].sockets.push('drive'), (v: any) => v.assets[0].extra = true, (v: any) => v.assets[0].sha256 = 'bad']) {

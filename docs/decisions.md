@@ -1,6 +1,6 @@
 # Decisiones y habilitación
 
-Revisión documental: **1.12.0**. Actualización: **14 de octubre de 2026**. Conserva la base documental del 9 de octubre.
+Revisión documental: **1.13.0**. Actualización: **14 de octubre de 2026**. Conserva la base documental del 9 de octubre.
 
 ## Base aprobada
 
@@ -159,3 +159,17 @@ La solicitud «Documentá las decisiones, crea un nuevo branch para trabajar, y 
 ## Estado de esta instalación
 
 Al comenzar esta entrega, la carpeta contenía únicamente el GDD y no era un repositorio Git. Se creó `jonathankozur/robots` como repositorio público, se subió la documentación inicial a `main` y se configuraron protecciones de rama. La configuración actual y los controles aún pendientes están detallados en [colaboración](workflow/collaboration.md#estado-del-repositorio).
+
+## IND-001 — Independencia de sistemas y paquetes
+
+Fecha: 14 de octubre de 2026. Estado: **implementación local entregada para revisión humana**. Responsable humano: Jonathan Kozur. [Tarjeta IND-001](https://trello.com/c/Hw4FTSfv), En desarrollo conforme al encargo. Autorización: «implementa migración en este orden» con cinco pasos, crear tarjeta con plan y rama. Base main e05aac9330ef0579aeacb2ffc886a2622eb058e8. Rama codex/independent-systems en C:/dev/robots por preferencia explícita del usuario.
+
+Se eligen nueve paquetes privados npm workspaces en el mismo repositorio. Puertos y ProtocolError único en system-api; DTO/esquemas/definiciones versionadas en protocol; helpers puros en values. World y Result pertenecen al protocolo navigation/v1 y no requieren importar la implementación de navegación. Navegación y presentación dependen solo de esas tres bibliotecas comunes. Three.js queda en el adaptador presentation-three. Los paquetes tienen manifests, exports, dependencias y tsconfig autónomos; src conserva reexports públicos de compatibilidad.
+
+Las definiciones describen mensajes; el host aporta autorización de productores/fases y responsable, crea participantes y monta el runtime. Se aceptan producers=[] para eventos y comandos conocidos: consumidores instalados esperan, nadie puede emitir, y los comandos mantienen responsable único. Catálogo fijo durante la sesión, propiedad exclusiva del estado, barreras APP y fallo global ante excepción/violación permanecen. Un proveedor alternativo usa el mismo protocolo sin editar al consumidor.
+
+Tradeoff: paquetes dentro del mismo repositorio permiten migrar consumidores conjuntamente y conservar un lockfile; repositorios separados añadirían publicación y coordinación de versiones sin aportar aislamiento adicional al código actual. Configuraciones de tipos autónomas repiten opciones comunes para no requerir archivos externos al paquete. Puentes src facilitan compatibilidad, pero las implementaciones deben editarse en packages y los presets históricos de fixtures no son contratos productivos.
+
+[Arquitectura implementada](architecture/system-independence-v1.md) y [plan/entrega](workflow/system-independence-v1.md): TDD de productores ausentes y controles negativos, 244/244 pruebas finales, nueve paquetes comprobados sin vecinos en directorios aislados, tipos raíz y por paquete sin emisión, 17 referencias previas APP/NAV/PRE que conservan traza/resultados/causalidad/replay. Vite dev desde C:/dev/robots en5174: escena,20 ticks,replay,segunda sesión,cierre y consola aprobados. El servidor viejo en5173 fue excluido al detectar que servía el checkout anterior.
+
+Sin builds ni artefactos compilados/publicables, commit/push/PR/merge. Publicación npm, integración y revisión humana pendientes. Aislamiento de fallos, procesos separados, hot-plug y rollback fuera del alcance. Engram no disponible: la memoria del encargo está en las fuentes compartidas.

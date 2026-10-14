@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { Session } from "../../src/core/index.ts";
-import type { Contract } from "../../src/core/index.ts";
+import { Session } from "@robots/runtime";
+import type { Contract } from "@robots/runtime";
 import { options, COMMAND, EVENT } from "./fixtures.ts";
 
 function fixture(debug = false) {

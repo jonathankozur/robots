@@ -1,6 +1,6 @@
 # Bus y scheduler v1
 
-Revisión documental: **1.2.0**. BUS-001 autoriza el núcleo; BUS-002 autoriza control de ejecución y debug con archivo en el arnés. Implementación con fixtures verificada en Node y Chrome; la integración se rige por COL-001 en [decisiones](../decisions.md), y el gameplay sigue pendiente. Las reglas comunes están en [AGENTS.md](../../AGENTS.md). Ver [decisiones](../decisions.md), [API ejecutable](core-api-v1.md) y [evidencia](../workflow/debug-harness-plan.md).
+Revisión documental: **1.3.0**. BUS-001 autoriza el núcleo; BUS-002 autoriza control de ejecución y debug con archivo en el arnés; IND-001 separa definiciones públicas de bindings y admite consumidores sin productores. Implementación con fixtures verificada en Node y Chrome; la integración se rige por COL-001 en [decisiones](../decisions.md), y el gameplay sigue pendiente. Las reglas comunes están en [AGENTS.md](../../AGENTS.md). Ver [decisiones](../decisions.md), [API ejecutable](core-api-v1.md), [paquetes independientes](system-independence-v1.md) y [evidencia](../workflow/debug-harness-plan.md).
 
 ## Responsabilidades e interfaz conceptual
 
@@ -25,6 +25,7 @@ Cada combinación de nombre y versión tiene una ficha con clase (comando/evento
 
 - Un comando tiene exactamente un sistema responsable y una inscripción para ese contrato. Cero o varios responsables es un error de configuración.
 - Un evento puede tener cero o varios consumidores explícitos. La ausencia de consumidores no lo convierte en un comando ni permite ejecutar una acción implícita.
+- Una definición pública no autoriza productores concretos: el host declara esos permisos en cada composición. Puede declarar cero productores para un mensaje conocido; los consumidores esperan y nadie puede emitirlo. Un comando sigue exigiendo su responsable único instalado. Para añadir un productor se prepara una nueva composición; no se modifica una sesión activa.
 - No se aceptan productores, versiones o destinos fuera del catálogo de la sesión.
 - La carga contiene únicamente datos inmutables y serializables conceptualmente: valores e identificadores. No contiene objetos del motor, conexiones, closures, callbacks ni referencias al estado mutable del productor.
 - La implementación debe impedir que emisor o receptores modifiquen el mensaje admitido. La estrategia concreta de representación se elegirá con el lenguaje.
