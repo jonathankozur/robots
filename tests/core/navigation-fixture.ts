@@ -1,11 +1,12 @@
+import {bindNavigationContracts} from "@robots/application-host/bindings";
 import basic from "../../content/fixtures/basic-v2.json" with {type:"json"};
-import {checkedAdd,ProtocolError} from "../../src/core/index.ts";
-import type {Payload,Publisher,FieldRule,Message} from "../../src/core/index.ts";
-import type {Recipe,Actor,Request} from "../../src/application/index.ts";
-import type {ContentBundle} from "../../src/content/index.ts";
-import {createNavigationActor,navigationContracts,BOARD_FIELDS,WORLD_FIELDS,STEP_FIELDS,RESULT_FIELDS,validateBoard} from "../../src/navigation/index.ts";
-import type {Board,World,Step,Result,RobotState} from "../../src/navigation/index.ts";
-import {findPath,same} from "../../src/shared/hex-grid/index.ts";
+import {checkedAdd,ProtocolError} from "@robots/runtime";
+import type {Payload,Publisher,FieldRule,Message} from "@robots/runtime";
+import type {Recipe,Actor,Request} from "@robots/application-host";
+import type {ContentBundle} from "@robots/content";
+import {createNavigationActor,BOARD_FIELDS,WORLD_FIELDS,STEP_FIELDS,RESULT_FIELDS,validateBoard} from "@robots/navigation";
+import type {Board,World,Step,Result,RobotState} from "@robots/navigation";
+import {findPath,same} from "@robots/values/hex-grid";
 export interface Goal {robotId:string;q:number;r:number}
 export interface RawStep {dueTick:number;step:Step}
 export interface FixtureConfig {configSequence:number;autoEnabled:boolean;goals:readonly Goal[];rawSteps:readonly RawStep[]}
@@ -84,7 +85,7 @@ function observer(identity:Payload):Actor{
  subscriptions:[{type:"NavigationWorldReady",phase:"action",handler(m){if(world)error("Repeated world");world=m.payload as unknown as World;dirty=true;}},{type:"NavigationStepResolved",phase:"action",handler(m){if(!world)error("No world");const result=m.payload as unknown as Result;world=applyResult(world,result);results.push(result);if(results.length>16){results.shift();omitted=checkedAdd(omitted,1);}dirty=true;}}],
  loopPhase:"action",loop(c){if(enabled&&world&&dirty){publisher.emit("NavigationLabObserved",1,{world,observedTick:c.tick,results,omittedResults:omitted} as unknown as Payload,{causes:[]});dirty=false;}}};
 }
-export function navigationRecipe():Recipe{return {id:"navigation.fixture",revision:"navigation-fixture-v1",prepare,contracts:[...navigationContracts(),{type:"ConfigureNavigationFixture",version:1,kind:"command",responsibleSystemId:"navigation-agent-fixture",producers:[{systemId:"app-bootstrap",phases:["input"]}],fields:CONFIG_FIELDS},{type:"NavigationAgentObserved",version:1,kind:"event",producers:[{systemId:"navigation-agent-fixture",phases:["decision"]}],fields:AGENT_FIELDS},{type:"NavigationLabObserved",version:1,kind:"event",producers:[{systemId:"navigation-lab-observer",phases:["action"]}],fields:LAB_FIELDS}],outputTypes:["NavigationLabObserved","NavigationAgentObserved"],participants:[
+export function navigationRecipe():Recipe{return {id:"navigation.fixture",revision:"navigation-fixture-v1",prepare,contracts:[...bindNavigationContracts({navigationId:"navigation",requestProducers:[{systemId:"navigation-agent-fixture",phases:["decision"]}]}),{type:"ConfigureNavigationFixture",version:1,kind:"command",responsibleSystemId:"navigation-agent-fixture",producers:[{systemId:"app-bootstrap",phases:["input"]}],fields:CONFIG_FIELDS},{type:"NavigationAgentObserved",version:1,kind:"event",producers:[{systemId:"navigation-agent-fixture",phases:["decision"]}],fields:AGENT_FIELDS},{type:"NavigationLabObserved",version:1,kind:"event",producers:[{systemId:"navigation-lab-observer",phases:["action"]}],fields:LAB_FIELDS}],outputTypes:["NavigationLabObserved","NavigationAgentObserved"],participants:[
  {id:"navigation",initializationType:"InitializeNavigationBoard",phase:"movement",fields:BOARD_FIELDS,create:createNavigationActor},
  {id:"navigation-agent-fixture",initializationType:"InitializeNavigationAgentFixture",phase:"decision",fields:agentFields,create:agent},
  {id:"navigation-lab-observer",initializationType:"InitializeNavigationObserverFixture",phase:"action",fields:{boardId:str()},create:observer}]};}

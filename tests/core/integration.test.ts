@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { Session } from "../../src/core/index.ts";
-import type { Contract, Message, Publisher } from "../../src/core/index.ts";
+import { Session } from "@robots/runtime";
+import type { Contract, Message, Publisher } from "@robots/runtime";
 import { COMMAND, EVENT, options } from "./fixtures.ts";
 
 test("external input to input is immediate at the cut; internal input to input waits a tick", () => {

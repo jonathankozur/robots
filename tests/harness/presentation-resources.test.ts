@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ResourcePool } from '../../src/presentation/graphics/resources.ts';
+import { ResourcePool } from '@robots/presentation-three/resources';
 test('visual resources are shared until their final lease releases, exactly once', async () => {
     let loaded = 0, disposed = 0;
     const p = new ResourcePool(async () => { loaded++; return {}; }, () => disposed++);

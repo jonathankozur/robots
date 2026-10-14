@@ -1,9 +1,9 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { ApplicationController } from '../../src/application/index.ts';
+import { ApplicationController } from '@robots/application-host';
 import { presentationRecipe, presentationRequest } from './presentation-fixture.ts';
 import { navigationPresets } from './navigation-fixture.ts';
-import type { View } from '../../src/presentation/data/contracts.ts';
+import type { View } from '@robots/protocol/presentation/v1';
 const app = () => new ApplicationController({ instanceId: 'pre', runtime: 'pre-tests', recipe: presentationRecipe() });
 const view = (a: ApplicationController) => a.snapshot().observations.presentation as unknown as View;
 function boot(a: ApplicationController, data = presentationRequest()) { const r = a.request(data); assert.equal(r.ok, true, JSON.stringify(r)); assert.equal(a.advance().ok, true); assert.equal(a.advance().ok, true); }

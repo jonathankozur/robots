@@ -1,6 +1,6 @@
-import { Session, createSimulationEnvironment, nextInt, chance, parseScaledDecimal, mulDiv, checkedAdd, msToTicks } from "../../src/core/index.ts";
-import type { Publisher, Contract, Payload } from "../../src/core/index.ts";
-import { snapshotData } from "../../src/core/messaging/immutable.ts";
+import { Session, createSimulationEnvironment, nextInt, chance, parseScaledDecimal, mulDiv, checkedAdd, msToTicks } from "@robots/runtime";
+import type { Publisher, Contract, Payload } from "@robots/runtime";
+import { snapshotData } from "@robots/values/json";
 
 export const DEFAULT_SEED = "0123456789abcdef";
 export const FIXTURE_TICKS = 6;

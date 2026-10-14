@@ -4,8 +4,8 @@ import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import * as THREE from 'three';
-import { validateManifest } from '../../src/presentation/data/manifest.ts';
-import { validateContentBundle } from '../../src/content/index.ts';
+import { validateManifest } from '@robots/protocol/presentation/manifest-v1';
+import { validateContentBundle } from '@robots/content';
 const manifest = validateManifest(JSON.parse(readFileSync(new URL('../../content/presentation/prototype-v1.json', import.meta.url), 'utf8')));
 test('Blender GLB exports are self contained, match their digests and expose unique sockets with correct axes', async () => {
     const loaded = new Map<string, THREE.Group>();

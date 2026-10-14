@@ -1,10 +1,10 @@
-import { ApplicationController } from "../../src/application/index.ts";
-import type { Request, Result } from "../../src/application/index.ts";
-import { parseContentJson } from "../../src/content/index.ts";
+import { ApplicationController } from "@robots/application-host";
+import type { Request, Result } from "@robots/application-host";
+import { parseContentJson } from "@robots/content";
 import { fixtureRecipe, nav, combat } from "../core/application-fixture.ts";
 import type { Mode } from "../core/application-fixture.ts";
 import basic from "../../content/fixtures/basic-v2.json" with { type:"json" };
-import type { DebugRecord } from "../../src/core/index.ts";
+import type { DebugRecord } from "@robots/runtime";
 
 export function mountApplicationPanel(container:HTMLElement):void {
   container.innerHTML='<section class="application-panel"><div class="section-title"><div><span class="eyebrow">CICLO DE APLICACIÓN / APP-001</span><h2>Preparar, iniciar y cerrar encuentros</h2></div><span>Laboratorio de desarrollo</span></div>'

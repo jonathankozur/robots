@@ -1,6 +1,6 @@
 # Laboratorio del bus y scheduler
 
-Herramienta local de desarrollo y prueba manual. Ejecuta el núcleo real, catálogo, ciclo de aplicación y Navegación con fixtures independientes y estado propio. No contiene el juego completo ni modelos 3D.
+Herramienta local de desarrollo y prueba manual. Ejecuta los paquetes reales de núcleo, catálogo, ciclo de aplicación, navegación y presentación con fixtures independientes y estado propio. Incluye los modelos 3D de PRE-001; el juego completo sigue pendiente.
 
 ## Iniciar
 
@@ -11,6 +11,8 @@ npm run browser:harness
 ```
 
 Abrir http://127.0.0.1:5173/. El servidor usa Vite en desarrollo; transforma TypeScript al servirlo y no ejecuta un build de producción. Ctrl+C detiene el servidor. Los archivos se escriben en debug-logs/ de este checkout, no en el directorio del navegador.
+
+IND-001 conserva los presets, mensajes y permisos actuales. El laboratorio monta paquetes mediante sus entradas `@robots/*` y autoriza explícitamente sus fixtures desde el host. Las implementaciones canónicas están en `packages/`; `src/` conserva puentes para consumidores antiguos. Ver [arquitectura de paquetes](../../docs/architecture/system-independence-v1.md). `npm run test:isolated` comprueba paquetes sin las fuentes de los vecinos; no hace falta crear otros repositorios para trabajar en C:/dev/robots.
 
 ## Primera prueba manual
 

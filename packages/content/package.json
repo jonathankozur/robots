@@ -1,0 +1,29 @@
+{
+  "name": "@robots/content",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.12.0 <25"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./canonical": "./src/canonical.ts",
+    "./catalog": "./src/catalog.ts",
+    "./references": "./src/references.ts",
+    "./schema": "./src/schema.ts",
+    "./validation": "./src/validation.ts"
+  },
+  "dependencies": {
+    "@robots/system-api": "0.1.0",
+    "@robots/values": "0.1.0",
+    "@robots/protocol": "0.1.0"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@types/node": "24.10.15"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  }
+}

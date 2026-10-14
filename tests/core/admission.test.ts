@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { snapshotPayload } from "../../src/core/messaging/immutable.ts";
-import { Session } from "../../src/core/scheduler/session.ts";
+import { snapshotPayload } from "@robots/values/json";
+import { Session } from "@robots/runtime/session";
 import { COMMAND, options } from "./fixtures.ts";
-import type { Payload } from "../../src/core/messaging/contracts.ts";
+import type { Payload } from "@robots/system-api";
 
 test("admitted nested values are detached, deeply frozen and stable", () => {
   const original = { robot: { hp: 100 }, positions: [1, 2] };

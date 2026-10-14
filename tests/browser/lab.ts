@@ -1,5 +1,5 @@
-import { PHASES } from "../../src/core/index.ts";
-import type { Message, Phase, ReplayRecording, TraceEntry } from "../../src/core/index.ts";
+import { PHASES } from "@robots/runtime";
+import type { Message, Phase, ReplayRecording, TraceEntry } from "@robots/runtime";
 import { createLab, validateScenario, presets, compareRuns } from "./scenarios.ts";
 import type { Lab, Scenario, Rule, Action } from "./scenarios.ts";
 import { DebugFile } from "./debug-client.ts";

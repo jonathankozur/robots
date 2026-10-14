@@ -1,0 +1,28 @@
+{
+  "name": "@robots/protocol",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.12.0 <25"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./navigation/v1": "./src/navigation/v1.ts",
+    "./presentation/v1": "./src/presentation/v1.ts",
+    "./presentation/manifest-v1": "./src/presentation/manifest-v1.ts",
+    "./application/v1": "./src/application/v1.ts",
+    "./content/v2": "./src/content/v2.ts"
+  },
+  "dependencies": {
+    "@robots/system-api": "0.1.0",
+    "@robots/values": "0.1.0"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@types/node": "24.10.15"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  }
+}

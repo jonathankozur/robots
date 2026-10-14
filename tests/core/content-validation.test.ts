@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { readFileSync } from "node:fs";
-import { parseContentJson, validateContentBundle, CONTENT_LIMITS } from "../../src/content/index.ts";
-import type { ContentResult } from "../../src/content/index.ts";
+import { parseContentJson, validateContentBundle, CONTENT_LIMITS } from "@robots/content";
+import type { ContentResult } from "@robots/content";
 const text = readFileSync(new URL("../../content/fixtures/basic-v2.json", import.meta.url), "utf8");
 const fresh = () => JSON.parse(text);
 function issues(result: ContentResult) { assert.equal(result.ok, false); if (result.ok) throw new Error("Expected rejection"); assert.equal("content" in result, false); return result.issues; }

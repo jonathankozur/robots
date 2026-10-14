@@ -2,7 +2,7 @@
 
 El proyecto está en diseño. El [GDD preliminar](diseno_autobattler_robots.md) conserva su contenido original y distingue conceptos, propuestas y decisiones abiertas.
 
-Esta entrega incorpora el núcleo ejecutable de mensajería y scheduler, con pruebas de contratos, aislamiento y replay. La tecnología aprobada es TypeScript con Three.js para presentación 3D y Electron para escritorio; esas integraciones y el gameplay siguen pendientes. La rama pública `main` requiere PR y revisión; ver la [configuración actual y los pendientes](docs/workflow/collaboration.md#estado-del-repositorio). Los checks automáticos de PR aún requieren workflows propios.
+El código implementado incluye mensajería y scheduler, contenido, ciclo de aplicación, navegación y presentación 3D de evaluación. Vive en **`packages/`**, dentro de este mismo proyecto. La tecnología aprobada es TypeScript con Three.js y Electron; la aplicación de escritorio y el gameplay completo siguen pendientes. La rama pública `main` requiere PR y revisión; ver la [configuración actual y los pendientes](docs/workflow/collaboration.md#estado-del-repositorio). Los checks automáticos de PR aún requieren workflows propios.
 
 ## Para empezar
 
@@ -22,6 +22,8 @@ Esta entrega incorpora el núcleo ejecutable de mensajería y scheduler, con pru
 | [Fichas](docs/workflow/templates.md) | Encargo, plan, sistema, mensaje y reporte de entrega. |
 | [Aceptación](docs/workflow/acceptance.md) | Escenarios para revisar el protocolo y convertirlo después en pruebas. |
 | [API del núcleo](docs/architecture/core-api-v1.md) | Configuración, puertos, límites, errores y reproducción. |
+| [Paquetes independientes](docs/architecture/system-independence-v1.md) | Ubicación del código, contratos comunes, dependencias y montaje del host. |
+| [Entrega IND-001](docs/workflow/system-independence-v1.md) | Plan autorizado y evidencia de migración y ejecución aislada. |
 | [Entrega BUS-001](docs/workflow/bus-scheduler-implementation.md) | Autorización, alcance, evidencia TDD y pendientes de integración. |
 
 ## Ejecutar las verificaciones
@@ -32,11 +34,13 @@ En Node.js 24.12 o posterior de la línea 24:
 npm ci --ignore-scripts --no-audit --no-fund
 npm test
 npm run typecheck
+npm run typecheck:packages
+npm run test:isolated
 ```
 
-Las pruebas ejecutan TypeScript con tipos borrables mediante Node; la comprobación de tipos usa tsc --noEmit. Ninguno de estos comandos genera un build. No hay dependencias runtime ni script de build. La evaluación de BUS-001 se ejecutó en Node.js 24.14.0 con TypeScript 5.9.3.
+Las pruebas ejecutan TypeScript con tipos borrables mediante Node; la comprobación de tipos usa tsc --noEmit. Ninguno de estos comandos genera un build. Cada paquete declara sus dependencias; Three.js pertenece al adaptador gráfico. No hay script de build. IND-001 se comprobó en Node.js 24.14.0 con TypeScript 5.9.3.
 
-El ensamblador importa [src/core/index.ts](src/core/index.ts). Cada sistema recibe únicamente su Publisher y datos inmutables. El ensamblador conserva Session, registra handlers y controla los ticks. Ver [un ejemplo probado](tests/core/replay.test.ts).
+El ensamblador importa `@robots/runtime` y `@robots/application-host`. Cada sistema importa el puerto de `@robots/system-api`, contratos de `@robots/protocol` y utilidades puras de `@robots/values`. El host conserva Session, autoriza productores, registra handlers y controla los ticks. Ver [un ejemplo probado](tests/packages/composition.test.ts). Las entradas antiguas de `src/` son puentes de compatibilidad: editar la implementación canónica en `packages/`.
 
 ### Harness de navegador del núcleo
 

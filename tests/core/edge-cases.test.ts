@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { Session } from "../../src/core/scheduler/session.ts";
-import { snapshotPayload } from "../../src/core/messaging/immutable.ts";
-import type { Contract, FieldRule, JsonValue, Message, Publisher } from "../../src/core/messaging/contracts.ts";
+import { Session } from "@robots/runtime/session";
+import { snapshotPayload } from "@robots/values/json";
+import type { Contract, FieldRule, JsonValue, Message, Publisher } from "@robots/system-api";
 import { COMMAND, EVENT, options } from "./fixtures.ts";
 
 test("two command receivers are rejected; versions and field rules are checked before activation", () => {

@@ -1,4 +1,4 @@
-import type { Session, DebugRecord } from "../../src/core/index.ts";
+import type { Session, DebugRecord } from "@robots/runtime";
 export class DebugFile {
   id = "";
   path = "";

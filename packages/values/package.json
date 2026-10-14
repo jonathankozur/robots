@@ -1,0 +1,27 @@
+{
+  "name": "@robots/values",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24.12.0 <25"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./json": "./src/json.ts",
+    "./integers": "./src/integers.ts",
+    "./numeric": "./src/numeric.ts",
+    "./rng": "./src/rng.ts",
+    "./hex-grid": "./src/hex-grid.ts"
+  },
+  "dependencies": {
+    "@robots/system-api": "0.1.0"
+  },
+  "devDependencies": {
+    "typescript": "5.9.3",
+    "@types/node": "24.10.15"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  }
+}

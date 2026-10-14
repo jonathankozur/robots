@@ -1,9 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { createSimulationEnvironment, validateEnvironment } from "../../src/core/determinism/environment.ts";
-import { Session, ProtocolError } from "../../src/core/index.ts";
-import type { SimulationEnvironment } from "../../src/core/messaging/contracts.ts";
-import { checkedAdd } from "../../src/core/determinism/numeric.ts";
+import { createSimulationEnvironment, validateEnvironment } from "@robots/runtime/environment";
+import { Session, ProtocolError } from "@robots/runtime";
+import type { SimulationEnvironment } from "@robots/system-api";
+import { checkedAdd } from "@robots/values/numeric";
 const systems = [{ id: "a" }, { id: "b" }, { id: "adapter", kind: "adapter" as const }];
 const declarations = [{ systemId: "b", purpose: "sample" }, { systemId: "a", purpose: "sample" }];
 const seed = "0123456789abcdef";

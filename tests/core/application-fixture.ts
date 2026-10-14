@@ -1,6 +1,6 @@
-import { ProtocolError } from "../../src/core/index.ts";
-import type { Payload, Publisher, Contract, FieldRule } from "../../src/core/index.ts";
-import type { Recipe } from "../../src/application/index.ts";
+import { ProtocolError } from "@robots/runtime";
+import type { Payload, Publisher, Contract, FieldRule } from "@robots/runtime";
+import type { Recipe } from "@robots/application-host";
 export const nav="app-navigation-fixture", combat="app-combat-fixture";
 const text={type:"string",minLength:1,maxLength:128} as const;
 const number={type:"number",integer:true,min:0} as const;

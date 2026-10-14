@@ -1,5 +1,5 @@
 {
-  "name": "robots-core",
+  "name": "robots-workspace",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -7,17 +7,31 @@
     "node": ">=24.12.0 <25"
   },
   "scripts": {
-    "test": "node --test tests/core/*.test.ts tests/harness/*.test.ts",
+    "test": "node --test tests/core/*.test.ts tests/harness/*.test.ts tests/packages/*.test.ts packages/*/test/*.test.ts",
     "typecheck": "tsc --noEmit",
-    "browser:harness": "node scripts/harness-server.ts"
+    "browser:harness": "node scripts/harness-server.ts",
+    "typecheck:packages": "node scripts/typecheck-packages.ts",
+    "test:isolated": "node --test tests/packages/isolated.test.ts"
   },
   "devDependencies": {
     "@types/node": "24.10.15",
     "@types/three": "0.186.0",
     "typescript": "5.9.3",
-    "vite": "8.3.4"
+    "vite": "8.3.4",
+    "three": "0.186.1"
   },
   "dependencies": {
-    "three": "0.186.1"
-  }
+    "@robots/system-api": "0.1.0",
+    "@robots/values": "0.1.0",
+    "@robots/protocol": "0.1.0",
+    "@robots/runtime": "0.1.0",
+    "@robots/navigation": "0.1.0",
+    "@robots/presentation": "0.1.0",
+    "@robots/presentation-three": "0.1.0",
+    "@robots/content": "0.1.0",
+    "@robots/application-host": "0.1.0"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }

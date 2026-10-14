@@ -4,10 +4,11 @@ import { readdirSync, readFileSync } from "node:fs";
 import { dirname, resolve, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 import ts from "typescript";
-import { Session } from "../../src/core/index.ts";
+import { Session } from "@robots/runtime";
 import { options } from "./fixtures.ts";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
+const allowed = new Set(["@robots/system-api","@robots/values/json","@robots/values/numeric","@robots/values/rng"]);
 const forbidden = new Set([
   "Date", "performance", "crypto", "process", "window", "document", "fetch", "WebSocket",
   "Worker", "setTimeout", "setInterval", "queueMicrotask", "requestAnimationFrame", "console", "Buffer", "require", "eval",
@@ -18,12 +19,12 @@ function violations(source: string, file: string): string[] {
   function visit(node: ts.Node): void {
     if (ts.isImportDeclaration(node) || ts.isExportDeclaration(node)) {
       const specifier = node.moduleSpecifier;
-      if (specifier && ts.isStringLiteral(specifier) && (!specifier.text.startsWith(".") || !specifier.text.endsWith(".ts"))) {
+      if (specifier && ts.isStringLiteral(specifier) && (!specifier.text.startsWith(".") && !allowed.has(specifier.text) || specifier.text.startsWith(".") && !specifier.text.endsWith(".ts"))) {
         errors.push("External or implicit import: " + specifier.text);
       }
       if (specifier && ts.isStringLiteral(specifier) && specifier.text.startsWith(".")) {
         const target = resolve(dirname(file), specifier.text);
-        const path = relative(resolve(root, "src/core"), target);
+        const path = relative(resolve(root, "packages/runtime/src"), target);
         if (path.startsWith(".." + sep) || path === "..") errors.push("Core import escapes its boundary");
       }
     }
@@ -43,7 +44,7 @@ function files(folder: string): string[] {
     entry.isDirectory() ? files(resolve(folder, entry.name)) : entry.name.endsWith(".ts") ? [resolve(folder, entry.name)] : []);
 }
 test("architecture control detects forbidden capabilities and dependencies", () => {
-  const path = resolve(root, "src/core/example.ts");
+  const path = resolve(root, "packages/runtime/src/example.ts");
   for (const code of [
     'import { randomUUID } from "node:crypto";', 'import { Vector3 } from "three";',
     'import "../systems/navigation.ts";', 'const now = Date.now();', 'const value = Math.random();',
@@ -51,8 +52,8 @@ test("architecture control detects forbidden capabilities and dependencies", () 
   ]) assert.ok(violations(code, path).length > 0, code);
   assert.deepEqual(violations('import type { Message } from "./messaging/contracts.ts"; const x = 1 + 2;', path), []);
 });
-test("core has only local imports and no visual, clock, I/O or randomness dependencies", () => {
-  const core = files(resolve(root, "src/core"));
+test("runtime imports only its modules, neutral API and pure helpers without visual, clock, I/O or randomness dependencies", () => {
+  const core = files(resolve(root, "packages/runtime/src"));
   assert.ok(core.length > 0);
   for (const path of core) assert.deepEqual(violations(readFileSync(path, "utf8"), path), [], relative(root, path));
 });
@@ -64,7 +65,7 @@ test("system-facing port has only immutable send/emit capabilities", () => {
   assert.throws(() => { (port as unknown as { advanceTick: () => void }).advanceTick = () => {}; }, TypeError);
 });
 test("contracts do not import infrastructure; infrastructure is absent from a publisher's public type", () => {
-  const source = readFileSync(resolve(root, "src/core/messaging/contracts.ts"), "utf8");
+  const source = readFileSync(resolve(root, "packages/system-api/src/index.ts"), "utf8");
   const ast = ts.createSourceFile("contracts.ts", source, ts.ScriptTarget.Latest, true);
   assert.ok(!ast.statements.some(node => ts.isImportDeclaration(node)));
   const publisher = ast.statements.find(node => ts.isInterfaceDeclaration(node) && node.name.text === "Publisher");

@@ -1,2 +1,2 @@
-export { ApplicationController } from "./controller.ts";
-export type { Actor, Participant, Recipe, Request, RestoredParts, ApplicationState, ApplicationSnapshot, Result } from "./contracts.ts";
+// Compatibility entry; implementation lives in packages/.
+export * from "@robots/application-host";
