@@ -140,6 +140,10 @@ No ejecutados: builds, empaquetado compilado/publicable, instalación desde un r
 
 ### Recuperación y próximos pasos
 
-Los cambios permanecen locales y sin commit, push, PR o merge. Preservados event-bus/, .playwright-mcp/ y pre-001-initial.png. Para continuar: revisar esta rama y la arquitectura IND-001; integración GitHub requiere autorización explícita. No descartar indiscriminadamente archivos locales para revertir: comparar con la base e05aac9 y conservar las fuentes/evidencias propias de este encargo antes de retirar cambios.
+Al presentar originalmente esta ficha, la entrega estaba local y aguardaba autorización para commit, push, PR y merge. Los archivos ajenos event-bus/, .playwright-mcp/ y pre-001-initial.png se preservaron.
 
 Limitaciones vigentes: dependencia semántica de los protocolos comunes, IDs estables de actores actuales y fallo global de sesión. No se implementaron hot-plug, reinicio de actores, procesos separados, rollback ni aislar fallos. Compilación de distribución requiere excepción explícita a la regla de no builds. Engram no está disponible; plan, decisiones, resultados y continuidad están conservados en archivos compartidos y la tarjeta.
+
+### Integración posterior
+
+14 de octubre de 2026: el responsable humano autorizó explícitamente commit, push, PR y merge. Commit de implementación `557878289ab9cda34f1a537cef5ccf867a0316be` en `codex/independent-systems`; [PR #7](https://github.com/jonathankozur/robots/pull/7), título `feat(architecture): decouple robot systems into packages`, integrado por squash. Commit integrado en main: `ab70a91d4545d19327d3fac98ff0c7e1b53ed58e`. La rama local `main` en C:/dev/robots se actualizó por fast-forward al mismo commit. No hubo checks requeridos ni conversaciones abiertas. La rama remota de trabajo se dejó intacta.
