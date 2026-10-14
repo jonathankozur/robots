@@ -6,7 +6,7 @@ import { Session } from "../../src/core/index.ts";
 import type { Payload } from "../../src/core/index.ts";
 import { options } from "./fixtures.ts";
 import { validateContentBundle } from "../../src/content/index.ts";
-const fresh = () => JSON.parse(readFileSync(new URL("../../content/fixtures/basic-v1.json", import.meta.url), "utf8"));
+const fresh = () => JSON.parse(readFileSync(new URL("../../content/fixtures/basic-v2.json", import.meta.url), "utf8"));
 function recorded() {
   const original = createContentFixture(fresh()); original.session.start(); original.initialize();
   for (let i = 0; i < 3; i++) original.session.advanceTick();
@@ -23,7 +23,7 @@ test("owners receive only their minimal content via deferred messages in declare
   assert.equal(fixture.session.trace().entries.filter(e => e.kind === "external_admitted").length, 2);
   fixture.session.advanceTick();
   const { navigation, combat } = fixture.snapshot();
-  assert.equal(navigation!.moveDurationTicks, 3); assert.equal(combat!.impactUnits, 2500);
+  assert.equal(navigation!.moveCooldownTicks, 3); assert.equal(combat!.impactUnits, 2500);
   assert.equal("definitions" in navigation!, false); assert.equal("integrityUnits" in navigation!, false); assert.equal("passable" in combat!, false);
   assert.ok(Object.isFrozen(navigation)); assert.ok(Object.isFrozen(combat));
   assert.deepEqual(fixture.session.trace().entries.flatMap(e => e.kind === "consumption_finished" && "phase" in e ? [e.phase] : []), ["movement", "resolution"]);
@@ -64,7 +64,7 @@ test("replay rejects changed content, reused revision, ID, revision and runtime;
   const changed = [
     (d: ReturnType<typeof fresh>) => { d.definitions.weapons[0].impactUnits++; },
     (d: ReturnType<typeof fresh>) => { d.bundleId = "bundle.other"; },
-    (d: ReturnType<typeof fresh>) => { d.contentRevision = "lab-2"; },
+    (d: ReturnType<typeof fresh>) => { d.contentRevision = "lab-3"; },
   ];
   for (const mutate of changed) { const d = fresh(); mutate(d); const replay = createContentFixture(d); replay.session.loadReplay(recording); assert.throws(() => replay.session.start(), { code: "REPLAY_INVALID" }); }
   const runtime = createContentFixture(fresh(), { runtime: "another-runtime" }); runtime.session.loadReplay(recording); assert.throws(() => runtime.session.start(), { code: "REPLAY_INVALID" });
@@ -75,7 +75,7 @@ test("reinitialization and content mismatches fail the owning callback without c
   const repeated = createContentFixture(fresh()); repeated.session.start(); repeated.initialize(); repeated.session.advanceTick(); const retained = repeated.snapshot();
   repeated.initialize(); assert.throws(() => repeated.session.advanceTick(), { code: "CONTENT_INIT_DUPLICATE" }); assert.deepEqual(repeated.snapshot(), retained);
   const { recording } = recorded();
-  for (const change of [{ contentRevision: "lab-2" }, { moveDurationTicks: 9 }]) {
+  for (const change of [{ contentRevision: "lab-3" }, { moveCooldownTicks: 9 }]) {
     const wrong = createContentFixture(fresh()); wrong.session.start();
     const input = recording.inputs[0]!.input; wrong.session.stageExternalInput("content-bootstrap", { ...input, payload: { ...input.payload, ...change } });
     assert.throws(() => wrong.session.advanceTick(), { code: "CONTENT_INIT_MISMATCH" });
@@ -92,7 +92,7 @@ test("the initial session envelope budget is enforced even for an individually v
   const data = fresh(), target = 1_048_576 - 256;
   let bytes = JSON.stringify(data).length;
   for (let n = 0; bytes < target; n++) {
-    const resource = { schemaVersion: 1, id: "resource.pad-" + n, name: "Budget resource", sockets: Array.from({ length: 64 }, (_, i) => "s" + String(i).padStart(2, "0") + "x".repeat(61)) };
+    const resource = { schemaVersion: 2, id: "resource.pad-" + n, name: "Budget resource", sockets: Array.from({ length: 64 }, (_, i) => "s" + String(i).padStart(2, "0") + "x".repeat(61)) };
     data.vocabularies.resources.push(resource); bytes += JSON.stringify(resource).length + 1;
   }
   const last = data.vocabularies.resources.at(-1)!;

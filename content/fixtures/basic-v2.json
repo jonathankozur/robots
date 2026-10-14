@@ -1,64 +1,64 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 2,
   "bundleId": "bundle.lab",
-  "contentRevision": "lab-1",
+  "contentRevision": "lab-2",
   "vocabularies": {
     "rarities": [
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "rarity.standard",
         "name": "Standard fixture"
       },
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "rarity.special",
         "name": "Special fixture"
       }
     ],
     "technologies": [
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "technology.prototype",
         "name": "Prototype fixture"
       },
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "technology.advanced",
         "name": "Advanced fixture"
       }
     ],
     "mountTypes": [
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "mount.internal",
         "name": "Internal"
       },
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "mount.drive",
         "name": "Drive"
       },
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "mount.weapon",
         "name": "Weapon"
       }
     ],
     "sizes": [
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "size.small",
         "name": "Small"
       },
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "size.large",
         "name": "Large"
       }
     ],
     "resources": [
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "resource.chassis",
         "name": "Chassis placeholder",
         "sockets": [
@@ -71,7 +71,7 @@
         ]
       },
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "resource.pulse",
         "name": "Weapon placeholder",
         "sockets": []
@@ -81,7 +81,7 @@
   "definitions": {
     "chassis": [
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "chassis.lab",
         "name": "Basic lab",
         "rarityId": "rarity.standard",
@@ -138,7 +138,7 @@
     ],
     "cores": [
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "core.basic",
         "name": "Basic core",
         "rarityId": "rarity.standard",
@@ -153,7 +153,7 @@
     ],
     "locomotions": [
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "locomotion.wheels",
         "name": "Wheels",
         "rarityId": "rarity.standard",
@@ -163,12 +163,12 @@
           "sizeId": "size.large"
         },
         "energyCostUnits": 20000,
-        "moveDurationTicks": 3
+        "moveCooldownTicks": 3
       }
     ],
     "ais": [
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "ai.observe",
         "name": "Observer",
         "rarityId": "rarity.standard",
@@ -183,7 +183,7 @@
     ],
     "sensors": [
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "sensor.basic",
         "name": "Basic sensor",
         "rarityId": "rarity.standard",
@@ -198,7 +198,7 @@
     ],
     "weapons": [
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "weapon.pulse",
         "name": "Pulse",
         "rarityId": "rarity.standard",
@@ -219,13 +219,13 @@
     ],
     "terrains": [
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "terrain.floor",
         "name": "Floor",
         "passable": true
       },
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "terrain.wall",
         "name": "Wall",
         "passable": false
@@ -233,7 +233,7 @@
     ],
     "robots": [
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "robot.scout",
         "name": "Scout",
         "chassisId": "chassis.lab",
@@ -261,7 +261,7 @@
         ]
       },
       {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "id": "robot.unarmed",
         "name": "Unarmed",
         "chassisId": "chassis.lab",

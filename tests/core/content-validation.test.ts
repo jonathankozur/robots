@@ -3,7 +3,7 @@ import test from "node:test";
 import { readFileSync } from "node:fs";
 import { parseContentJson, validateContentBundle, CONTENT_LIMITS } from "../../src/content/index.ts";
 import type { ContentResult } from "../../src/content/index.ts";
-const text = readFileSync(new URL("../../content/fixtures/basic-v1.json", import.meta.url), "utf8");
+const text = readFileSync(new URL("../../content/fixtures/basic-v2.json", import.meta.url), "utf8");
 const fresh = () => JSON.parse(text);
 function issues(result: ContentResult) { assert.equal(result.ok, false); if (result.ok) throw new Error("Expected rejection"); assert.equal("content" in result, false); return result.issues; }
 function rejects(value: unknown, code: string, path?: string) {
@@ -18,7 +18,7 @@ test("validated JSON preserves the complete prototype definitions", () => {
 });
 test("syntax, non-string text and repeated JSON object keys are rejected explicitly", () => {
   for (const source of ["{", 17, null]) assert.ok(issues(parseContentJson(source)).some(i => i.code === "CONTENT_JSON"));
-  const repeated = text.replace('"schemaVersion": 1', '"schemaVersion": 2, "schemaVersion": 1');
+  const repeated = text.replace('"schemaVersion": 2', '"schemaVersion": 2, "schemaVersion": 2');
   assert.ok(issues(parseContentJson(repeated)).some(i => i.code === "CONTENT_DUPLICATE_KEY"));
   assert.equal(parseContentJson(text.replace('"name": "Basic lab"', '"name": "String with \\"key\\": inside"')).ok, true);
 });
@@ -37,7 +37,7 @@ test("unknown and missing fields have precise deterministic diagnostic paths", (
   assert.deepEqual(found.map(i => i.path), [...found.map(i => i.path)].sort());
 });
 test("unsupported bundle and family schemas are never defaulted", () => {
-  const data = fresh(); data.schemaVersion = 2; data.definitions.weapons[0].schemaVersion = 2;
+  const data = fresh(); data.schemaVersion = 3; data.definitions.weapons[0].schemaVersion = 3;
   rejects(data, "CONTENT_VERSION", "$.schemaVersion");
   rejects(data, "CONTENT_VERSION", "$.definitions.weapons[0].schemaVersion");
 });
@@ -69,4 +69,15 @@ test("diagnostics have an explicit bound and successful results never escape wit
 test("visual and component nested fields are strict and executable behaviors are not data", () => {
   const data = fresh(); data.definitions.weapons[0].visual.extra = true; data.definitions.ais[0].behaviorId = "return attack()";
   rejects(data, "CONTENT_UNKNOWN_FIELD"); rejects(data, "CONTENT_FIELD");
+});
+
+test("CAT-002 accepts explicit cooldown v2 and rejects legacy, mixed versions and invalid cooldown", () => {
+  const v2=fresh();
+  function upgrade(value: any): void { if(value && typeof value==='object'){ if(Object.hasOwn(value,'schemaVersion'))value.schemaVersion=2; if(Object.hasOwn(value,'moveDurationTicks')){value.moveCooldownTicks=value.moveDurationTicks;delete value.moveDurationTicks;} for(const child of Object.values(value))upgrade(child); } }
+  upgrade(v2); v2.contentRevision='lab-2';
+  assert.equal(validateContentBundle(v2).ok,true);
+  const legacy=structuredClone(v2);function downgrade(value:any):void{if(value&&typeof value==="object"){if(Object.hasOwn(value,"schemaVersion"))value.schemaVersion=1;if(Object.hasOwn(value,"moveCooldownTicks")){value.moveDurationTicks=value.moveCooldownTicks;delete value.moveCooldownTicks;}for(const child of Object.values(value))downgrade(child);}}downgrade(legacy);legacy.contentRevision="lab-1";assert.equal(validateContentBundle(legacy).ok,false);
+  const mixed=structuredClone(v2);mixed.definitions.locomotions[0].schemaVersion=1;assert.equal(validateContentBundle(mixed).ok,false);
+  for(const n of [0,-1,1.5]){const wrong=structuredClone(v2);wrong.definitions.locomotions[0].moveCooldownTicks=n;assert.equal(validateContentBundle(wrong).ok,false);}
+  const oldField=structuredClone(v2);oldField.definitions.locomotions[0].moveDurationTicks=3;assert.equal(validateContentBundle(oldField).ok,false);
 });

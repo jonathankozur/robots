@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { ApplicationController } from "../../src/application/index.ts";
 import { fixtureRecipe, nav, combat } from "./application-fixture.ts";
-const request=(requestId="run")=>({requestId,seed:"0123456789abcdef",content:JSON.parse(readFileSync(new URL("../../content/fixtures/basic-v1.json",import.meta.url),"utf8")),selection:{robotId:"robot.scout",terrainId:"terrain.floor"}});
+const request=(requestId="run")=>({requestId,seed:"0123456789abcdef",content:JSON.parse(readFileSync(new URL("../../content/fixtures/basic-v2.json",import.meta.url),"utf8")),selection:{robotId:"robot.scout",terrainId:"terrain.floor"}});
 const controller=(recipe=fixtureRecipe(),instanceId="test",runtime="runtime")=>new ApplicationController({instanceId,runtime,recipe});
 const boot=(a:ApplicationController,r:unknown=request())=>{assert.equal(a.request(r).ok,true);a.advance();a.advance();assert.equal(a.snapshot().state,"ready");};
 test("replay rebuilds fresh owners, forbids live input without damaging the run and preserves evidence",()=>{

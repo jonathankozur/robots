@@ -1,12 +1,14 @@
 # Paquete mínimo CAT-001
 
-basic-v1.json es una colección de demostración, no contenido balanceado del juego. Incluye un chasis, núcleo, locomoción, IA, sensor y arma; dos terrenos y dos configuraciones (armada/desarmada). Las etiquetas de rareza/tecnología son vocabularios de prueba. Los recursos solo describen IDs y sockets: no existen modelos 3D asociados.
+NAV-001 migró el ejemplo a CAT-002: paquete y fichas usan schemaVersion 2; locomoción declara moveCooldownTicks entero positivo. Los paquetes v1 y moveDurationTicks se rechazan, sin conversión automática. Valores de fixture, sin balance final.
+
+basic-v2.json es una colección de demostración, no contenido balanceado del juego. Incluye un chasis, núcleo, locomoción, IA, sensor y arma; dos terrenos y dos configuraciones (armada/desarmada). Las etiquetas de rareza/tecnología son vocabularios de prueba. Los recursos solo describen IDs y sockets: no existen modelos 3D asociados.
 
 Contrato, campos y unidades: [catálogo v1](../../docs/architecture/content-catalog-v1.md). API: src/content/index.ts. Lectura de archivos fuera de la simulación; el parser recibe texto y devuelve content o issues, nunca ambos.
 
 ## Ejemplos inválidos reproducibles
 
-Modificar una copia de basic-v1.json; conservar el original. Los casos se ejecutan automáticamente en las suites content-*.test.ts.
+Modificar una copia de basic-v2.json; conservar el original. Los casos se ejecutan automáticamente en las suites content-*.test.ts.
 
 | Modificación | Resultado esperado |
 | --- | --- |

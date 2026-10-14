@@ -3,7 +3,7 @@ import type { Request, Result } from "../../src/application/index.ts";
 import { parseContentJson } from "../../src/content/index.ts";
 import { fixtureRecipe, nav, combat } from "../core/application-fixture.ts";
 import type { Mode } from "../core/application-fixture.ts";
-import basic from "../../content/fixtures/basic-v1.json" with { type:"json" };
+import basic from "../../content/fixtures/basic-v2.json" with { type:"json" };
 import type { DebugRecord } from "../../src/core/index.ts";
 
 export function mountApplicationPanel(container:HTMLElement):void {
