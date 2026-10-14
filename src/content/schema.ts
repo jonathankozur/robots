@@ -10,7 +10,7 @@ const object = (fields: Readonly<Record<string, Rule>>): Rule => ({ type: "objec
 const array = (item: Rule, max: number = CONTENT_LIMITS.maxEntries): Rule => ({ type: "array", item, max });
 const string: Rule = { type: "string", min: 1, max: 128 };
 const integer = (min = 0): Rule => ({ type: "integer", min, max: Number.MAX_SAFE_INTEGER });
-const version: Rule = { type: "integer", values: [1] };
+const version: Rule = { type: "integer", values: [2] };
 const id = (prefix: string): Rule => ({ ...string, pattern: new RegExp("^" + prefix + "\\.[a-z][a-z0-9._-]*$") });
 const localId: Rule = { type: "string", min: 1, max: 64, pattern: /^[a-z][a-z0-9_-]*$/ };
 const common = (prefix: string) => ({ schemaVersion: version, id: id(prefix), name: string });
@@ -28,7 +28,7 @@ const fields: Rule = object({
   definitions: object({
     chassis: array(object({ ...common("chassis"), rarityId: id("rarity"), technologyId: id("technology"), integrityUnits: integer(1), slots: array(slot, CONTENT_LIMITS.maxSlots), visual })),
     cores: array(object({ ...part("core"), energyCapacityUnits: integer(1) })),
-    locomotions: array(object({ ...part("locomotion"), moveDurationTicks: integer(1) })),
+    locomotions: array(object({ ...part("locomotion"), moveCooldownTicks: integer(1) })),
     ais: array(object({ ...part("ai"), behaviorId: { type: "string", values: ["fixture.observe-v1", "fixture.pressure-v1"] } })),
     sensors: array(object({ ...part("sensor"), rangeHexes: integer() })),
     weapons: array(object({ ...part("weapon"), behaviorId: { type: "string", values: ["fixture.direct-v1"] }, impactUnits: integer(1), reloadTicks: integer(1), rangeHexes: integer() })),

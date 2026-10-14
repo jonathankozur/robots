@@ -1,5 +1,7 @@
 # APP-001 v1 — Ensamblado y ciclo de aplicación
 
+**Nota de fixtures NAV-001/CAT-002:** la API productiva APP-001 y su contrato v1 permanecen vigentes. La demostración consume ahora [CAT-002](content-catalog-v2.md) y `basic-v2.json`: inicialización `FixtureInitializeNavigationCooldown`, observación `FixtureEquipmentObserved` y revisión de receta `application-fixture-v2-<modo>`. Replays de la fixture anterior se rechazan como incompatibles; no cambia el formato general de replay. Ver [entrega NAV-001](../workflow/board-navigation-v1.md).
+
 Revisión: 1.0.0, 13 de octubre de 2026. Plan y contrato autorizados mediante «comenza la implementacion». Implementación y evidencia en el [plan/entrega](../workflow/application-lifecycle-v1.md).
 
 ## Propiedad y puertos

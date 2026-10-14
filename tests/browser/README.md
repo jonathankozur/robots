@@ -1,6 +1,6 @@
 # Laboratorio del bus y scheduler
 
-Herramienta local de desarrollo y prueba manual. Ejecuta el núcleo real con sistemas ficticios, cada uno con estado propio. No contiene sistemas del juego ni modelos 3D.
+Herramienta local de desarrollo y prueba manual. Ejecuta el núcleo real, catálogo, ciclo de aplicación y Navegación con fixtures independientes y estado propio. No contiene el juego completo ni modelos 3D.
 
 ## Iniciar
 
@@ -84,15 +84,38 @@ Crear una sesión del panel con esa semilla, 0 sorteos extra y completar exactam
 
 Vectores independientes: `python tests/core/reference-vectors.py` regenera el JSON de referencia mediante enteros Python. No es necesario para usar el panel; los tests Node usan los vectores ya conservados. Sin builds ni dependencias nuevas.
 
-## Catálogo de contenido (CAT-001)
+## Catálogo de contenido (CAT-002)
 
-1. Abrir la pestaña **Catálogo de contenido**. El editor comienza con `content/fixtures/basic-v1.json`; **Cargar ejemplo** restaura esa versión si la modificaste.
+1. Abrir la pestaña **Catálogo de contenido**. El editor comienza con `content/fixtures/basic-v2.json`; **Cargar ejemplo** restaura esa versión si la modificaste.
 2. Pegar o editar JSON y pulsar **Validar paquete**, o importar un archivo de hasta 1 MiB. Los rechazos muestran código, ruta y explicación. Un paquete inválido nunca inicia una sesión.
 3. Un paquete puede ser válido aunque no permita ejecutar la fixture. Elige un robot con chasis, locomoción y arma definidos y un terreno existente; los requisitos de la demostración se explican junto a los selectores. Por ejemplo, `robot.unarmed` sigue siendo válido para el catálogo, pero no satisface esta fixture.
 4. Pulsa **Iniciar fixture** y avanza con **Paso**, **Fase** o **Tick**. Observa la traza, el manifiesto con el snapshot de contenido y las vistas separadas que reciben navegación y combate. Los datos aparecen al consumirse sus mensajes; avanzar un solo paso puede no alcanzar aún a ambos receptores.
 5. La sesión fija el paquete elegido y bloquea edición/importación mientras está activa. **Cerrar sesión** conserva la traza y las vistas para inspección; valida otro JSON para preparar una ejecución nueva.
 
-La pestaña solo ayuda a probar el catálogo y los dos consumidores ficticios. No ejecuta movimiento, IA, combate ni contenido como código.
+La pestaña de Catálogo prueba validación y dos consumidores ficticios. Usa CAT-002, schemaVersion2 y moveCooldownTicks. El movimiento real se prueba en la pestaña Tablero y navegación.
+
+
+## Tablero y navegación (NAV-001)
+
+Esta pestaña usa Navegación real, geometría axial/BFS y dos participantes ficticios de decisión/observación. Es una herramienta de desarrollo independiente: no incorpora IA ni combate completos.
+
+1. Abrir **Tablero y navegación**, elegir **Velocidades distintas** y **Preparar encuentro**. El ejemplo empieza en un tablero 7x7; el editor aplica al siguiente encuentro.
+2. Avanzar dos **Tick**: encuentro Disponible. A pasa de (0,2) a (1,2), CD3, próximo tick4; B pasa de (6,4) a (5,4), CD20, próximo tick21. El primer paso estuvo disponible sin esperar un CD inicial.
+3. Observar posición/CD/revisión junto al tablero. La vista del observador y la del agente llegan en fases distintas. El agente recibe los resultados en decision del tick siguiente; el observador, en action del mismo tick.
+4. Avanzar hasta los ticks4 y21: cada robot vuelve a moverse cuando corresponde. Pausar o cambiar el ritmo visual no cambia ese límite lógico.
+5. Recorrer los otros siete presets: competencia por destino, orden invertido, duplicado exacto, cooldown, sin camino, casilla que se libera e intercambio bloqueado. En competencia solo gana la primera solicitud válida; invertir orden invierte ganador. En cooldown, aprobación en2, rechazo en3 y nueva aprobación en5.
+6. Seleccionar un robot y pulsar una casilla para completar q/r. **Solicitar un paso** prepara un mensaje de fixture; Navegación puede rechazarlo por CD, ocupación, origen antiguo, pared o falta de vecindad. El rechazo no mueve ni reinicia CD.
+7. **Cambiar objetivo de prueba** cambia el comportamiento de prueba mediante mensajes. **Repetir configuración** no duplica el paso. Las solicitudes crudas tienen prioridad sobre autopiloto para el mismo robot/tick.
+8. **Paso**, **Fase**, **Tick**, **Ejecutar N ticks** y **Ejecutar continuo** permiten ver el flujo. **Pausar** conserva el cursor parcial. Preparar otro encuentro durante un tick parcial se rechaza; completar el tick antes de reemplazar.
+9. Editar robots con posiciones superpuestas e intentar preparar: rechazo antes de cerrar el encuentro previo. Restaurar el preset y preparar: instancias nuevas. **Entrada antigua** prueba el rechazo del contexto cerrado.
+10. Entre ticks completos, **Reproducir y comparar** verifica traza/vistas idénticas; **Comparar segunda sesión** comprueba aislamiento. **Exportar replay** conserva escenario, catálogo y entradas admitidas. Importarlo reconstruye la sesión sin entradas vivas. Comparación manual hasta5000 ticks, con traza completa.
+11. Exportar/importar escenario conserva la definición del próximo encuentro, distinta del replay. Editores JSON estrictos; contenido CAT-002 v2 con moveCooldownTicks, mínimo1. No hay conversión automática de versiones anteriores.
+12. **Debug a archivo** crea JSONL por contexto. Ver ruta, confirmados/pendientes y detalle de mensajes/colas/causas. Si la escritura falla, se pausa la ejecución automática; **Reintentar log** conserva secuencia sin duplicar registros.
+13. **Cerrar** finaliza el encuentro. **Nuevo controlador** solo está habilitado sin encuentro activo y reinicia el registro acotado de solicitudes; no reinicia silenciosamente una simulación viva.
+
+La búsqueda se reconsidera antes del siguiente paso usando la vista recibida. Sin camino, espera un cambio de revisión/objetivo para evitar repetir una búsqueda idéntica cada tick. Navegación vuelve a validar su ocupación vigente.
+
+Límites de infraestructura: 12x12 y16 entidades, sujetos a bytes y colas. Tablero fijo por encuentro, una unidad terrestre por casilla, sin vuelo, reservas, intercambios atómicos, terreno ponderado ni modelos3D. El driver visual depende del render/escritura; CD depende solo de ticks. Evidencia real y límites en [entrega NAV-001](../../docs/workflow/board-navigation-v1.md).
 
 ## Verificación de las entregas
 

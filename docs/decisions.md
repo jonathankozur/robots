@@ -1,6 +1,6 @@
 # Decisiones y habilitación
 
-Revisión documental: **1.6.0**. Actualización: **13 de octubre de 2026**. Conserva la base documental del 9 de octubre.
+Revisión documental: **1.10.0**. Actualización: **13 de octubre de 2026**. Conserva la base documental del 9 de octubre.
 
 ## Base aprobada
 
@@ -129,6 +129,20 @@ Después de explicar qué contiene una sesión y las alternativas, el usuario re
 Alternativa de sesión global: menos transferencias, más limpieza y riesgo de mezclar encuentros; sesión por sistema: mayor separación, pero múltiples buses/relojes. La opción por combate prioriza aislamiento, cierre y replay, a cambio de contratos explícitos de entrada y resultados.
 
 Autorización actual: documentación, plan y rama codex/application-lifecycle-v1, checkout propio desde main bf8b89b (PR #3). [Plan 1.0 y entrega](workflow/application-lifecycle-v1.md) y [contrato técnico APP-001](architecture/application-lifecycle-v1.md) aprobados para ejecución; entrega local para revisión. El «ok» confirmó la decisión 2. La autorización posterior «comenza la implementacion. Recorda mover la tarjeta a su posicion correspondiente» habilitó ejecutar el plan/contrato 1.0. Entrega: 151 pruebas aprobadas, typecheck sin emisión y recorridos de navegador documentados. Sin gameplay, persistencia ni cambios al núcleo. El responsable humano autorizó después commit, push, PR y merge mediante «hace commit, push, crea el PR y mergea».
+
+### NAV-001 — Tablero y navegación con movimiento como habilidad
+
+Fecha: 13 de octubre de 2026. Estado: **decisiones, contrato y plan 1.0 aprobados; implementación local para revisión humana**. Responsable humano: usuario solicitante. [Tarjeta 04](https://trello.com/c/koJ7Lhkb), Revisión / pruebas al entregar. Base main 53f1d175b825ecd3ec7e7ea14cfc7d1cec905665, [PR #4 integrado](https://github.com/jonathankozur/robots/pull/4). Rama codex/board-navigation-v1 y checkout propios, creados antes de documentar.
+
+Aprobación: respuestas numeradas del usuario y modelo posterior «me lo imagino como una habilidad con CD», seguidos de «oka, documenta todas las decisiones. Queda algo pendiente?». [Diseño y decisiones NAV-001](architecture/board-navigation-design.md) conserva todas las elecciones, alternativas sustituidas y pendientes.
+
+Coordenadas axiales/geometría pura; tablero pequeño configurable antes del encuentro y fijo durante este, completo en una pantalla; 20 ticks/s; terreno básico transitable/bloqueado; robots de un hexágono y casillas ocupadas bloqueadas. Vuelo/capas de ocupación quedan fuera.
+
+Cada paso autorizado cambia posición/ocupación inmediatamente y activa un CD posterior. Navegación posee posiciones, ocupación y disponibilidad de movimiento; emite un hecho ya aplicado, sin esperar acuse del robot. Un rechazo no altera posición ni activa CD. Primera solicitud válida en orden lógico del bus obtiene la casilla; las demás se revalidan contra el estado actualizado. Esto sustituye las propuestas anteriores de reserva durante tránsito y prioridad por antigüedad de espera.
+
+La IA elige comportamiento/próximo paso, recalcula antes de cada movimiento y solicita por mensajes. El jugador no ordena durante combate. Utilidades puras ayudan a buscar caminos; Navegación revalida la solicitud con su estado vigente. Vistas iniciales y actualizaciones con revisión/tick; laboratorio manual de fixtures, sin IA real. Energía conserva presupuesto de equipamiento, sin gasto por paso.
+
+Confirmación final mediante «1. ok / 2. ok»: CD entero mínimo 1 tick, máximo un paso aprobado por robot/tick; migración explícita moveDurationTicks → moveCooldownTicks con revisión nueva y actualización conjunta de catálogo/fixtures CAT/APP, rechazando claramente JSON/replays anteriores incompatibles, sin lectores legacy separados. El usuario solicitó preparar el plan tras pasar la tarjeta a Listo para desarrollar. [Plan NAV-001 1.0](workflow/board-navigation-v1.md), [contrato NAV v1](architecture/board-navigation-v1.md) y [migración CAT-002](architecture/content-catalog-v2.md) aprobados e implementados: catálogo/fichas v2, contratos afectados nuevos/versionados, receta con Navegación y dos fixtures, geometría/BFS puros y panel manual. Ejecución aprobada mediante «aprobado. implementalo». Implementados NAV-001, CAT-002 y laboratorio; 175/175 pruebas y typecheck sin emisión aprobados, más recorridos del navegador. src/core y src/application permanecen sin cambios. Pendiente revisión humana e integración; no se autorizó commit/push/PR/merge.
 
 ## Estado de esta instalación
 

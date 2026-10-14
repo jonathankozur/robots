@@ -10,8 +10,8 @@ const idField = { type: "string", minLength: 1, maxLength: 128 } as const;
 const integerField = { type: "number", integer: true, min: 1 } as const;
 const navigationType = "FixtureInitializeNavigationContent", combatType = "FixtureInitializeCombatContent";
 const contracts: readonly Contract[] = [
-  { type: navigationType, version: 1, kind: "command", responsibleSystemId: "content-navigation-fixture", producers: [{ systemId: "content-bootstrap", phases: ["input"] }],
-    fields: { bundleId: idField, contentRevision: idField, terrainId: idField, passable: { type: "boolean" }, locomotionId: idField, moveDurationTicks: integerField } },
+  { type: navigationType, version: 2, kind: "command", responsibleSystemId: "content-navigation-fixture", producers: [{ systemId: "content-bootstrap", phases: ["input"] }],
+    fields: { bundleId: idField, contentRevision: idField, terrainId: idField, passable: { type: "boolean" }, locomotionId: idField, moveCooldownTicks: integerField } },
   { type: combatType, version: 1, kind: "command", responsibleSystemId: "content-combat-fixture", producers: [{ systemId: "content-bootstrap", phases: ["input"] }],
     fields: { bundleId: idField, contentRevision: idField, chassisId: idField, integrityUnits: integerField, weaponId: idField, impactUnits: integerField } },
 ];
@@ -39,20 +39,20 @@ export function createContentFixture(input: unknown, options: ContentFixtureOpti
   const weapon = definitions.weapons.find(w => w.id === weaponId);
   if (!robot || !terrain || !chassis || !locomotion || !weapon) throw new Error("CONTENT_FIXTURE_CONFIGURATION: choose an existing armed robot and terrain");
   const identity = { bundleId: content.bundleId, contentRevision: content.contentRevision };
-  const navigationData = snapshotPayload({ ...identity, terrainId: terrain.id, passable: terrain.passable, locomotionId: locomotion.id, moveDurationTicks: locomotion.moveDurationTicks });
+  const navigationData = snapshotPayload({ ...identity, terrainId: terrain.id, passable: terrain.passable, locomotionId: locomotion.id, moveCooldownTicks: locomotion.moveCooldownTicks });
   const combatData = snapshotPayload({ ...identity, chassisId: chassis.id, integrityUnits: chassis.integrityUnits, weaponId: weapon.id, impactUnits: weapon.impactUnits });
   const navigation = owner(navigationData), combat = owner(combatData);
   const systems: readonly SystemDefinition[] = [{ id: "content-bootstrap", kind: "adapter" }, { id: "content-navigation-fixture" }, { id: "content-combat-fixture" }];
   const sessionId = "content-fixture";
-  const session = new Session({ sessionId, revision: "content-fixture-v1", runtime: options.runtime ?? "content-fixture-test",
+  const session = new Session({ sessionId, revision: "content-fixture-v2", runtime: options.runtime ?? "content-fixture-test",
     debug: options.debug ?? false, environment: createSimulationEnvironment("0123456789abcdef", [], systems),
     initialState: { content: content as unknown as Payload }, contracts, systems });
-  session.subscribe("content-navigation-fixture", navigationType, 1, "movement", navigation.receive);
+  session.subscribe("content-navigation-fixture", navigationType, 2, "movement", navigation.receive);
   session.subscribe("content-combat-fixture", combatType, 1, "resolution", combat.receive);
   return Object.freeze({
     session,
     initialize(): void {
-      session.stageExternalInput("content-bootstrap", { sessionId, type: navigationType, version: 1, payload: navigationData });
+      session.stageExternalInput("content-bootstrap", { sessionId, type: navigationType, version: 2, payload: navigationData });
       session.stageExternalInput("content-bootstrap", { sessionId, type: combatType, version: 1, payload: combatData });
     },
     snapshot: () => Object.freeze({ navigation: navigation.snapshot(), combat: combat.snapshot() }),

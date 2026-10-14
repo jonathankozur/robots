@@ -1,5 +1,7 @@
 # CAT-001 — Plan de implementación del catálogo de contenido
 
+**Continuidad NAV-001:** esta ficha conserva la evidencia histórica de CAT-001. El ejemplo runtime actual está en `content/fixtures/basic-v2.json`, con esquemas v2 y `moveCooldownTicks`; el archivo v1 fue retirado de las entradas. Ver [migración CAT-002](../architecture/content-catalog-v2.md) y [entrega NAV-001](board-navigation-v1.md).
+
 Revisión del plan: 1.1.0. Fecha: 13 de octubre de 2026. **La entrega local de CAT-001 y la ampliación del laboratorio están implementadas para revisión.**
 
 ## Encargo y base

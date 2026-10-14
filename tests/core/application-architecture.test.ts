@@ -4,7 +4,7 @@ import { readFileSync,readdirSync } from "node:fs";
 import { ApplicationController } from "../../src/application/index.ts";
 import { fixtureRecipe } from "./application-fixture.ts";
 import ts from "typescript";
-const request=()=>({requestId:"one",seed:"0123456789abcdef",content:JSON.parse(readFileSync(new URL("../../content/fixtures/basic-v1.json",import.meta.url),"utf8")),selection:{robotId:"robot.scout",terrainId:"terrain.floor"}});
+const request=()=>({requestId:"one",seed:"0123456789abcdef",content:JSON.parse(readFileSync(new URL("../../content/fixtures/basic-v2.json",import.meta.url),"utf8")),selection:{robotId:"robot.scout",terrainId:"terrain.floor"}});
 test("recipe selects actual equipment and rejects unarmed demo without invalidating catalog",()=>{
   const a=new ApplicationController({instanceId:"selection",runtime:"test",recipe:fixtureRecipe()});
   const unarmed=request();unarmed.selection.robotId="robot.unarmed";assert.equal(a.request(unarmed).ok,false);

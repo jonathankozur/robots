@@ -1,5 +1,7 @@
 # Catálogo de contenido v1 — CAT-001
 
+**Nota de migración NAV-001:** esta especificación conserva CAT-001 como referencia histórica. El runtime actual usa [CAT-002 v2](content-catalog-v2.md), `moveCooldownTicks` y `content/fixtures/basic-v2.json`; rechaza paquetes/fichas v1. Las garantías no afectadas siguen vigentes.
+
 Revisión: 1.0.0. Plan aprobado por el usuario mediante «aprobado, implementalo». Base: main d402c32. [Encargo y alcance](../workflow/content-catalog-v1.md); [decisiones CAT-001](../decisions.md#cat-001--catálogo-de-contenido-y-primera-entrega). Esquemas de infraestructura/fixtures, sin reglas productivas de combate.
 
 ## API y fases de validación

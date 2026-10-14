@@ -2,11 +2,11 @@ import { parseContentJson } from "../../src/content/index.ts";
 import type { ContentBundle } from "../../src/content/index.ts";
 import { createContentFixture } from "../core/content-fixture.ts";
 import type { ContentFixture } from "../core/content-fixture.ts";
-import basicBundle from "../../content/fixtures/basic-v1.json" with { type: "json" };
+import basicBundle from "../../content/fixtures/basic-v2.json" with { type: "json" };
 
 export function mountContentPanel(container: HTMLElement): void {
   container.innerHTML = '<section class="content-panel">'
-    + '<div class="section-title"><div><span class="eyebrow">CATÁLOGO DE CONTENIDO / CAT-001</span><h2>Validar datos y observar su entrega</h2></div><span>Herramienta de desarrollo</span></div>'
+    + '<div class="section-title"><div><span class="eyebrow">CATÁLOGO DE CONTENIDO / CAT-002</span><h2>Validar datos y observar su entrega</h2></div><span>Herramienta de desarrollo</span></div>'
     + '<p class="muted">Carga un paquete JSON, revisa sus errores y arranca la fixture de integración. La validación del catálogo y los requisitos de la demo se muestran por separado.</p>'
     + '<div class="content-toolbar"><button id="content-example">Cargar ejemplo</button><label class="content-file">Importar JSON<input id="content-file" type="file" accept=".json,application/json"></label><button id="content-validate" class="primary">Validar paquete</button></div>'
     + '<div class="content-grid"><section class="content-editor"><label for="content-json">Paquete JSON</label><textarea id="content-json" spellcheck="false" aria-label="Paquete JSON"></textarea><div id="content-validation" class="content-validation" role="status" aria-live="polite"></div></section>'

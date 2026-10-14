@@ -3,12 +3,12 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { ApplicationController } from "../../src/application/index.ts";
 import { fixtureRecipe, nav, combat } from "./application-fixture.ts";
-const content = () => JSON.parse(readFileSync(new URL("../../content/fixtures/basic-v1.json", import.meta.url), "utf8"));
+const content = () => JSON.parse(readFileSync(new URL("../../content/fixtures/basic-v2.json", import.meta.url), "utf8"));
 export const request = (requestId = "one") => ({ requestId, seed: "0123456789abcdef", content: content(), selection: { robotId: "robot.scout", terrainId: "terrain.floor" } });
 const app = (recipe = fixtureRecipe(), instanceId = "test") => new ApplicationController({ instanceId, runtime: "test-runtime", recipe });
 function boot(a: ApplicationController) { assert.equal(a.request(request()).ok, true); a.advance(); a.advance(); assert.equal(a.snapshot().state, "ready"); }
 test("configuration rejects before advancing and detaches caller data", () => {
-  const a = app(), bad = request("invalid"); bad.content.schemaVersion = 2;
+  const a = app(), bad = request("invalid"); bad.content.schemaVersion = 3;
   assert.equal(a.request(bad).ok, false); assert.equal(a.snapshot().state, "idle");
   const data = request(); assert.equal(a.request(data).ok, true); data.content.definitions.chassis[0].integrityUnits = 1;
   a.advance(); a.advance(); assert.equal(a.snapshot().observations[combat]!.amount, 100000); assert.ok(Object.isFrozen(a.snapshot()));
@@ -20,7 +20,7 @@ test("bootstrap waits for confirmations and the complete input activation barrie
   a.advance("step"); a.advance("step"); assert.equal(a.snapshot().state, "initializing");
   a.advance("phase"); assert.equal(a.snapshot().state, "ready"); a.advance(); assert.equal(a.snapshot().observations[nav]!.count, 0);
   const published = a.trace()!.entries.filter((e: any) => e.kind === "published").map((e: any) => e.message);
-  assert.equal(new Set(published.filter((m: any) => m.type !== "FixtureObserved").map((m: any) => m.correlationId)).size, 1);
+  assert.equal(new Set(published.filter((m: any) => m.type !== "FixtureEquipmentObserved").map((m: any) => m.correlationId)).size, 1);
 });
 test("duplicates are harmless; conflict, rejection, timeout and exception are visible", () => {
   boot(app(fixtureRecipe({ mode: "duplicate" })));
@@ -44,7 +44,7 @@ test("request deduplication, body conflicts and bounded registry are explicit", 
   const a = app(); const first = a.request(request()); assert.deepEqual(a.request(request()), first); assert.equal(a.snapshot().contextId, first.contextId);
   const different = request(); different.seed = "fedcba9876543210"; assert.equal(a.request(different).code, "REQUEST_CONFLICT");
   assert.equal(a.request(request("other")).code, "BUSY");
-  const b = app(); for(let i=0;i<128;i++) { const invalid = request(String(i)); invalid.content.schemaVersion = 2; b.request(invalid); }
+  const b = app(); for(let i=0;i<128;i++) { const invalid = request(String(i)); invalid.content.schemaVersion = 3; b.request(invalid); }
   assert.equal(b.request(request("overflow")).code, "REQUEST_CAPACITY");
 });
 test("cleanup is idempotent; failed cleanup blocks new context until explicit retry", () => {

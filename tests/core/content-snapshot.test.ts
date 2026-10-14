@@ -3,7 +3,7 @@ import test from "node:test";
 import { readFileSync } from "node:fs";
 import { parseContentJson, validateContentBundle } from "../../src/content/index.ts";
 import type { ContentBundle } from "../../src/content/index.ts";
-const text = readFileSync(new URL("../../content/fixtures/basic-v1.json", import.meta.url), "utf8");
+const text = readFileSync(new URL("../../content/fixtures/basic-v2.json", import.meta.url), "utf8");
 const fresh = () => JSON.parse(text);
 function content(data: unknown): ContentBundle { const result = validateContentBundle(data); assert.equal(result.ok, true); if (!result.ok) throw new Error(JSON.stringify(result)); return result.content; }
 test("canonical snapshots ignore meaningless collection, slot, socket, equipment and object-key ordering", () => {
@@ -35,7 +35,7 @@ test("JSON numerical tokens cannot silently round fractional or exponent literal
   assert.equal(exact.ok, true);
 });
 test("escaped repeated JSON member names and prototype pollution keys cannot bypass validation", () => {
-  const escapedDuplicate = text.replace('"schemaVersion": 1', '"\\u0073chemaVersion": 1, "schemaVersion": 1');
+  const escapedDuplicate = text.replace('"schemaVersion": 2', '"\\u0073chemaVersion": 1, "schemaVersion": 2');
   const duplicate = parseContentJson(escapedDuplicate); assert.ok(!duplicate.ok && duplicate.issues.some(i => i.code === "CONTENT_DUPLICATE_KEY"));
   const poisoned = parseContentJson(text.replace('"bundleId":', '"__proto__": {"polluted": true}, "bundleId":'));
   assert.ok(!poisoned.ok && poisoned.issues.some(i => i.code === "CONTENT_UNKNOWN_FIELD"));
