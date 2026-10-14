@@ -1,0 +1,359 @@
+{
+  "schemaVersion": 2,
+  "bundleId": "bundle.lab",
+  "contentRevision": "presentation-1",
+  "vocabularies": {
+    "rarities": [
+      {
+        "schemaVersion": 2,
+        "id": "rarity.standard",
+        "name": "Standard fixture"
+      },
+      {
+        "schemaVersion": 2,
+        "id": "rarity.special",
+        "name": "Special fixture"
+      }
+    ],
+    "technologies": [
+      {
+        "schemaVersion": 2,
+        "id": "technology.prototype",
+        "name": "Prototype fixture"
+      },
+      {
+        "schemaVersion": 2,
+        "id": "technology.advanced",
+        "name": "Advanced fixture"
+      }
+    ],
+    "mountTypes": [
+      {
+        "schemaVersion": 2,
+        "id": "mount.internal",
+        "name": "Internal"
+      },
+      {
+        "schemaVersion": 2,
+        "id": "mount.drive",
+        "name": "Drive"
+      },
+      {
+        "schemaVersion": 2,
+        "id": "mount.weapon",
+        "name": "Weapon"
+      }
+    ],
+    "sizes": [
+      {
+        "schemaVersion": 2,
+        "id": "size.small",
+        "name": "Small"
+      },
+      {
+        "schemaVersion": 2,
+        "id": "size.large",
+        "name": "Large"
+      }
+    ],
+    "resources": [
+      {
+        "schemaVersion": 2,
+        "id": "resource.chassis",
+        "name": "Chassis placeholder",
+        "sockets": [
+          "core",
+          "drive",
+          "ai",
+          "sensor",
+          "weapon-a",
+          "weapon-b"
+        ]
+      },
+      {
+        "schemaVersion": 2,
+        "id": "resource.pulse",
+        "name": "Weapon placeholder",
+        "sockets": []
+      },
+      {
+        "schemaVersion": 2,
+        "id": "resource.core",
+        "name": "resource.core",
+        "sockets": []
+      },
+      {
+        "schemaVersion": 2,
+        "id": "resource.ai",
+        "name": "resource.ai",
+        "sockets": []
+      },
+      {
+        "schemaVersion": 2,
+        "id": "resource.sensor",
+        "name": "resource.sensor",
+        "sockets": []
+      },
+      {
+        "schemaVersion": 2,
+        "id": "resource.wheels",
+        "name": "resource.wheels",
+        "sockets": []
+      },
+      {
+        "schemaVersion": 2,
+        "id": "resource.tracks",
+        "name": "resource.tracks",
+        "sockets": []
+      },
+      {
+        "schemaVersion": 2,
+        "id": "resource.floor",
+        "name": "resource.floor",
+        "sockets": []
+      },
+      {
+        "schemaVersion": 2,
+        "id": "resource.block",
+        "name": "resource.block",
+        "sockets": []
+      }
+    ]
+  },
+  "definitions": {
+    "chassis": [
+      {
+        "schemaVersion": 2,
+        "id": "chassis.lab",
+        "name": "Basic lab",
+        "rarityId": "rarity.standard",
+        "technologyId": "technology.prototype",
+        "integrityUnits": 100000,
+        "visual": {
+          "resourceId": "resource.chassis"
+        },
+        "slots": [
+          {
+            "id": "core",
+            "category": "core",
+            "mountTypeId": "mount.internal",
+            "sizeId": "size.small",
+            "socketId": "core"
+          },
+          {
+            "id": "drive",
+            "category": "locomotion",
+            "mountTypeId": "mount.drive",
+            "sizeId": "size.large",
+            "socketId": "drive"
+          },
+          {
+            "id": "ai",
+            "category": "ai",
+            "mountTypeId": "mount.internal",
+            "sizeId": "size.small",
+            "socketId": "ai"
+          },
+          {
+            "id": "sensor",
+            "category": "sensor",
+            "mountTypeId": "mount.internal",
+            "sizeId": "size.small",
+            "socketId": "sensor"
+          },
+          {
+            "id": "weapon-a",
+            "category": "weapon",
+            "mountTypeId": "mount.weapon",
+            "sizeId": "size.small",
+            "socketId": "weapon-a"
+          },
+          {
+            "id": "weapon-b",
+            "category": "weapon",
+            "mountTypeId": "mount.weapon",
+            "sizeId": "size.small",
+            "socketId": "weapon-b"
+          }
+        ]
+      }
+    ],
+    "cores": [
+      {
+        "schemaVersion": 2,
+        "id": "core.basic",
+        "name": "Basic core",
+        "rarityId": "rarity.standard",
+        "technologyId": "technology.prototype",
+        "mounting": {
+          "mountTypeId": "mount.internal",
+          "sizeId": "size.small"
+        },
+        "energyCostUnits": 0,
+        "energyCapacityUnits": 100000,
+        "visual": {
+          "resourceId": "resource.core"
+        }
+      }
+    ],
+    "locomotions": [
+      {
+        "schemaVersion": 2,
+        "id": "locomotion.wheels",
+        "name": "Wheels",
+        "rarityId": "rarity.standard",
+        "technologyId": "technology.prototype",
+        "mounting": {
+          "mountTypeId": "mount.drive",
+          "sizeId": "size.large"
+        },
+        "energyCostUnits": 20000,
+        "moveCooldownTicks": 3,
+        "visual": {
+          "resourceId": "resource.wheels"
+        }
+      },
+      {
+        "schemaVersion": 2,
+        "id": "locomotion.slow",
+        "name": "Prototype tracks",
+        "rarityId": "rarity.standard",
+        "technologyId": "technology.prototype",
+        "mounting": {
+          "mountTypeId": "mount.drive",
+          "sizeId": "size.large"
+        },
+        "energyCostUnits": 20000,
+        "moveCooldownTicks": 20,
+        "visual": {
+          "resourceId": "resource.tracks"
+        }
+      }
+    ],
+    "ais": [
+      {
+        "schemaVersion": 2,
+        "id": "ai.observe",
+        "name": "Observer",
+        "rarityId": "rarity.standard",
+        "technologyId": "technology.prototype",
+        "mounting": {
+          "mountTypeId": "mount.internal",
+          "sizeId": "size.small"
+        },
+        "energyCostUnits": 5000,
+        "behaviorId": "fixture.observe-v1",
+        "visual": {
+          "resourceId": "resource.ai"
+        }
+      }
+    ],
+    "sensors": [
+      {
+        "schemaVersion": 2,
+        "id": "sensor.basic",
+        "name": "Basic sensor",
+        "rarityId": "rarity.standard",
+        "technologyId": "technology.prototype",
+        "mounting": {
+          "mountTypeId": "mount.internal",
+          "sizeId": "size.small"
+        },
+        "energyCostUnits": 10000,
+        "rangeHexes": 4,
+        "visual": {
+          "resourceId": "resource.sensor"
+        }
+      }
+    ],
+    "weapons": [
+      {
+        "schemaVersion": 2,
+        "id": "weapon.pulse",
+        "name": "Pulse",
+        "rarityId": "rarity.standard",
+        "technologyId": "technology.prototype",
+        "mounting": {
+          "mountTypeId": "mount.weapon",
+          "sizeId": "size.small"
+        },
+        "energyCostUnits": 25000,
+        "behaviorId": "fixture.direct-v1",
+        "impactUnits": 2500,
+        "reloadTicks": 20,
+        "rangeHexes": 3,
+        "visual": {
+          "resourceId": "resource.pulse"
+        }
+      }
+    ],
+    "terrains": [
+      {
+        "schemaVersion": 2,
+        "id": "terrain.floor",
+        "name": "Floor",
+        "passable": true
+      },
+      {
+        "schemaVersion": 2,
+        "id": "terrain.wall",
+        "name": "Wall",
+        "passable": false
+      }
+    ],
+    "robots": [
+      {
+        "schemaVersion": 2,
+        "id": "robot.scout",
+        "name": "Scout",
+        "chassisId": "chassis.lab",
+        "equipment": [
+          {
+            "slotId": "core",
+            "componentId": "core.basic"
+          },
+          {
+            "slotId": "drive",
+            "componentId": "locomotion.wheels"
+          },
+          {
+            "slotId": "ai",
+            "componentId": "ai.observe"
+          },
+          {
+            "slotId": "sensor",
+            "componentId": "sensor.basic"
+          },
+          {
+            "slotId": "weapon-a",
+            "componentId": "weapon.pulse"
+          }
+        ]
+      },
+      {
+        "schemaVersion": 2,
+        "id": "robot.unarmed",
+        "name": "Unarmed",
+        "chassisId": "chassis.lab",
+        "equipment": [
+          {
+            "slotId": "core",
+            "componentId": "core.basic"
+          },
+          {
+            "slotId": "drive",
+            "componentId": "locomotion.slow"
+          },
+          {
+            "slotId": "ai",
+            "componentId": "ai.observe"
+          },
+          {
+            "slotId": "sensor",
+            "componentId": "sensor.basic"
+          }
+        ]
+      }
+    ]
+  }
+}
