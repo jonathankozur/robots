@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "revision": "presentation-prototype-1",
+  "assets": [
+    {
+      "resourceId": "resource.chassis",
+      "url": "/assets/presentation/chassis.glb",
+      "sha256": "d22286d6fb6ec06bb4880fd37540159a7ba8849595019a8a120c5e7da4971f10",
+      "sockets": [
+        "ai",
+        "core",
+        "drive",
+        "sensor",
+        "weapon-a",
+        "weapon-b"
+      ]
+    },
+    {
+      "resourceId": "resource.core",
+      "url": "/assets/presentation/core.glb",
+      "sha256": "d13beccbf50b00fb1a48adb6fbfd7f1d6e57ec3f228ce94e5f8ecd45c04476bf",
+      "sockets": []
+    },
+    {
+      "resourceId": "resource.ai",
+      "url": "/assets/presentation/ai.glb",
+      "sha256": "b14c469669bf183b87862b974fcb4e76c228cc595ee32008542b4b4c8286048b",
+      "sockets": []
+    },
+    {
+      "resourceId": "resource.sensor",
+      "url": "/assets/presentation/sensor.glb",
+      "sha256": "45bd0d67c456f5df0f9ce876672064ccf755475210046a4ff0a6a7dc8a522ce9",
+      "sockets": []
+    },
+    {
+      "resourceId": "resource.wheels",
+      "url": "/assets/presentation/wheels.glb",
+      "sha256": "b22614e5da326a849018d9db6a0676e2496b0face093f095721ba1f17c409f87",
+      "sockets": []
+    },
+    {
+      "resourceId": "resource.tracks",
+      "url": "/assets/presentation/tracks.glb",
+      "sha256": "bc445a585818369a456e0e58f07715c70c811db1853124a0a0cb01d829b6b05d",
+      "sockets": []
+    },
+    {
+      "resourceId": "resource.pulse",
+      "url": "/assets/presentation/pulse.glb",
+      "sha256": "75a87034eaa345b4e5592906961d186c49b4da225f165cf58025c7f92f22abe4",
+      "sockets": []
+    },
+    {
+      "resourceId": "resource.floor",
+      "url": "/assets/presentation/floor.glb",
+      "sha256": "585fbe58d6a2f9de5a5d3258054695fb8724b3f7402b0b3c5750eb203915035a",
+      "sockets": []
+    },
+    {
+      "resourceId": "resource.block",
+      "url": "/assets/presentation/block.glb",
+      "sha256": "80d1d4d6113104828c10cc5f51fa869524b4288a4a3094f06477c97ce6726b63",
+      "sockets": []
+    }
+  ]
+}

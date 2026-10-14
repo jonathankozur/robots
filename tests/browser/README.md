@@ -135,3 +135,19 @@ npm test ejecuta pruebas del núcleo, escenarios y escritura JSONL; npm run type
 10. Debug a archivo crea un JSONL por contexto bajo debug-logs/. Se drena fuera de callbacks después de cada operación; un fallo de escritura conserva el lote pendiente. Reintentar log vuelve a escribir idempotentemente. Descargar debug permite revisar los registros locales. Exportar reporte incluye ciclo de vida y diagnóstico, que no deben confundirse con el replay del encuentro.
 
 El editor aplica al próximo encuentro. Para iniciar otro con diferente escenario de fallo, cerrar/limpiar antes de recrear el controlador. El panel usa las APIs públicas de APP-001, no accede a estado privado de participantes.
+# Presentación 3D — PRE-001
+
+Abrir http://127.0.0.1:5173/, pestaña **Presentación 3D**, y pulsar **Preparar escena 3D**. El ejemplo contiene un robot con ruedas/arma y otro con orugas/sin arma. Las piezas son GLB creados en Blender; la leyenda identifica cada forma y color.
+
+1. **Tick** muestra la última posición confirmada. **Paso/Fase** permite observar que la proyección llega en publicación; el minimapa y la vista 3D pertenecen a la misma sesión.
+2. Elegir **Suavizado confirmado**, ejecutar continuo y pulsar **Pausar**. La posición dibujada puede estar entre dos casillas, pero el reloj visual queda congelado. **Exacto** sincroniza con la casilla oficial.
+3. Cambiar **FPS render** entre 15/30/60 o calidad. No debe avanzar el tick. Los números de recursos/FPS/poses aparecen en el inspector; objetivo medido en el equipo de referencia, no garantía universal.
+4. Activar **Sockets, rutas y casillas lógicas**. El aro muestra la posición oficial; los puntos muestran montajes y las líneas son rutas de la IA ficticia. Cámara: arrastrar/rueda; **Restablecer cámara** vuelve al tablero completo.
+5. Probar los nueve escenarios, ejecutar N ticks y **Comparar replay**. El resultado debe indicar traza/vistas iguales. Solicitudes manuales son fixtures, no órdenes del jugador del juego.
+6. **Fallo visual** se aplica al preparar: archivo, socket o carga demorada. Debe aparecer un marcador/diagnóstico; al cerrar durante carga no debe reaparecer un canvas.
+7. **Perder contexto gráfico**, **Restaurar contexto** y **Reconstruir vista** conserva la sesión lógica y reinicia solo los recursos gráficos. La pérdida pausa la ejecución externa.
+8. **Segunda sesión y escena** crea otra vista sin avanzar la original. **Cerrar encuentro** limpia ambas.
+9. Desplegar **Escenario y catálogo del próximo encuentro** para editar antes de iniciar. En el catálogo, el slot drive usa locomotion.wheels o locomotion.slow (orugas); agregar/quitar arma requiere una configuración CAT-002 válida. Preparar valida antes de sustituir el encuentro sano.
+10. Exportar/importar escenario o replay. El sobre 3D lleva su manifest visual y exige coincidencia de recursos/digests; el formato de replay del núcleo no cambió. Debug JSONL conserva pendientes ante fallo de escritura y permite reintento; el reporte incluye pendientes para recuperación local.
+
+Fuentes/contratos y evidencia: [PRE-001](../../docs/workflow/presentation-3d-v1.md). Generador: scripts/assets/generate-presentation.py; escena fuente: assets/blender/presentation-prototype-v1.blend; GLB: public/assets/presentation. Regenerar con Blender 5.1 y --background --python desde la raíz del checkout; actualizar revisión/digests al cambiar el kit. Producción de assets no ejecuta un build de software.

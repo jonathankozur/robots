@@ -1,6 +1,6 @@
 # Decisiones y habilitación
 
-Revisión documental: **1.10.0**. Actualización: **13 de octubre de 2026**. Conserva la base documental del 9 de octubre.
+Revisión documental: **1.12.0**. Actualización: **14 de octubre de 2026**. Conserva la base documental del 9 de octubre.
 
 ## Base aprobada
 
@@ -23,7 +23,7 @@ El GDD original permanece en [diseno_autobattler_robots.md](../diseno_autobattle
 
 | Requisito | Evidencia necesaria para habilitarlo |
 | --- | --- |
-| Integración de presentación y escritorio | Tecnología aprobada en TEC-001; Vite verifica el arnés local en BUS-002. Three.js, presentación del juego y Electron siguen pendientes. |
+| Integración de presentación y escritorio | Tecnología aprobada en TEC-001; Vite verifica el arnés local en BUS-002. PRE-001 implementado localmente para revisión; integración GitHub y Electron pendientes. |
 | Aritmética, precisión, frecuencia de ticks y algoritmo aleatorio | Resuelto para infraestructura por ENV-001; fórmulas/balance de gameplay requieren sus propios contratos. |
 | Integración del bus y scheduler v1 | Integrados en main por PR #1 (050f831); ENV-001 integrado por PR #2 (d402c32), base de CAT-001. |
 | Controles ejecutables de gameplay | Controles locales del núcleo implementados; ampliar a productores/consumidores reales cuando existan. |
@@ -143,6 +143,18 @@ Cada paso autorizado cambia posición/ocupación inmediatamente y activa un CD p
 La IA elige comportamiento/próximo paso, recalcula antes de cada movimiento y solicita por mensajes. El jugador no ordena durante combate. Utilidades puras ayudan a buscar caminos; Navegación revalida la solicitud con su estado vigente. Vistas iniciales y actualizaciones con revisión/tick; laboratorio manual de fixtures, sin IA real. Energía conserva presupuesto de equipamiento, sin gasto por paso.
 
 Confirmación final mediante «1. ok / 2. ok»: CD entero mínimo 1 tick, máximo un paso aprobado por robot/tick; migración explícita moveDurationTicks → moveCooldownTicks con revisión nueva y actualización conjunta de catálogo/fixtures CAT/APP, rechazando claramente JSON/replays anteriores incompatibles, sin lectores legacy separados. El usuario solicitó preparar el plan tras pasar la tarjeta a Listo para desarrollar. [Plan NAV-001 1.0](workflow/board-navigation-v1.md), [contrato NAV v1](architecture/board-navigation-v1.md) y [migración CAT-002](architecture/content-catalog-v2.md) aprobados e implementados: catálogo/fichas v2, contratos afectados nuevos/versionados, receta con Navegación y dos fixtures, geometría/BFS puros y panel manual. Ejecución aprobada mediante «aprobado. implementalo». Implementados NAV-001, CAT-002 y laboratorio; 175/175 pruebas y typecheck sin emisión aprobados, más recorridos del navegador. src/core y src/application permanecen sin cambios. Pendiente revisión humana e integración; no se autorizó commit/push/PR/merge.
+
+### PRE-001 — Presentación 3D modular
+
+Fecha: 14 de octubre de 2026. Estado: **diez decisiones, diseño y plan 1.0 aprobados; implementación local entregada para revisión**. Responsable humano: usuario solicitante. [Tarjeta 05](https://trello.com/c/yvOivbe1), Revisión / pruebas al entregar.
+
+El usuario eligió ensamblado por piezas con geometría genérica y colores contrastantes; Codex producirá los modelos usando Blender. Aceptó GLB, convenciones de escala/orientación/sockets, cámara ortográfica inclinada, suavizado únicamente de movimientos confirmados, pausa del reloj visual, vista propia por mensajes, señales iniciales y precarga/reutilización/limpieza explícita. También aceptó la propuesta inicial WebGL 2, con rendimiento medido y sin afectar la simulación.
+
+Kit propuesto: chasis rectangular azul, núcleo octaédrico amarillo, IA cúbica cian, sensor cónico violeta, arma de base rectangular naranja/cañón rojo y locomoción mediante ruedas cilíndricas u orugas de prismas oscuros. Todas las piezas visibles son fixtures; sin arte final ni balance nuevo. Tablero hexagonal completo, dirección/identidad y diagnósticos del laboratorio. CD es disponibilidad lógica; nunca duración de tránsito visual.
+
+Separación propuesta: actor presentation solo recibe mensajes, conserva su vista y publica datos inmutables; adaptador Three.js carga GLB, posee recursos/cámara/transiciones y corre fuera del scheduler. Contratos NAV/CAT/APP conservados, receta y mensajes de presentación nuevos/versionados. Precarga y errores visuales sin esperar I/O dentro de handlers; generaciones cerradas rechazan cargas tardías. Tests/replay existentes permanecen válidos con sus recetas originales.
+
+La solicitud «Documentá las decisiones, crea un nuevo branch para trabajar, y arma el plan de implementacion» habilitó documentación y planificación. Rama codex/presentation-3d-v1 y checkout propio creados desde main a9d8d834a9f5169d9c1b79f0a8b2023fefb52f59 ([PR #5 integrado](https://github.com/jonathankozur/robots/pull/5)). Blender 5.1.0 disponible, comprobado mediante --version. [Diseño/contratos propuestos](architecture/presentation-3d-v1.md) y [plan 1.0](workflow/presentation-3d-v1.md) incluyen modelos/sockets, frontera de mensajes, laboratorio, gestión de recursos y cambios acotados de dependencia/servidor. El usuario autorizó después el plan 1.0 mediante «aprobado. Implementalo». Implementados actor/vista por mensajes, recursos/reloj externo, nueve GLB/.blend, Three.js y laboratorio independiente. 198/198 pruebas y typecheck aprobados, más recorridos de navegador/logs/cierre/WebGL y rendimiento medido documentados en la entrega. Sin cambios al núcleo/APP/NAV/CAT ni builds. Revisión humana e integración GitHub pendientes.
 
 ## Estado de esta instalación
 

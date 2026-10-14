@@ -1,0 +1,41 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { VisualMotion, hexPosition } from '../../src/presentation/graphics/motion.ts';
+import type { View } from '../../src/presentation/data/contracts.ts';
+const frame = (q = 0, sequence = 1, cd = 20) => ({ contextId: 'c', sequence, world: { robots: [{ robotId: 'a', q, r: 0, moveCooldownTicks: cd }] } } as unknown as View);
+test('confirmed visual moves interpolate and pause freezes the clock exactly', () => {
+    const c = new VisualMotion();
+    c.accept(frame(), 0);
+    c.pause(false, 0);
+    c.accept(frame(1, 2), 0);
+    assert.ok(Math.abs(c.poses(60).get('a')!.x - Math.sqrt(3) / 2) < 1e-9);
+    c.pause(true, 60);
+    assert.deepEqual(c.poses(500).get('a'), c.poses(600).get('a'));
+    c.pause(false, 600);
+    assert.equal(c.poses(660).get('a')!.x, Math.sqrt(3));
+});
+test('duplicate views do not restart animation; CD1 caps duration and manual/batch resync snaps', () => {
+    const c = new VisualMotion();
+    c.accept(frame(0, 1, 1), 0);
+    c.pause(false, 0);
+    c.accept(frame(1, 2, 1), 0);
+    c.accept(frame(1, 2, 1), 25);
+    assert.equal(c.poses(50).get('a')!.x, Math.sqrt(3));
+    c.pause(true, 50);
+    c.accept(frame(3, 5), 50);
+    assert.deepEqual(c.poses(50).get('a'), { ...hexPosition(3, 0), yaw: Math.PI / 2 });
+    c.accept({ ...frame(0, 1), contextId: 'new' }, 50, true);
+    assert.equal(c.poses(50).get('a')!.x, 0);
+});
+test('changing playback speed preserves current pose and advances only visual time', () => {
+    const c = new VisualMotion();
+    c.accept(frame(), 0);
+    c.pause(false, 0);
+    c.accept(frame(1, 2), 0);
+    const before = c.poses(30).get('a')!.x;
+    c.speed(2, 30);
+    assert.equal(c.poses(30).get('a')!.x, before);
+    assert.equal(c.poses(75).get('a')!.x, Math.sqrt(3));
+    assert.throws(() => c.speed(0, 75));
+    assert.throws(() => c.poses(-1));
+});

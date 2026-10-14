@@ -8,6 +8,7 @@ import { mountEnvironmentPanel } from "./environment-panel.ts";
 import { mountContentPanel } from "./content-panel.ts";
 import { mountApplicationPanel } from "./application-panel.ts";
 import { mountNavigationPanel } from "./navigation-panel.ts";
+import { mountPresentationPanel } from "./presentation-panel.ts";
 
 const layout = '<header class="app-header"><div class="brand"><span class="brand-mark">R</span><div><strong>ROBOTS</strong><span>Laboratorio de mensajes</span></div></div><div class="file-actions"><button id="save">Guardar escenario</button><button id="export-scenario">Exportar JSON</button><button id="import">Importar</button><input type="file" id="file" accept=".json,application/json" hidden></div></header>'
   + '<div class="app"><aside class="sidebar"><div class="side-label">ESCENARIOS</div><select id="preset" aria-label="Escenario"></select><p id="preset-description"></p><div id="expected" class="muted"></div><button id="duplicate" class="full">Duplicar y editar</button><hr><label class="debug-toggle"><input id="debug-enabled" type="checkbox" checked> Registrar debug a archivo</label><p class="muted small">Cada mensaje, ruta y consumo se guarda en JSONL.</p><div id="log-status" class="log-status">Archivo pendiente de iniciar sesión.</div><button id="retry-log" hidden>Reintentar escritura</button><button id="download-pending" hidden>Descargar registros pendientes</button><hr><div class="side-label">EVIDENCIA</div><button id="export-replay" class="full">Exportar replay</button><button id="replay" class="full">Reproducir y comparar</button><button id="isolation" class="full">Probar segunda sesión</button><button id="export-report" class="full">Exportar reporte</button><hr><p class="small muted">Sistemas ficticios independientes. Fases fijas; pausas reales entre callbacks síncronos.</p></aside>'
@@ -32,6 +33,9 @@ mountApplicationPanel(document.getElementById("application-view")!);
 document.querySelector(".tabs")!.insertAdjacentHTML("beforeend", '<button data-view="navigation">Tablero y navegación</button>');
 document.querySelector(".workspace")!.insertAdjacentHTML("beforeend", '<section id="navigation-view" hidden></section>');
 mountNavigationPanel(document.getElementById("navigation-view")!);
+document.querySelector('.tabs')!.insertAdjacentHTML('beforeend', '<button data-view="presentation">Presentación 3D</button>');
+document.querySelector('.workspace')!.insertAdjacentHTML('beforeend', '<section id="presentation-view" hidden></section>');
+mountPresentationPanel(document.getElementById('presentation-view')!);
 
 function el<T extends HTMLElement = HTMLElement>(id: string): T { return document.getElementById(id) as T; }
 function escape(value: unknown): string { return String(value).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!); }
@@ -64,13 +68,14 @@ function fillCatalog(): void {
     + '</optgroup><optgroup label="Mis escenarios">' + Object.keys(saved()).map(name => option("saved:" + name, name)).join("") + '</optgroup>';
 }
 function changeView(view: string): void {
-  const standalone = view === "environment" || view === "content" || view === "application" || view === "navigation";
-  for (const name of ["simulation", "configuration", "comparison", "environment", "content", "application", "navigation"]) el(name + "-view").hidden = name !== view;
+  const standalone = view === "environment" || view === "content" || view === "application" || view === "navigation" || view === "presentation";
+  for (const name of ["simulation", "configuration", "comparison", "environment", "content", "application", "navigation", "presentation"]) el(name + "-view").hidden = name !== view;
   for (const selector of [".workspace > .controls", ".workspace > .status-strip", ".workspace > .title-row"]) (document.querySelector(selector) as HTMLElement).hidden = standalone;
   document.querySelector(".app")!.classList.toggle("environment-mode", view === "environment");
   document.querySelector(".app")!.classList.toggle("content-mode", view === "content");
   document.querySelector(".app")!.classList.toggle("application-mode", view === "application");
 document.querySelector(".app")!.classList.toggle("navigation-mode", view === "navigation");
+document.querySelector('.app')!.classList.toggle('presentation-mode', view === 'presentation');
   (document.querySelector(".file-actions") as HTMLElement).hidden = standalone;
   el("notice").hidden = standalone || !el("notice").textContent;
   document.querySelectorAll<HTMLButtonElement>("[data-view]").forEach(button => { button.classList.toggle("active", button.dataset.view === view); });
