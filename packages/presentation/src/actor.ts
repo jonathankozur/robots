@@ -1,11 +1,14 @@
-import type { Actor } from '@robots/system-api';
+import type { Actor, ActorContext } from '@robots/system-api';
 import type { Payload } from '@robots/system-api';
 import { checkedAdd } from '@robots/values/numeric';
 import type { Publisher } from '@robots/system-api';
 import type { World, Result } from '@robots/protocol/navigation/v1';
 import type { Assembly, View } from '@robots/protocol/presentation/v1';
 import { frozen, fail } from './plain.ts';
-export function createPresentationActor(inputIdentity: Payload): Actor {
+export function createPresentationActor(inputIdentity: Payload, context: ActorContext = {systemId: 'presentation'}): Actor {
+    const systemId = context.systemId;
+    if (typeof systemId !== 'string' || systemId.length < 1 || systemId.length > 128)
+        fail('Invalid actor system ID');
     const identity = frozen(inputIdentity);
     let publisher: Publisher, boardId = '', assemblies: readonly Assembly[] = [], initialized = false, active = false, world: World | undefined, dirty = false, sequence = 0;
     let movements: View['movements'][number][] = [];
@@ -31,12 +34,12 @@ export function createPresentationActor(inputIdentity: Payload): Actor {
                 if (new Set(a.parts.map(p => p.slotId)).size !== a.parts.length || new Set(a.parts.map(p => p.socketId)).size !== a.parts.length)
                     fail('Duplicate mounting');
             initialized = true;
-            publisher.emit('ApplicationParticipantInitialized', 1, { ...identity, participantId: 'presentation' });
+            publisher.emit('ApplicationParticipantInitialized', 1, { ...identity, participantId: systemId });
         },
         activate(m) { if (!initialized || active || m.sessionId !== identity.contextId)
             fail('Invalid activation'); active = true; },
         subscriptions: [
-            { type: 'NavigationWorldReady', phase: 'action', handler(m) {
+            { type: 'NavigationWorldReady', version: 1, phase: 'action', handler(m) {
                     if (!active || world || m.payload.boardId !== boardId)
                         fail('Invalid initial world');
                     world = frozen(m.payload as unknown as World);
@@ -44,7 +47,7 @@ export function createPresentationActor(inputIdentity: Payload): Actor {
                         fail('Assembly mismatch');
                     dirty = true;
                 } },
-            { type: 'NavigationStepResolved', phase: 'action', handler(m) {
+            { type: 'NavigationStepResolved', version: 1, phase: 'action', handler(m) {
                     if (!world || m.sessionId !== identity.contextId)
                         fail('No active world');
                     const r = m.payload as unknown as Result;

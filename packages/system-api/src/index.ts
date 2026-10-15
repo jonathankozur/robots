@@ -1,6 +1,6 @@
-export const PHASES = [
+export const PHASES = Object.freeze([
   "input", "perception", "decision", "movement", "action", "resolution", "publication",
-] as const;
+] as const);
 export type Phase = typeof PHASES[number];
 export type JsonValue = null | boolean | number | string | readonly JsonValue[] | Payload;
 export interface Payload { readonly [key: string]: JsonValue }
@@ -11,9 +11,11 @@ export type FieldRule = (
   | { readonly type: "object"; readonly fields: Readonly<Record<string, FieldRule>> }
   | { readonly type: "array"; readonly items: FieldRule; readonly maxLength: number }
 ) & { readonly optional?: boolean };
-export interface MessageDefinition {
+export interface MessageReference {
   readonly type: string;
   readonly version: number;
+}
+export interface MessageDefinition extends MessageReference {
   readonly kind: "command" | "event";
   readonly fields: Readonly<Record<string, FieldRule>>;
 }
@@ -104,9 +106,11 @@ export function contractKey(type: string, version: number): string {
   return JSON.stringify([type, version]);
 }
 
+/** Identity assigned by the assembler; contains no neighboring system capabilities. */
+export interface ActorContext { readonly systemId: string }
 export interface Actor {
   connect(publisher: Publisher): void;
   initialize: Handler; activate: Handler;
-  readonly subscriptions?: readonly { type: string; phase: Phase; handler: Handler }[];
+  readonly subscriptions?: readonly (MessageReference & { readonly phase: Phase; readonly handler: Handler })[];
   readonly loopPhase?: Phase; readonly loop?: SystemDefinition["loop"];
 }

@@ -12,8 +12,8 @@ export const APPLICATION_MESSAGES = snapshotData([
  {type:"ApplicationInitializationRejected",version:1,kind:"event",fields:{...APPLICATION_IDENTITY_FIELDS,reason:text,pendingParticipants:strings}},
 ]) as unknown as readonly MessageDefinition[];
 export function beginContextDefinition(viewFields: Readonly<Record<string,FieldRule>>): MessageDefinition {
- return {type:"BeginApplicationContext",version:1,kind:"command",fields:{...APPLICATION_IDENTITY_FIELDS,requiredParticipants:strings,initializationMaxTicks:{type:"number",integer:true,min:1,max:10000},views:{type:"object",fields:viewFields}}};
+ return snapshotData({type:"BeginApplicationContext",version:1,kind:"command",fields:{...APPLICATION_IDENTITY_FIELDS,requiredParticipants:strings,initializationMaxTicks:{type:"number",integer:true,min:1,max:10000},views:{type:"object",fields:viewFields}}}, 1_048_576, 128) as unknown as MessageDefinition;
 }
 export function initializationDefinition(type:string, fields:Readonly<Record<string,FieldRule>>):MessageDefinition {
- return {type,version:1,kind:"command",fields:{...APPLICATION_IDENTITY_FIELDS,view:{type:"object",fields}}};
+ return snapshotData({type,version:1,kind:"command",fields:{...APPLICATION_IDENTITY_FIELDS,view:{type:"object",fields}}}, 1_048_576, 128) as unknown as MessageDefinition;
 }

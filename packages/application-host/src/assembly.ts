@@ -24,7 +24,7 @@ export function assemble(recipe: Recipe, target: Runtime, runtime: string, debug
       if(!installing)fail("APP_RESOURCE_CONTEXT","Resources may only register during factory creation");
       if(typeof dispose!=="function") fail("INVALID_REQUEST","Resource cleanup must be callable");
       target.resources.push({dispose,released:false});
-    });
+    },Object.freeze({systemId:p.id}));
   });}finally{installing=false;}})();
   let publisher: Publisher, root: Message | null=null, decision=false, rejected:string|null=null, started=0;
   const confirmations=new Map<string,Message>();
@@ -70,11 +70,11 @@ export function assemble(recipe: Recipe, target: Runtime, runtime: string, debug
     const actor=actors[i]!; actor.connect(session.publisher(p.id));
     session.subscribe(p.id,p.initializationType,1,p.phase,actor.initialize);
     session.subscribe(p.id,"ApplicationContextReady",1,"input",actor.activate);
-    for(const sub of actor.subscriptions??[]) session.subscribe(p.id,sub.type,1,sub.phase,sub.handler);
+    for(const sub of actor.subscriptions??[]) session.subscribe(p.id,sub.type,sub.version,sub.phase,sub.handler);
   });
   session.subscribe("app-output","ApplicationContextReady",1,"input",()=>{output.ready=true;});
   session.subscribe("app-output","ApplicationInitializationRejected",1,"input",m=>{output.rejected=m.payload.reason as string;});
-  for(const type of recipe.outputTypes) session.subscribe("app-output",type,1,"publication",m=>{output.observations[m.sourceSystemId]=m.payload;});
+  for(const reference of recipe.outputTypes) session.subscribe("app-output",reference.type,reference.version,"publication",m=>{output.observations[m.sourceSystemId]=m.payload;});
   if(recording) session.loadReplay(recording);
   session.start();
   if(!recording) session.stageExternalInput("app-bootstrap",{sessionId:target.identity.contextId as string,type:"BeginApplicationContext",version:1,payload:begin});

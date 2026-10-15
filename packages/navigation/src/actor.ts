@@ -1,5 +1,7 @@
-import {checkedAdd} from "@robots/values/numeric";import type {Payload,Publisher,Message} from "@robots/system-api";import type {Actor} from "@robots/system-api";import {distance,inside,key,same} from "@robots/values/hex-grid";import type {Board,Step,Result,RobotState} from "@robots/protocol/navigation/v1";import {validateBoard,copyData,fail} from "./data.ts";
-export function createNavigationActor(inputIdentity:Payload):Actor{
+import {checkedAdd} from "@robots/values/numeric";import type {Payload,Publisher,Message} from "@robots/system-api";import type {Actor,ActorContext} from "@robots/system-api";import {distance,inside,key,same} from "@robots/values/hex-grid";import type {Board,Step,Result,RobotState} from "@robots/protocol/navigation/v1";import {validateBoard,copyData,fail} from "./data.ts";
+export function createNavigationActor(inputIdentity:Payload,context:ActorContext={systemId:"navigation"}):Actor{
+ const systemId=context.systemId;
+ if(typeof systemId!=="string"||systemId.length<1||systemId.length>128)fail("NAV_IDENTITY","Invalid actor system ID");
  const identity=copyData(inputIdentity);let publisher:Publisher,board:Board|undefined,enabled=false,revision=0;
  const robots=new Map<string,RobotState>(),occupied=new Map<string,string>(),queue:Message[]=[];
  const requests=new Map<string,{high:number;entries:Map<number,{body:string;result:Result}>}>();
@@ -27,10 +29,10 @@ export function createNavigationActor(inputIdentity:Payload):Actor{
    for(const k of ["contextId","attemptId","bundleId","contentRevision"])if(Object.hasOwn(m.payload,k)&&m.payload[k]!==identity[k])fail("NAV_IDENTITY","Wrong bootstrap identity");
    board=validateBoard(m.payload.view as unknown as Board);
    for(const r of board.robots){robots.set(r.robotId,{...r,robotRevision:0,readyAtTick:0});occupied.set(key(r),r.robotId);}
-   publisher.emit("ApplicationParticipantInitialized",1,{...identity,participantId:"navigation"});
+   publisher.emit("ApplicationParticipantInitialized",1,{...identity,participantId:systemId});
   },
   activate(m,c){if(!board||enabled||m.sessionId!==identity.contextId)fail("NAV_ACTIVATION","Invalid activation");enabled=true;publisher.emit("NavigationWorldReady",1,{...board,boardRevision:revision,effectiveTick:c.tick,robots:[...robots.values()]} as unknown as Payload);},
-  subscriptions:[{type:"RequestNavigationStep",phase:"movement",handler(m){if(queue.length>=256)fail("NAV_QUEUE_CAPACITY","Too many pending steps");queue.push(m);}}],
+  subscriptions:[{type:"RequestNavigationStep",version:1,phase:"movement",handler(m){if(queue.length>=256)fail("NAV_QUEUE_CAPACITY","Too many pending steps");queue.push(m);}}],
   loopPhase:"movement",loop(c){
    queue.sort((a,b)=>a.messageId-b.messageId);
    for(const m of queue){const p=m.payload as unknown as Step,pair=JSON.stringify([m.sourceSystemId,p.robotId]),body=JSON.stringify(p);

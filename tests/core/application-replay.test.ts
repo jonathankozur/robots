@@ -76,8 +76,8 @@ test("a participant cannot forge a new initialization confirmation from an unrel
 
 test("invalid asynchronous cleanup cannot leak a rejection and does not skip other resources",async()=>{
   const disposed:string[]=[];const base=fixtureRecipe({disposed});
-  const recipe={...base,participants:base.participants.map(p=>({...p,create(identity:any,register:any){
-    return p.create(identity,dispose=>register(p.id===nav?()=>Promise.reject(new Error("async cleanup forbidden")):dispose));
+  const recipe={...base,participants:base.participants.map(p=>({...p,create(identity:any,register:any,context:Parameters<typeof p.create>[2]){
+    return p.create(identity,dispose=>register(p.id===nav?()=>Promise.reject(new Error("async cleanup forbidden")):dispose),context);
   }}))};
   const a=controller(recipe);boot(a);assert.equal(a.close().ok,false);
   await new Promise<void>(resolve=>setImmediate(resolve));
@@ -86,8 +86,8 @@ test("invalid asynchronous cleanup cannot leak a rejection and does not skip oth
 
 test("factory resource registration cannot be retained and used from simulation callbacks",()=>{
   const base=fixtureRecipe();
-  const recipe={...base,participants:base.participants.map(p=>p.id!==nav?p:{...p,create(identity:any,register:any){
-    const actor=p.create(identity,register);
+  const recipe={...base,participants:base.participants.map(p=>p.id!==nav?p:{...p,create(identity:any,register:any,context:Parameters<typeof p.create>[2]){
+    const actor=p.create(identity,register,context);
     return {...actor,activate(message:any,context:any){register(()=>{});actor.activate(message,context);}};
   }})};
   const a=controller(recipe);a.request(request());a.advance();a.advance();

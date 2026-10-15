@@ -20,10 +20,10 @@ function boot(recipe:Recipe) {
 }
 test("a presentation-only composition reaches ready and waits without registering navigation",()=>{
   const recipe:Recipe={id:"presentation-only",revision:"presentation-only-v1",
-    participants:[{id:"presentation",initializationType:"InitializePresentationView",phase:"action",fields:INITIAL_FIELDS,create:createPresentationActor}],
+    participants:[{id:"presentation",initializationType:"InitializePresentationView",phase:"action",fields:INITIAL_FIELDS,create:(identity,_resource,context)=>createPresentationActor(identity,context)}],
     prepare(){return {presentation:{boardId:"board",assemblies:[]}};},
     contracts:[...NAVIGATION_MESSAGES.filter(d=>d.kind==="event").map(d=>bindMessage(d,{producers:[]})),...bindPresentationContracts("presentation")],
-    outputTypes:["PresentationViewPublished"]};
+    outputTypes:[{type:"PresentationViewPublished",version:1}]};
   const a=boot(recipe);for(let i=0;i<6;i++)assert.equal(a.advance().ok,true);
   assert.deepEqual(a.snapshot().observations,{});
   const manifest=a.trace()!.manifest as any;
@@ -32,10 +32,10 @@ test("a presentation-only composition reaches ready and waits without registerin
 });
 test("a navigation-only composition reaches ready and retains a command receiver with no decision producer",()=>{
   const recipe:Recipe={id:"navigation-only",revision:"navigation-only-v1",
-    participants:[{id:"navigation",initializationType:"InitializeNavigationBoard",phase:"movement",fields:BOARD_FIELDS,create:createNavigationActor}],
+    participants:[{id:"navigation",initializationType:"InitializeNavigationBoard",phase:"movement",fields:BOARD_FIELDS,create:(identity,_resource,context)=>createNavigationActor(identity,context)}],
     prepare(){return {navigation:board() as unknown as Payload};},
     contracts:bindNavigationContracts({navigationId:"navigation",requestProducers:[]}),
-    outputTypes:["NavigationWorldReady","NavigationStepResolved"]};
+    outputTypes:[{type:"NavigationWorldReady",version:1},{type:"NavigationStepResolved",version:1}]};
   const a=boot(recipe);for(let i=0;i<6;i++)assert.equal(a.advance().ok,true);
   assert.equal(a.snapshot().observations.navigation!.boardRevision,0);
   assert.equal(a.stage(a.snapshot().contextId,"RequestNavigationStep",{}),false);
@@ -45,9 +45,9 @@ function driverRecipe(sourceId:string):Recipe {
   const step:Step={boardId:"board",robotId:"a",requestSequence:1,from:{q:0,r:0},to:{q:1,r:0},expectedRobotRevision:0,knownBoardRevision:0};
   return {id:"alternative-"+sourceId,revision:"alternative-v1",prepare(){return {navigation:board() as unknown as Payload,[sourceId]:{}};},
     contracts:bindNavigationContracts({navigationId:"navigation",requestProducers:[{systemId:sourceId,phases:["decision"]}]}),
-    outputTypes:["NavigationStepResolved"],
+    outputTypes:[{type:"NavigationStepResolved",version:1}],
     participants:[
-      {id:"navigation",initializationType:"InitializeNavigationBoard",phase:"movement",fields:BOARD_FIELDS,create:createNavigationActor},
+      {id:"navigation",initializationType:"InitializeNavigationBoard",phase:"movement",fields:BOARD_FIELDS,create:(identity,_resource,context)=>createNavigationActor(identity,context)},
       {id:sourceId,initializationType:"InitializeAlternativeProducer",phase:"decision",fields:{},create(identity):Actor{
         let port:Publisher,active=false,sent=false;
         return {connect(p){port=p;},initialize(){port.emit("ApplicationParticipantInitialized",1,{...identity,participantId:sourceId});},

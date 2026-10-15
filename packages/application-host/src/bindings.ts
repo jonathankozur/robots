@@ -20,16 +20,16 @@ export function bindMessage(definition: MessageDefinition, binding: MessageBindi
     ...(binding.responsibleSystemId === undefined ? {} : { responsibleSystemId: binding.responsibleSystemId })
   }, 1_048_576, 128) as unknown as Contract;
 }
-/** The current navigation actor owns the stable ID navigation. */
+/** The host assigns command ownership and producer IDs for this composition. */
 export function bindNavigationContracts(options: {
-  readonly navigationId: "navigation"; readonly requestProducers: Contract["producers"];
+  readonly navigationId: string; readonly requestProducers: Contract["producers"];
 }): readonly Contract[] {
   return Object.freeze(NAVIGATION_MESSAGES.map(definition => bindMessage(definition,
     definition.kind === "command"
       ? { responsibleSystemId: options.navigationId, producers: options.requestProducers }
       : { producers: [{ systemId: options.navigationId, phases: [definition.type === "NavigationWorldReady" ? "input" : "movement"] }] })));
 }
-export function bindPresentationContracts(presentationId: "presentation"): readonly Contract[] {
+export function bindPresentationContracts(presentationId: string): readonly Contract[] {
   return Object.freeze(PRESENTATION_MESSAGES.map(definition => bindMessage(definition,
     { producers: [{ systemId: presentationId, phases: ["action"] }] })));
 }
