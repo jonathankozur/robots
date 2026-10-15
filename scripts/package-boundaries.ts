@@ -7,6 +7,11 @@ export interface GraphOverrides {
 }
 interface Manifest { name:string; dependencies?:Record<string,string>; exports:Record<string,string> }
 const permitted:Record<string,readonly string[]>={
+  "@robots/damage":["@robots/system-api","@robots/protocol","@robots/values"],
+  "@robots/weapons":["@robots/system-api","@robots/protocol","@robots/values"],
+  "@robots/perception":["@robots/system-api","@robots/protocol","@robots/values"],
+  "@robots/decision":["@robots/system-api","@robots/protocol","@robots/values"],
+  "@robots/battle":["@robots/system-api","@robots/protocol","@robots/values"],
   "@robots/system-api":[],
   "@robots/values":["@robots/system-api"],
   "@robots/protocol":["@robots/system-api","@robots/values"],

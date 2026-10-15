@@ -44,7 +44,7 @@ function isolated(name:string) {
   }
   try {
     copyWorkspace(name);
-    for(const neighbor of ["@robots/navigation","@robots/presentation","@robots/presentation-three","@robots/application-host","@robots/runtime"]){
+    for(const neighbor of ["@robots/navigation","@robots/presentation","@robots/damage","@robots/weapons","@robots/perception","@robots/decision","@robots/battle","@robots/presentation-three","@robots/application-host","@robots/runtime"]){
       if(neighbor!==name&&!included.has(neighbor))assert.equal(existsSync(join(sandbox,"node_modules",neighbor)),false);
     }
     const info=manifests.get(name)!;
@@ -52,9 +52,9 @@ function isolated(name:string) {
     run(sandbox,[compiler,"--noEmit","-p",join(project,"tsconfig.json")]);
     const specifiers=Object.keys(info.m.exports).map(key=>key==="."?name:name+key.slice(1));
     run(project,["--input-type=module","-e","for(const name of "+JSON.stringify(specifiers)+")await import(name);"]);
-    if(name==="@robots/presentation"||name==="@robots/navigation"){
-      const neighbor=name==="@robots/presentation"?"@robots/navigation":"@robots/presentation";
-      run(project,["--input-type=module","-e","try{await import("+JSON.stringify(neighbor)+");process.exit(1)}catch(e){if(e.code!=='ERR_MODULE_NOT_FOUND')throw e}"]);
+    if(["@robots/navigation","@robots/presentation","@robots/damage","@robots/weapons","@robots/perception","@robots/decision","@robots/battle"].includes(name)){
+      const absent=["@robots/navigation","@robots/presentation","@robots/damage","@robots/weapons","@robots/perception","@robots/decision","@robots/battle"].filter(n=>n!==name);
+      run(project,["--input-type=module","-e","for(const n of "+JSON.stringify(absent)+"){try{await import(n);process.exit(1)}catch(e){if(e.code!=='ERR_MODULE_NOT_FOUND')throw e}}"]);
     }
     const tests=existsSync(join(project,"test"))?readdirSync(join(project,"test")).filter(n=>n.endsWith(".test.ts")):[];
     if(tests.length)run(project,["--test",...tests.map(t=>join(project,"test",t))]);
@@ -68,6 +68,6 @@ function isolated(name:string) {
 }
 for(const name of manifests.keys())test("package typechecks and loads with only its declared dependencies in an isolated directory: "+name,()=>{
   const included=isolated(name);
-  if(name==="@robots/navigation"||name==="@robots/presentation")assert.deepEqual(included,["@robots/protocol",name,"@robots/system-api","@robots/values"].sort());
+  if(["@robots/navigation","@robots/presentation","@robots/damage","@robots/weapons","@robots/perception","@robots/decision","@robots/battle"].includes(name))assert.deepEqual(included,["@robots/protocol",name,"@robots/system-api","@robots/values"].sort());
   if(name==="@robots/protocol")assert.deepEqual(included,["@robots/protocol","@robots/system-api","@robots/values"]);
 });

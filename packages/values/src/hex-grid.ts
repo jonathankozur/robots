@@ -1,4 +1,4 @@
-import { checkedInteger, checkedAdd, checkedSubtract } from "./numeric.ts";
+import { checkedInteger, checkedAdd, checkedSubtract, checkedMultiply } from "./numeric.ts";
 import { ProtocolError } from "@robots/system-api";
 export interface Hex { readonly q:number; readonly r:number }
 export interface Grid { readonly width:number; readonly height:number; readonly tiles:readonly (Hex & {readonly passable:boolean})[] }
@@ -25,4 +25,32 @@ export function findPath(g:Grid,from:Hex,to:Hex,occupied:readonly Hex[]=[]):Path
   for(const next of neighbors(p))if(free.has(key(next))&&!previous.has(key(next))){previous.set(key(next),p);queue.push(next);}
  }
  return finish("NO_PATH",[],explored);
+}
+
+
+/** Closed hex supercover: a wall touched only at an edge or vertex still blocks. */
+export function hasLineOfSight(grid:Grid,from:Hex,to:Hex):boolean {
+ validateGrid(grid);
+ for(const p of [from,to])if(!Number.isSafeInteger(p.q)||!Number.isSafeInteger(p.r)||!inside(grid,p))
+  throw new ProtocolError("HEX_LOS_INVALID","Visibility endpoints must be bounded integer hexes");
+ if(same(from,to))return true;
+ const project=(p:Hex)=>({x:checkedAdd(checkedMultiply(2,p.q),p.r),z:checkedMultiply(3,p.r)});
+ const a=project(from),b=project(to),dx=checkedSubtract(b.x,a.x),dz=checkedSubtract(b.z,a.z);
+ const planes:readonly (readonly [number,number,number])[]=[[1,0,1],[-1,0,1],[1,1,2],[-1,-1,2],[-1,1,2],[1,-1,2]];
+ const after=(n:number,d:number,m:number,e:number)=>checkedMultiply(n,e)>checkedMultiply(m,d);
+ for(const tile of grid.tiles){
+  if(tile.passable||same(tile,from)||same(tile,to))continue;
+  const c=project(tile),x=checkedSubtract(a.x,c.x),z=checkedSubtract(a.z,c.z);
+  let ln=0,ld=1,un=1,ud=1,intersects=true;
+  for(const [nx,nz,bound] of planes){
+   const p=checkedAdd(checkedMultiply(nx,dx),checkedMultiply(nz,dz));
+   const q=checkedSubtract(bound,checkedAdd(checkedMultiply(nx,x),checkedMultiply(nz,z)));
+   if(p===0){if(q<0){intersects=false;break;}continue;}
+   if(p>0){if(after(un,ud,q,p)){un=q;ud=p;}}
+   else if(after(-q,-p,ln,ld)){ln=-q;ld=-p;}
+   if(after(ln,ld,un,ud)){intersects=false;break;}
+  }
+  if(intersects)return false;
+ }
+ return true;
 }

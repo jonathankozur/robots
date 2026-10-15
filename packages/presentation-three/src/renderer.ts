@@ -7,6 +7,8 @@ import { ResourcePool } from './resources.ts';
 import { VisualMotion, hexPosition } from './motion.ts';
 import { batchRigidAsset } from './batching.ts';
 import { RenderCadence } from './cadence.ts';
+import type { CombatView } from '@robots/protocol/presentation/v2';
+import { CombatFeedback } from './combat-feedback.ts';
 function disposeObject(group: THREE.Object3D): void {
     const geometries = new Set<THREE.BufferGeometry>(), materials = new Set<THREE.Material>(), textures = new Set<THREE.Texture>();
     group.traverse(o => { if (o instanceof THREE.Mesh) {
@@ -71,6 +73,8 @@ export class PresentationRenderer {
     #released = false;
     #rendererDisposed = false;
     #cadence = new RenderCadence();
+    #combatFeedback = new CombatFeedback();
+    #combatEffects: { object: THREE.Line | THREE.Mesh; born: number }[] = [];
     constructor(host: HTMLElement, manifest: Manifest, options: {
         fault?: string;
         onLost?: () => void;
@@ -253,6 +257,39 @@ export class PresentationRenderer {
         const p = hexPosition(r.q, r.r);
         this.#logical.get(r.robotId)?.position.set(p.x, .025, p.z);
     } }
+    acceptCombat(view: CombatView): void {
+        if (this.#closed || this.#lost) return;
+        this.accept(view);
+        const now = performance.now();
+        this.motion.pause(false, now);
+        for (const event of this.#combatFeedback.accept(view)) {
+            const from = view.world.robots.find(r => r.robotId === event.robotId);
+            const target = view.world.robots.find(r => r.robotId === event.targetRobotId);
+            if (!from || !target) continue;
+            const a = hexPosition(from.q, from.r), b = hexPosition(target.q, target.r);
+            let object: THREE.Line | THREE.Mesh;
+            if (event.kind === 'ATTACK') {
+                object = new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(a.x, .6, a.z), new THREE.Vector3(b.x, .6, b.z)]), new THREE.LineBasicMaterial({color: 0xffd271, transparent: true}));
+            } else {
+                object = new THREE.Mesh(new THREE.RingGeometry(.2, .8, 24), new THREE.MeshBasicMaterial({color: 0xff795e, side: THREE.DoubleSide, transparent: true}));
+                object.rotation.x = -Math.PI / 2;
+                object.position.set(b.x, .06, b.z);
+            }
+            if (this.#combatEffects.length >= 64) this.#clearCombatEffect(this.#combatEffects.shift()!.object);
+            this.#scene.add(object);
+            this.#combatEffects.push({object, born: now});
+        }
+        for (const hp of view.combatants) {
+            const robot = this.#robots.get(hp.robotId);
+            if (robot) robot.rotation.z = hp.status === 'DEFEATED' ? .28 : 0;
+            const label = this.#labels.get(hp.robotId);
+            if (label && label.material instanceof THREE.MeshBasicMaterial) label.material.color.setHex(hp.robotId === view.combatants[0]?.robotId ? 0xffd271 : 0x92c9f4);
+        }
+    }
+    #clearCombatEffect(object: THREE.Line | THREE.Mesh): void {
+        object.removeFromParent(); object.geometry.dispose();
+        for (const material of Array.isArray(object.material) ? object.material : [object.material]) material.dispose();
+    }
     setRoutes(plans: readonly {
         robotId: string;
         path: readonly {
@@ -314,7 +351,15 @@ export class PresentationRenderer {
     #frame = (time: number) => {
         if (this.#closed || this.#lost || this.#host.offsetParent === null || !this.#cadence.ready(time, this.#fps))
             return;
-        const poses = this.motion.poses(performance.now());
+        const now = performance.now();
+        this.#combatEffects = this.#combatEffects.filter(effect => {
+            const age = now - effect.born;
+            if (age > 260) { this.#clearCombatEffect(effect.object); return false; }
+            for (const material of Array.isArray(effect.object.material) ? effect.object.material : [effect.object.material]) material.opacity = 1 - age / 260;
+            if (effect.object instanceof THREE.Mesh) effect.object.scale.setScalar(1 + age / 160);
+            return true;
+        });
+        const poses = this.motion.poses(now);
         for (const [id, p] of poses) {
             const r = this.#robots.get(id);
             if (r) {
@@ -344,6 +389,9 @@ export class PresentationRenderer {
         if (this.#released)
             return;
         this.#released = true;
+        for (const effect of this.#combatEffects) this.#clearCombatEffect(effect.object);
+        this.#combatEffects = [];
+        this.#combatFeedback.reset();
         for (const o of this.#routes.children)
             if (o instanceof THREE.Line)
                 o.geometry.dispose();

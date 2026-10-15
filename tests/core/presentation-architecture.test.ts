@@ -4,7 +4,7 @@ import { readdirSync, readFileSync } from 'node:fs';
 import ts from 'typescript';
 function violations(source: string): string[] {
     const ast = ts.createSourceFile('data.ts', source, ts.ScriptTarget.Latest, true), bad: string[] = [];
-    const allowed = new Set(['@robots/system-api', '@robots/values/numeric', '@robots/values/integers', '@robots/protocol/navigation/v1', '@robots/protocol/presentation/v1', '@robots/protocol/presentation/manifest-v1']);
+    const allowed = new Set(["@robots/protocol/weapons/v1","@robots/protocol/damage/v1","@robots/protocol/battle/v1","@robots/protocol/perception/v1","@robots/protocol/decision/v1","@robots/protocol/presentation/v2","@robots/protocol/application/v1","@robots/values/hex-grid",'@robots/system-api', '@robots/values/numeric', '@robots/values/integers', '@robots/protocol/navigation/v1', '@robots/protocol/presentation/v1', '@robots/protocol/presentation/manifest-v1']);
     function visit(n: ts.Node): void {
         if ((ts.isImportDeclaration(n) || ts.isExportDeclaration(n)) && n.moduleSpecifier && ts.isStringLiteral(n.moduleSpecifier)) {
             const p = n.moduleSpecifier.text;

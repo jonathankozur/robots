@@ -14,6 +14,7 @@
     "packages/*/src/**/*.ts",
     "packages/*/test/**/*.ts",
     "tests/**/*.ts",
-    "scripts/**/*.ts"
+    "scripts/**/*.ts",
+    "apps/**/*.ts"
   ]
 }

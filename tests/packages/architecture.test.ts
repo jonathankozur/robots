@@ -7,7 +7,7 @@ import { inspectPackageGraph } from "../../scripts/package-boundaries.ts";
 const root=fileURLToPath(new URL("../../",import.meta.url));
 test("every canonical package obeys its declared public dependency boundaries",()=>{
   const graph=inspectPackageGraph(root);
-  assert.equal(graph.packages.length,9);assert.deepEqual(graph.issues,[]);
+  assert.equal(graph.packages.length,14);assert.deepEqual(graph.issues,[]);
 });
 test("the graph rejects direct peer implementations even if someone declares that dependency",()=>{
   const graph=inspectPackageGraph(root,{
@@ -42,7 +42,7 @@ test("protocol definitions contain no fixture permissions or implementations",as
     assert.deepEqual(Object.keys(definition).sort(),["fields","kind","type","version"]);
     assert.ok(!JSON.stringify(definition).includes("navigation-agent-fixture"));
   }
-  for(const p of ["navigation","presentation"]){
+  for(const p of ["navigation","presentation","damage","weapons","perception","decision","battle"]){
     const manifest=JSON.parse(readFileSync(join(root,"packages",p,"package.json"),"utf8"));
     assert.deepEqual(Object.keys(manifest.dependencies).sort(),["@robots/protocol","@robots/system-api","@robots/values"]);
   }
