@@ -1,6 +1,6 @@
 # Decisiones y habilitación
 
-Revisión documental: **1.13.0**. Actualización: **14 de octubre de 2026**. Conserva la base documental del 9 de octubre.
+Revisión documental: **1.18.0**. Actualización: **15 de octubre de 2026**. Conserva la base documental del 9 de octubre.
 
 ## Base aprobada
 
@@ -173,3 +173,21 @@ Tradeoff: paquetes dentro del mismo repositorio permiten migrar consumidores con
 [Arquitectura implementada](architecture/system-independence-v1.md) y [plan/entrega](workflow/system-independence-v1.md): TDD de productores ausentes y controles negativos, 244/244 pruebas finales, nueve paquetes comprobados sin vecinos en directorios aislados, tipos raíz y por paquete sin emisión, 17 referencias previas APP/NAV/PRE que conservan traza/resultados/causalidad/replay. Vite dev desde C:/dev/robots en5174: escena,20 ticks,replay,segunda sesión,cierre y consola aprobados. El servidor viejo en5173 fue excluido al detectar que servía el checkout anterior.
 
 Sin builds ni artefactos compilados/publicables, commit/push/PR/merge. Publicación npm, integración y revisión humana pendientes. Aislamiento de fallos, procesos separados, hot-plug y rollback fuera del alcance. Engram no disponible: la memoria del encargo está en las fuentes compartidas.
+
+### COM-001 — Combate automático mínimo e interfaz del jugador
+
+Responsable humano: Jonathan Kozur. Plan/diseño inicial aprobados el 14 de octubre de 2026. El usuario confirmó que el combate es automático y que el jugador solo debe iniciar y observar tablero, vida, daño, estado y resultado.
+
+El MVP incluye un escenario local 1v1, ambos robots moviéndose y atacando, una única arma directa, integridad, alcance/visión, recarga, dos políticas automáticas e inicio/fin con ganador. Efectos/condiciones de juego, armas adicionales, defensa/soporte, loot, progreso, red y persistencia quedan para extensiones posteriores.
+
+Se aprobaron las alternativas técnicas: LOS por contacto de hexes no pasables mediante helper puro; fixture.observe-v1 y fixture.pressure-v1 deterministas; impactos letales por lote con doble KO; límite de 1200 ticks y empate; consumo de recarga al aceptar ataque; una batalla por instancia sin transferencia de integridad; PresentationViewPublished@2 preservando v1; app independiente en apps/game. Un fallo técnico no declara ganador.
+
+El 15 de octubre de 2026 Jonathan aprobó conjuntamente el [plan 1.0](workflow/automatic-combat-mvp.md), [diseño](architecture/automatic-combat-mvp-design-v1.md), [contratos](architecture/automatic-combat-mvp-contracts-v1.md) y [fichas](architecture/automatic-combat-mvp-systems-v1.md) mediante «aprobado, implementalo». Esa instrucción habilitó todos los lotes secuenciales, incluidos contratos públicos y registro de paquetes. Rama propia codex/combat-mvp-design en C:/Users/Jonat/.codex/worktrees/combat-mvp-plan/robots; base e533ca3. No se habilitaron push, PR, publicación o merge.
+
+La implementación local añade damage/weapons/perception/decision/battle; el inventario pasa de nueve a catorce paquetes. Cada actor mantiene estado propio y depende solo de system-api/protocol/values. La receta conserva una raíz BeginApplicationContext, proyección del corte t-1 y acuses de recarga. No requiere cambiar bus, scheduler, host genérico ni los contratos NAV/PRE v1.
+
+El escenario CAT-002 nuevo usa HP 100/80 y recursos PRE existentes. La ejecución real confirmó: arranque en tick 2, ambos se mueven en 2 y disparan desde 3, team.alpha gana en 623 con 20000 unidades; última vista en 624. Variante con HP igual produce doble KO. Replay y ritmos visuales 30/60 conservan traza completa en Node 24.14.0. La prueba de navegador terminó con el mismo resultado.
+
+APP-001 y la base de la tarjeta 07 contemplan conservación de progreso/daño entre contextos; esta entrega no implementa esa transferencia. No se ofrece segunda batalla. El HUD formatea unidades con cociente entero y resto para conservar precisión incluso cerca de MAX_SAFE_INTEGER. El adaptador de combate activa explícitamente la animación visual, conservando la pausa inicial del laboratorio v1.
+
+Estado: implementación y verificación local completadas; entregado para revisión humana. Evidencia, límites y archivos en el [reporte](workflow/automatic-combat-mvp.md#reporte-de-entrega-local--15-de-octubre-de-2026). No se ejecutaron builds, no se integró en main ni se modificaron tarjetas remotas. Engram no disponible: recuperación en documentos compartidos y apps/game/progress.md.

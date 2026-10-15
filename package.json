@@ -11,7 +11,8 @@
     "typecheck": "tsc --noEmit",
     "browser:harness": "node scripts/harness-server.ts",
     "typecheck:packages": "node scripts/typecheck-packages.ts",
-    "test:isolated": "node --test tests/packages/isolated.test.ts"
+    "test:isolated": "node --test tests/packages/isolated.test.ts",
+    "game:dev": "node scripts/game-server.ts"
   },
   "devDependencies": {
     "@types/node": "24.10.15",
@@ -29,7 +30,12 @@
     "@robots/presentation": "0.1.0",
     "@robots/presentation-three": "0.1.0",
     "@robots/content": "0.1.0",
-    "@robots/application-host": "0.1.0"
+    "@robots/application-host": "0.1.0",
+    "@robots/damage": "0.1.0",
+    "@robots/weapons": "0.1.0",
+    "@robots/perception": "0.1.0",
+    "@robots/decision": "0.1.0",
+    "@robots/battle": "0.1.0"
   },
   "workspaces": [
     "packages/*"

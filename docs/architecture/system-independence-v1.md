@@ -1,6 +1,6 @@
 # Paquetes independientes — IND-001
 
-Revisión: **1.1.0**, 14 de octubre de 2026. IND-001 extrajo los paquetes; IND-002 corrige fases y esquemas compartidos, selección de versiones e identidad de montaje. [Plan IND-001](../workflow/system-independence-v1.md), [plan IND-002](../workflow/system-coupling-fixes-v1.md), [investigación previa](system-independence-proposal.md).
+Revisión: **1.2.0**, 15 de octubre de 2026. IND-001 extrajo los paquetes; IND-002 corrige fases y esquemas compartidos, selección de versiones e identidad de montaje. [Plan IND-001](../workflow/system-independence-v1.md), [plan IND-002](../workflow/system-coupling-fixes-v1.md), [investigación previa](system-independence-proposal.md).
 
 ## Dónde vive el código
 
@@ -13,12 +13,17 @@ Todo continúa en **C:/dev/robots**. `packages/` contiene los paquetes del mismo
 | `protocol` | DTO, esquemas y definiciones públicas por dominio/versión | system-api, values |
 | `runtime` | Bus, catálogo, scheduler, sesión y traza | system-api, values |
 | `navigation` | Estado propio del tablero y resolución de pasos | system-api, protocol, values |
+| `damage` | Integridad y resoluciones de impactos | system-api, protocol, values |
+| `weapons` | Aceptación, alcance/visión y recarga | system-api, protocol, values |
+| `perception` | Observaciones vigentes por sensores | system-api, protocol, values |
+| `decision` | Políticas automáticas y solicitudes | system-api, protocol, values |
+| `battle` | Inicio, duración y resultado del encuentro | system-api, protocol, values |
 | `presentation` | Proyección inmutable de los mensajes recibidos | system-api, protocol, values |
 | `presentation-three` | Adaptador visual, recursos, movimiento y cadencia | protocol, Three.js |
 | `content` | Validación y preparación puras de contenido | system-api, protocol, values |
 | `application-host` | Preparación de sesión, permisos, ciclo de arranque y recursos externos | system-api, protocol, values, runtime, content |
 
-Los actores NAV/PRE no importan runtime, host ni implementaciones de vecinos, directamente o a través de una biblioteca común. El host genérico recibe fábricas; las recetas del laboratorio seleccionan los actores y el adaptador que montan. `content` es una biblioteca pura, sin actor, estado compartido ni ciclo de vida: el host puede usarla para preparar datos antes de iniciar una sesión.
+Los siete actores NAV/PRE/COM no importan runtime, host ni implementaciones de vecinos, directamente o a través de una biblioteca común. El host genérico recibe fábricas; las recetas del laboratorio y apps/game/composition.ts seleccionan los actores y el adaptador que montan. `content` es una biblioteca pura, sin actor, estado compartido ni ciclo de vida: el host puede usarla para preparar datos antes de iniciar una sesión.
 
 ## Contratos públicos y estado privado
 
@@ -32,7 +37,7 @@ import type { World, Result } from "@robots/protocol/navigation/v1";
 import type { View } from "@robots/protocol/presentation/v1";
 ```
 
-El paquete protocol también contiene application/v1, content/v2 y presentation/manifest-v1. Sus subpaths públicos evitan depender de una implementación para resolver tipos o esquemas. Un protocolo compartido sigue siendo una dependencia semántica: modificarlo exige analizar productores y consumidores. Compartir su ubicación no cambia esa responsabilidad.
+El paquete protocol también contiene application/v1, content/v2, presentation/manifest-v1 y los subpaths COM damage/v1, weapons/v1, perception/v1, decision/v1, battle/v1 y presentation/v2. Sus subpaths públicos evitan depender de una implementación para resolver tipos o esquemas. Un protocolo compartido sigue siendo una dependencia semántica: modificarlo exige analizar productores y consumidores. Compartir su ubicación no cambia esa responsabilidad.
 
 `PHASES` está congelado en ejecución. Las fábricas `beginContextDefinition` e `initializationDefinition` copian y congelan toda su definición, incluyendo los esquemas aportados por el llamador; no congelan los objetos originales ni conservan referencias mutables a ellos. Crear o intentar modificar una definición no altera las de otros hosts.
 
@@ -126,3 +131,10 @@ La migración conserva nombres/versiones/payloads de mensajes y el montaje de la
 Los paquetes privados usan fuentes TypeScript locales con Node 24 y Vite dev. Se comprobó resolución, ejecución y tipos por separado. **No se ejecutaron builds ni se generaron JS/.d.ts de distribución**; empaquetado/publicación npm y comprobación de esos artefactos quedan pendientes de autorización. La comprobación de tipos no se presenta como compilación de distribución.
 
 Se conserva el fallo global de sesión ante excepción de un actor o violación del protocolo. Procesos separados, reinicio de actores, aislamiento de fallos, hot-plug y rollback no fueron implementados. El adaptador Three.js requiere un entorno gráfico para dibujar; comprobar sus imports y tipos aisladamente no sustituye la ejecución WebGL en navegador.
+
+
+## COM-001 — Inventario y aislamiento extendidos
+
+El inventario tiene catorce paquetes. Cada uno se copia a un directorio temporal con solo su cierre declarado; los siete actores cargan/typecheckean con protocol, system-api y values. La prueba exige que ninguno de los otros seis actores pueda importarse. No se añadieron permisos entre implementaciones ni dependencias externas.
+
+Las verificaciones AST de COM y PRE vetan reloj, red/I/O, aleatoriedad implícita, async y vecinos. El grafo conserva controles negativos de dependencias declaradas, escapes y ciclos. La receta de combate vive fuera de los propietarios y selecciona PresentationViewPublished@2 explícitamente; el laboratorio sigue usando v1. Ver [evidencia COM](../workflow/automatic-combat-mvp.md#reporte-de-entrega-local--15-de-octubre-de-2026).

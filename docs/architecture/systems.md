@@ -16,20 +16,20 @@ Los contratos públicos contienen datos, identificadores y semántica. Las utili
 
 El código de ensamblado crea e inyecta bus, scheduler y sistemas. Ningún sistema obtiene el bus mediante un singleton global ni descubre implementaciones vecinas en un contenedor de servicios.
 
-## Mapa inicial de combate
+## Mapa del combate mínimo aprobado
 
 | Sistema estable | Estado propio | Entradas y vistas necesarias | Salidas de referencia | Fase del loop |
 | --- | --- | --- | --- | --- |
-| `navigation` | Posiciones y ocupación del tablero | Órdenes de movimiento, geometría y capacidades de movilidad recibidas | `RobotMovido`, rechazos de movimiento | Movimiento |
-| `perception` | Observaciones y vistas recibidas que permiten calcularlas | Posiciones y capacidades perceptivas; solo información habilitada por las reglas de visibilidad aprobadas | `ObservacionDisponible` | Percepción |
-| `decision` | Estado de comportamiento y decisiones de IA | Observaciones válidas y configuración de IA/directivas recibidas | `SolicitarMovimiento`, `SolicitarAtaque` | Decisiones |
-| `weapons` | Estado de armas, recargas y solicitudes de ataque pendientes | Órdenes de ataque, configuración y vista de posiciones necesaria para validar alcance | `AplicarImpacto`, rechazo explícito del ataque | Acciones |
-| `damage` | Integridad, escudos y estado defensivo | Impactos y configuración defensiva recibida | `AtaqueResuelto` y cambios defensivos | Resolución |
-| `battle` | Participantes, estado y resultado del encuentro | Hechos de los sistemas combatientes necesarios para las condiciones de finalización | Inicio y final del encuentro | Publicación |
+| `navigation` | Posiciones y ocupación del tablero | Órdenes de movimiento, geometría y capacidades de movilidad recibidas | NavigationWorldReady@1 y NavigationStepResolved@1 | Movimiento |
+| `perception` | Observaciones y vistas recibidas que permiten calcularlas | Posiciones y capacidades perceptivas; solo información habilitada por las reglas de visibilidad aprobadas | RobotObservationPublished@1 | Percepción |
+| `decision` | Estado de comportamiento y decisiones de IA | Observaciones válidas y configuración de IA/directivas recibidas | RequestNavigationStep@1, RequestAttack@1, AIDecisionPublished@1 | Decisiones |
+| `weapons` | Estado de armas, recargas y solicitudes de ataque pendientes | Órdenes de ataque, configuración y vista de posiciones necesaria para validar alcance | AttackAccepted@1, AttackRejected@1, ImpactRequested@1 | Acciones |
+| `damage` | Integridad y estado activo/derrotado | Impactos, participantes y configuración de integridad recibida | DamageRosterInitialized@1, ImpactResolved@1 e ImpactRejected@1 | Resolución |
+| `battle` | Participantes, estado y resultado del encuentro | Hechos de los sistemas combatientes necesarios para las condiciones de finalización | BattleStarted@1 y BattleFinished@1 | Publicación |
 
-Las reglas de movimiento, alcance, daño y victoria se especificarán cuando se apruebe cada mecánica. Esta tabla asigna la autoridad para ejecutarlas; no decide fórmulas ni simultaneidad de ataques.
+COM-001 aprobó e implementó las reglas mínimas de alcance/visión, recarga, daño simultáneo y resultado. Ver [contratos](automatic-combat-mvp-contracts-v1.md), [fichas](automatic-combat-mvp-systems-v1.md) y [entrega](../workflow/automatic-combat-mvp.md). Armadura, soporte, efectos y loot siguen fuera de este MVP.
 
-`weapons` solicita que `damage` resuelva un impacto. No modifica integridad o escudos. `damage` publica el resultado de ese impacto mediante `AtaqueResuelto`. `battle` observa los resultados y decide el estado global del encuentro sin reescribir los datos de los demás sistemas.
+`weapons` solicita que `damage` resuelva un impacto. No modifica integridad o escudos. `damage` publica el resultado de ese impacto mediante ImpactResolved@1 o ImpactRejected@1. `battle` observa los resultados y decide el estado global del encuentro sin reescribir los datos de los demás sistemas.
 
 ## Fronteras fuera del combate
 
@@ -39,7 +39,7 @@ Las reglas de movimiento, alcance, daño y victoria se especificarán cuando se 
 | `hangar` | Configuraciones de robots y equipamiento. Las operaciones sobre piezas necesitan el contrato de disponibilidad/reserva de inventario antes de habilitarse. |
 | `expedition` | Ruta, nodo y estado de la expedición, según las reglas aprobadas. |
 | `progression` | Desbloqueos y progresión permanente; no duplica las existencias de inventario. |
-| `presentation` | Estado visual y de interacción; interpreta resultados y envía intenciones, sin autoridad sobre combate. |
+| `presentation` | Proyección pública e historial; sin autoridad sobre combate. En COM-001 el jugador observa y solo inicia el encuentro desde la aplicación. |
 | `persistence` | Adaptación y confirmación de almacenamiento de snapshots; no posee las reglas de progresión. |
 | `network-bridge` | Traducción controlada de entradas y salidas externas. Modelo de multiplayer pendiente. |
 

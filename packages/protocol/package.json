@@ -12,7 +12,13 @@
     "./presentation/v1": "./src/presentation/v1.ts",
     "./presentation/manifest-v1": "./src/presentation/manifest-v1.ts",
     "./application/v1": "./src/application/v1.ts",
-    "./content/v2": "./src/content/v2.ts"
+    "./content/v2": "./src/content/v2.ts",
+    "./weapons/v1": "./src/weapons/v1.ts",
+    "./damage/v1": "./src/damage/v1.ts",
+    "./perception/v1": "./src/perception/v1.ts",
+    "./decision/v1": "./src/decision/v1.ts",
+    "./battle/v1": "./src/battle/v1.ts",
+    "./presentation/v2": "./src/presentation/v2.ts"
   },
   "dependencies": {
     "@robots/system-api": "0.1.0",

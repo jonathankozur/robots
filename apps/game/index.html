@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10151e"><link rel="icon" href="data:,"><title>Robots · Combate</title><link rel="stylesheet" href="/style.css"></head>
+<body>
+<header><a class="brand" href="/" aria-label="Robots, inicio">ROBOTS<span class="brand-dot"></span></a><div class="page-title">Combate automático <span class="version">MVP / 01</span></div><button id="start-btn" type="button">Iniciar combate <span aria-hidden="true">↗</span></button></header>
+<main>
+ <section class="arena" aria-label="Tablero de combate">
+  <div class="arena-heading"><span>ARENA 01</span><span id="stage">Sin iniciar</span></div>
+  <div id="viewport" role="img" aria-label="Tablero hexagonal con los robots Alpha y Beta"></div>
+  <div id="empty"><div class="arena-symbol" aria-hidden="true">⬡</div><h1>Listo para el combate</h1><p>Dos robots. Un encuentro automático.</p></div>
+  <div id="result" role="status" hidden></div>
+  <div class="arena-footer"><span>7 × 5 hexágonos <span class="muted">/</span> 2 robots</span><span id="elapsed">00:00</span></div>
+ </section>
+ <aside aria-label="Datos del combate">
+  <div class="section-title"><h2>Combatientes</h2><span>01 vs 01</span></div>
+  <section class="combatant alpha" aria-labelledby="alpha-name"><div class="robot-title"><div><span class="team">BANDO A</span><h3 id="alpha-name">Alpha</h3></div><span id="alpha-state" class="robot-state">Sin iniciar</span></div><div class="health-text"><span>Vida</span><strong id="alpha-health">—</strong></div><progress id="alpha-bar" aria-label="Vida de Alpha" max="100" value="0"></progress><p class="loadout">Ruedas · Pulso · Aproximación</p></section>
+  <section class="combatant beta" aria-labelledby="beta-name"><div class="robot-title"><div><span class="team">BANDO B</span><h3 id="beta-name">Beta</h3></div><span id="beta-state" class="robot-state">Sin iniciar</span></div><div class="health-text"><span>Vida</span><strong id="beta-health">—</strong></div><progress id="beta-bar" aria-label="Vida de Beta" max="100" value="0"></progress><p class="loadout">Orugas · Pulso · Presión</p></section>
+  <section class="activity" aria-labelledby="activity-title"><div class="section-title"><h2 id="activity-title">Actividad</h2><span id="activity-mark" aria-hidden="true">—</span></div><ol id="events"><li class="event-empty">Los movimientos y ataques aparecerán aquí.</li></ol></section>
+ </aside>
+</main>
+<footer><p id="status" role="status">Inicia el encuentro para observar a los robots.</p><span>SIMULACIÓN AUTOMÁTICA</span></footer>
+<script type="module" src="/main.ts"></script>
+</body></html>
