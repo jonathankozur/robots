@@ -1,6 +1,6 @@
 # Paquetes independientes — IND-001
 
-Revisión: **1.0.0**, 14 de octubre de 2026. Implementación local autorizada en `codex/independent-systems`, desde main e05aac9. [Plan y evidencia](../workflow/system-independence-v1.md), [investigación previa](system-independence-proposal.md).
+Revisión: **1.1.0**, 14 de octubre de 2026. IND-001 extrajo los paquetes; IND-002 corrige fases y esquemas compartidos, selección de versiones e identidad de montaje. [Plan IND-001](../workflow/system-independence-v1.md), [plan IND-002](../workflow/system-coupling-fixes-v1.md), [investigación previa](system-independence-proposal.md).
 
 ## Dónde vive el código
 
@@ -8,7 +8,7 @@ Todo continúa en **C:/dev/robots**. `packages/` contiene los paquetes del mismo
 
 | Paquete | Responsabilidad | Dependencias de ejecución permitidas |
 | --- | --- | --- |
-| `system-api` | Actor, Publisher, mensajes, esquemas, fases y ProtocolError único | Ninguna |
+| `system-api` | Actor, ActorContext, Publisher, referencias de mensajes, esquemas, fases y ProtocolError único | Ninguna |
 | `values` | Copias inmutables, validación JSON, aritmética/RNG y geometría puros | system-api |
 | `protocol` | DTO, esquemas y definiciones públicas por dominio/versión | system-api, values |
 | `runtime` | Bus, catálogo, scheduler, sesión y traza | system-api, values |
@@ -34,6 +34,8 @@ import type { View } from "@robots/protocol/presentation/v1";
 
 El paquete protocol también contiene application/v1, content/v2 y presentation/manifest-v1. Sus subpaths públicos evitan depender de una implementación para resolver tipos o esquemas. Un protocolo compartido sigue siendo una dependencia semántica: modificarlo exige analizar productores y consumidores. Compartir su ubicación no cambia esa responsabilidad.
 
+`PHASES` está congelado en ejecución. Las fábricas `beginContextDefinition` e `initializationDefinition` copian y congelan toda su definición, incluyendo los esquemas aportados por el llamador; no congelan los objetos originales ni conservan referencias mutables a ellos. Crear o intentar modificar una definición no altera las de otros hosts.
+
 Los perfiles de copia anteriores se conservan: JSON del bus, datos enteros de navegación y datos enteros congelados de presentación mantienen restricciones, presupuestos y códigos de error propios. No se unificaron esas validaciones cambiando lo que aceptan.
 
 ## Autorización en el host
@@ -51,11 +53,36 @@ const contracts = bindNavigationContracts({
 });
 ```
 
-`decision-a` debe registrarse como participante en esa composición. Otro host puede autorizar `decision-b` sin editar navegación. El helper conserva el ID estable del actor actual, `navigation`, y sus fases originales; renombrar actores o soportar varias instancias dentro de la misma sesión queda fuera de este cambio.
+`decision-a` debe registrarse como participante en esa composición. Otro host puede autorizar `decision-b` sin editar navegación. Los helpers NAV/PRE aceptan el identificador que asigna el host y conservan las fases originales. Cada comando/tipo/versión sigue teniendo un único responsable: renombrar actores no permite montar dos receptores del mismo comando en una sesión.
 
 `bindMessage` permite componer directamente otras definiciones y bindings. Toma una copia inmutable; modificar después los arrays del llamador no cambia los permisos. El runtime valida registro, fases, responsable y rutas antes de empezar. La barrera de inicialización/activación continúa usando mensajes diferidos.
 
 La función histórica `navigationContracts()` de `src/navigation/contracts.ts` conserva el permiso de `navigation-agent-fixture` por compatibilidad con consumidores antiguos. Es un preset obsoleto del laboratorio que llama al binder del host; no forma parte de las definiciones neutrales ni de las dependencias del paquete navigation. Los consumidores migrados declaran sus permisos explícitamente.
+
+## Versiones e identidad del actor — IND-002
+
+`MessageReference` contiene `type` y `version`. Cada entrada de `Actor.subscriptions` declara ambos junto con fase y handler. `Recipe.outputTypes` contiene esas referencias, no strings. El host registra exactamente la versión solicitada; omitirla o elegir una versión desconocida se rechaza, sin fallback a v1. Las recetas existentes declaran v1 explícitamente y mantienen sus manifests y replay.
+
+`Participant.create(identity, ownResource, context)` recibe como tercer argumento un `ActorContext` congelado con `{systemId: participant.id}`. No contiene capacidades para consultar ni llamar otros sistemas. Las fábricas NAV/PRE toman ese contexto como segundo argumento y capturan su ID. Las llamadas directas sin contexto conservan `navigation` y `presentation`.
+
+La receta debe adaptar explícitamente los argumentos del host:
+
+```typescript
+import type { Participant } from "@robots/application-host";
+import { bindNavigationContracts } from "@robots/application-host/bindings";
+import { createNavigationActor } from "@robots/navigation";
+import { BOARD_FIELDS } from "@robots/protocol/navigation/v1";
+
+const participant: Participant = {
+  id: "nav-a", initializationType: "InitializeNavigationBoard",
+  phase: "movement", fields: BOARD_FIELDS,
+  create: (identity, _ownResource, context) => createNavigationActor(identity, context)
+};
+const outputTypes = [{ type: "NavigationWorldReady", version: 1 }];
+const contracts = bindNavigationContracts({ navigationId: participant.id, requestProducers: [] });
+```
+
+Este fragmento muestra el participante, bindings y selección de salidas para una receta. La inicialización y activación APP continúan en v1. `ApplicationController.stage(contextId, type, payload)` conserva su interfaz actual para entrada v1; la selección multiversión añadida aquí cubre suscripciones y observaciones, no amplía esa entrada externa. La observación pública conserva un último payload por productor, como antes.
 
 ## Existir sin un proveedor
 

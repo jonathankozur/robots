@@ -83,6 +83,8 @@ Pruebas propuestas y alcance en el plan. La evidencia ejecutada y los límites c
 
 ApplicationController recibe instanceId (1..100) único asignado por el host, runtime (1..1024) y Recipe de código explícito. Métodos request, advance(step/phase/tick), stage(contextId,type,payload), close, snapshot, trace, exportReplay, loadReplay y drainDebugLog. El puerto no expone Session. Tipos públicos ApplicationSnapshot, Result, Recipe, Participant/Actor, Request y RestoredParts en src/application/index.ts.
 
+IND-002 actualiza la API de código de montaje: `Participant.create(identity, ownResource, context)` recibe el `ActorContext` neutral y congelado de system-api, con el ID asignado por el host. Las suscripciones de Actor y `Recipe.outputTypes` declaran `{type, version}` explícitamente. Las recetas existentes migran a v1; inicializaciones y barrera APP siguen en v1, sin cambiar los contratos serializados. Ver [montaje independiente](system-independence-v1.md#versiones-e-identidad-del-actor--ind-002).
+
 Request contiene requestId/seed/content/selection y opciones initializationMaxTicks/debug/restore; el controlador asigna contextId y attemptId crecientes. Un resultado ok es aceptación del pedido, no certificación de ready. Repetir un pedido registrado devuelve su aceptación/rechazo original incluso si ese contexto ya terminó; no lo reactiva. Pedidos transitoriamente BUSY/TICK_IN_PROGRESS no se registran como completados y pueden repetirse cuando se resuelve esa condición.
 
 app-output es un observador registrado kind=system. El núcleo reserva kind=adapter para ingreso externo y no permite que consuma mensajes. Su vista de confirmaciones/observaciones es propia; snapshot hacia el host copia y congela datos. I/O de debug en navegador ocurre fuera del scheduler.

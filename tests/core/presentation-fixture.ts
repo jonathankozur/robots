@@ -26,7 +26,7 @@ export function presentationRecipe(): Recipe {
             return { ...views, presentation: { boardId: views.navigation!.boardId, assemblies: visual } as Payload };
         },
         contracts: [...base.contracts, ...bindPresentationContracts('presentation')],
-        outputTypes: [...base.outputTypes, 'PresentationViewPublished'],
-        participants: [...base.participants, { id: 'presentation', initializationType: 'InitializePresentationView', phase: 'action', fields: INITIAL_FIELDS, create: createPresentationActor }] };
+        outputTypes: [...base.outputTypes, {type: 'PresentationViewPublished', version: 1}],
+        participants: [...base.participants, { id: 'presentation', initializationType: 'InitializePresentationView', phase: 'action', fields: INITIAL_FIELDS, create: (identity, _resource, context) => createPresentationActor(identity, context) }] };
 }
 export function presentationRequest(s = scenario(), requestId = 'presentation', debug = false): Request { return { requestId, seed: '0123456789abcdef', content: JSON.parse(JSON.stringify(content)), selection: s as unknown as Payload, debug }; }

@@ -11,7 +11,7 @@ export function fixtureRecipe(options:{mode?:Mode;disposed?:string[];failCleanup
   const observed:Contract={type:"FixtureEquipmentObserved",version:1,kind:"event",producers:[{systemId:nav,phases:["input","movement"]},{systemId:combat,phases:["input","resolution"]}],fields:{ownerId:text,count:number,amount:number}};
   const operation:Contract={type:"OperateNavigation",version:1,kind:"command",responsibleSystemId:nav,producers:[{systemId:"app-bootstrap",phases:["input"]}],fields:{delta:number}};
   return {
-    id:"application.fixture",revision:"application-fixture-v2-"+(options.mode??"normal"),contracts:[observed,operation],outputTypes:["FixtureEquipmentObserved"],
+    id:"application.fixture",revision:"application-fixture-v2-"+(options.mode??"normal"),contracts:[observed,operation],outputTypes:[{type:"FixtureEquipmentObserved",version:1}],
     prepare(content,selection){
       const d=content.definitions,robot=d.robots.find(r=>r.id===selection.robotId),terrain=d.terrains.find(t=>t.id===selection.terrainId);
       const chassis=d.chassis.find(c=>c.id===robot?.chassisId),equipped=robot?.equipment.map(e=>e.componentId)??[];
@@ -41,7 +41,7 @@ export function fixtureRecipe(options:{mode?:Mode;disposed?:string[];failCleanup
             if(id===combat&&(options.mode==="duplicate"||options.mode==="conflict"))publisher.emit("ApplicationParticipantInitialized",1,{...identity,participantId:options.mode==="conflict"?nav:id});
           },
           activate(){enabled=true;emit();},
-          subscriptions:id===nav&&!options.badRoute?[{type:"OperateNavigation",phase:"movement",handler(message){
+          subscriptions:id===nav&&!options.badRoute?[{type:"OperateNavigation",version:1,phase:"movement",handler(message){
             if(!enabled)throw new ProtocolError("APP_NOT_READY","Fixture is not ready");
             const next=count+(message.payload.delta as number);
             if(!Number.isSafeInteger(next))throw new ProtocolError("NUMERIC_OVERFLOW","Fixture counter overflow");

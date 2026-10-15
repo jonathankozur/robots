@@ -89,7 +89,7 @@ Datos y esquemas públicos se copian y congelan profundamente. El host conduce m
 
 CAT-002 migra paquete y todas sus fichas a schemaVersion=2 y locomoción a moveCooldownTicks. Conserva vocabularios/IDs/reglas restantes y límites; contentRevision de fixture lab-2. Renombrar basic-v1.json a basic-v2.json, actualizar referencias sin mantener lector v1.
 
-Fixture CAT: FixtureInitializeNavigationContent version=2, revision content-fixture-v2; comando de combate conserva versión 1. Fixture APP: nueva identidad FixtureInitializeNavigationCooldown v1 y FixtureEquipmentObserved v1, revision application-fixture-v2-<mode>. Su inicialización/salidas anteriores no se reutilizan con semántica diferente. Los nombres nuevos v1 son necesarios porque ensamblado APP usa versión 1 para Participant/outputTypes; evitar ampliar ese API compartido.
+Fixture CAT: FixtureInitializeNavigationContent version=2, revision content-fixture-v2; comando de combate conserva versión 1. Fixture APP: nueva identidad FixtureInitializeNavigationCooldown v1 y FixtureEquipmentObserved v1, revision application-fixture-v2-<mode>. Su inicialización/salidas anteriores no se reutilizan con semántica diferente. La inicialización de Participant conserva v1. Desde IND-002, las suscripciones de Actor y Recipe.outputTypes seleccionan explícitamente tipo/versión; estas salidas existentes continúan en v1.
 
 ReplayRecording conserva formatVersion=1. El catálogo incorporado, contratos y revisión de receta/manifiesto distintos rechazan grabaciones CAT/APP v1 explícitamente; BUS/ENV sin contenido conservan comportamiento. No crear conversor automático ni actualizar un archivo importado en silencio. Código de versiones anteriores permanece recuperable desde Git, sin lectores legacy en runtime nuevo.
 
