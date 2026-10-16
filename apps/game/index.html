@@ -1,7 +1,17 @@
 <!doctype html>
 <html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#10151e"><link rel="icon" href="data:,"><title>Robots · Combate</title><link rel="stylesheet" href="/style.css"></head>
 <body>
-<header><a class="brand" href="/" aria-label="Robots, inicio">ROBOTS<span class="brand-dot"></span></a><div class="page-title">Combate automático <span class="version">MVP / 01</span></div><button id="start-btn" type="button">Iniciar combate <span aria-hidden="true">↗</span></button></header>
+<header>
+ <a class="brand" href="/" aria-label="Robots, inicio">ROBOTS<span class="brand-dot"></span></a>
+ <div class="page-title">Combate automático <span class="version">MVP / 01</span></div>
+ <div class="header-actions">
+  <button id="start-btn" type="button">Iniciar combate <span aria-hidden="true">↗</span></button>
+  <button id="pause-btn" type="button" class="btn-secondary" hidden>Pausar</button>
+  <button id="replay-btn" type="button" class="btn-secondary" hidden>Repetir combate</button>
+  <button id="report-btn" type="button" class="btn-secondary" hidden>Ver informe</button>
+  <label id="load-label" class="btn-upload" title="Cargar archivo replay .json">Cargar replay<input id="replay-file" type="file" accept=".json" hidden></label>
+ </div>
+</header>
 <main>
  <section class="arena" aria-label="Tablero de combate">
   <div class="arena-heading"><span>ARENA 01</span><span id="stage">Sin iniciar</span></div>
@@ -17,6 +27,23 @@
   <section class="activity" aria-labelledby="activity-title"><div class="section-title"><h2 id="activity-title">Actividad</h2><span id="activity-mark" aria-hidden="true">—</span></div><ol id="events"><li class="event-empty">Los movimientos y ataques aparecerán aquí.</li></ol></section>
  </aside>
 </main>
+<div id="report-dialog" class="report-overlay" role="dialog" aria-modal="true" aria-labelledby="report-title" hidden>
+ <div class="report-card">
+  <div class="report-card-header">
+   <div>
+    <span class="report-badge">RESUMEN DEL ENCUENTRO</span>
+    <h2 id="report-title">Informe de combate</h2>
+   </div>
+   <button id="close-report-btn" class="btn-icon" type="button" aria-label="Cerrar informe">✕</button>
+  </div>
+  <p id="report-summary" class="report-summary-text"></p>
+  <div id="report-stats" class="report-grid"></div>
+  <div class="report-footer-actions">
+   <button id="download-replay-btn" type="button" class="btn-action">Descargar Replay (.json)</button>
+   <button id="download-report-btn" type="button" class="btn-action">Descargar Informe (.json)</button>
+  </div>
+ </div>
+</div>
 <footer><p id="status" role="status">Inicia el encuentro para observar a los robots.</p><span>SIMULACIÓN AUTOMÁTICA</span></footer>
 <script type="module" src="/main.ts"></script>
 </body></html>
